@@ -1,0 +1,30 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="CourseProject_SellingTickets.App"
+             xmlns:local="using:CourseProject_SellingTickets"
+             xmlns:vm="clr-namespace:CourseProject_SellingTickets.ViewModels"
+             xmlns:view="clr-namespace:CourseProject_SellingTickets.Views"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+        
+        <DataTemplate DataType="{x:Type vm:AuthUserViewModel}">
+            <view:AuthUserView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:DispatcherUserViewModel}">
+            <view:DispatcherUserView />
+        </DataTemplate>
+ 
+        <DataTemplate DataType="{x:Type vm:AdminUserViewModel}">
+            <view:AdminUserView />
+        </DataTemplate>
+        
+    </Application.DataTemplates>
+  
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+</Application>

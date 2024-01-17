@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
+        xmlns:view="clr-namespace:CourseProject_SellingTickets.Views"
+        x:DataType="vm:MainWindowViewModel"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CourseProject_SellingTickets.Views.MainWindow"
+        x:CompileBindings="True"
+        Icon="/Assets/avalonia-logo.ico"
+        Background="#0f0f0f"
+        MinWidth="850"
+        MinHeight="550"
+        Height="550"
+        Width="850"
+        Title="Информационная система по управлению Авиарейсов">
+        
+        <Grid>
+                <Grid.RowDefinitions>
+                        <RowDefinition Height="100" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                
+                <Border Background="#252525">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Run FontSize="30">Добро пожаловать</Run>
+                                <LineBreak/>
+                                <Run FontSize="20">В информационную систему</Run>
+                        </TextBlock>
+                </Border>
+                
+                <ContentPresenter Grid.Row="1" 
+                                  Content="{Binding NavigationService.CurrentView}" />
+
+                <Border Background="#252525" Grid.Row="2">
+                        <Label Content="Соединение с БД установлено" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                
+        </Grid>
+        
+    
+</Window>

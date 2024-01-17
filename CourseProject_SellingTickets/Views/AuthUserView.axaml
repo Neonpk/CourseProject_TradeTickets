@@ -1,0 +1,90 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
+             xmlns:converters="using:CourseProject_SellingTickets.Converters"
+             x:DataType="vm:AuthUserViewModel"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CourseProject_SellingTickets.Views.AuthUserView">
+    
+    <UserControl.Resources>
+        <converters:AuthConverterStateColor x:Key="AuthConverterStateColor"/>
+        <converters:AuthConverterStateString x:Key="AuthConverterStateString"/>
+    </UserControl.Resources>
+    
+    <UserControl.Styles>
+        <StyleInclude Source="/Interface/Styles/GroupBox_HeaderedContentControl.axaml" />
+    </UserControl.Styles>
+    
+   <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <HeaderedContentControl Header="Авторизация" 
+                                Grid.Column="1" Margin="20" IsEnabled="True"
+                                Background="White" VerticalAlignment="Center"
+                                >
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                <Label Content="Авторизоваться в качестве:" FontSize="25"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="RadioButtonDispatcher" 
+                                 Content="Диспетчер" 
+                                 Margin="10 10" FontSize="20" IsChecked="True"
+                                 Command="{Binding SelectOperationModeCommand}"
+                                 CommandParameter="dispatcherMode"
+                                 />
+                    
+                    <RadioButton x:Name="RadioButtonAdmin" 
+                                 Content="Администратор" 
+                                 Margin="10 10" FontSize="20" 
+                                 Command="{Binding SelectOperationModeCommand}"
+                                 CommandParameter="administratorMode"
+                                 />
+                </StackPanel>
+
+                <Grid IsVisible="True">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="27"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox x:Name="PasswordBox"
+                             IsEnabled="True"
+                             Height="27" FontSize="20"
+                             Text="{Binding Password}"
+                             />
+
+                </Grid>
+
+                <StackPanel Orientation="Horizontal">
+                
+                    <Button Content="Войти" 
+                            Command="{Binding LoginCommand}"
+                            IsEnabled="True"
+                            Margin="0 10" FontSize="20">
+                    </Button>
+                    
+                    <Label Content="{Binding AuthState, Converter={StaticResource AuthConverterStateString}}" 
+                           FontSize="20" 
+                           Margin="15 0 0 0"
+                           Foreground="{Binding AuthState, Converter={StaticResource AuthConverterStateColor}}"
+                           VerticalAlignment="Center" />
+                    
+                </StackPanel>
+
+
+            </StackPanel>
+            
+        </HeaderedContentControl>
+       
+        <Image  Source="{Binding ImageSource}"
+               Margin="30" Height="250" Width="250"/>
+        
+   </Grid>
+    
+</UserControl>
