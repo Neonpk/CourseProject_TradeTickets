@@ -14,7 +14,7 @@
     </UserControl.Resources>
     
     <UserControl.Styles>
-        <StyleInclude Source="/Interface/Styles/GroupBox_HeaderedContentControl.axaml" />
+        <StyleInclude Source="/Controls/Styles/GroupBox_HeaderedContentControl.axaml" />
     </UserControl.Styles>
     
    <Grid>

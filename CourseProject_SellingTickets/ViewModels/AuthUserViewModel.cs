@@ -12,7 +12,7 @@ using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;
 
-public class AuthUserViewModel : ViewModel
+public class AuthUserViewModel : ViewModelBase
 {
      // Static Properties;
     public Bitmap? ImageSource { get; } = ImageHelper.LoadFromResource(new Uri("avares://CourseProject_SellingTickets/Assets/aircraft-logo.png"));

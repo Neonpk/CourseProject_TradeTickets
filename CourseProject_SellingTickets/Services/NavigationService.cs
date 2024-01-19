@@ -12,7 +12,7 @@ public interface INavigationService
 
 public class NavigationService : ObservableObject, INavigationService
 {
-    private readonly Func<Type, ViewModel> _viewModelFactory;
+    private readonly Func<Type, ViewModelBase> _viewModelFactory;
     
     private ObservableObject _currentView;
     public ObservableObject CurrentView
@@ -25,7 +25,7 @@ public class NavigationService : ObservableObject, INavigationService
         }
     }
 
-    public NavigationService(Func<Type, ViewModel> viewModelFactory)
+    public NavigationService(Func<Type, ViewModelBase> viewModelFactory)
     {
         _viewModelFactory = viewModelFactory;
     }
