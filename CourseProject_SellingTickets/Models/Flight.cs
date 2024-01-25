@@ -1,5 +1,6 @@
 namespace CourseProject_SellingTickets.Models;
 
+#pragma warning disable
 public class Flight
 {
     public System.Int64 FlightNumber { get; }

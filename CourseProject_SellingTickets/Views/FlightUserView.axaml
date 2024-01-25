@@ -1,0 +1,361 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
+             x:DataType="vm:FlightUserViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CourseProject_SellingTickets.Views.FlightUserView">
+    
+    <SplitView IsPaneOpen="{Binding SideBarShowed}" 
+               DisplayMode="Inline" PanePlacement="Right">
+        
+        <SplitView.Content>
+        
+            <DockPanel>
+            
+                <DockPanel Margin="10" DockPanel.Dock="Top">
+                    <Label Content="Рейсы" FontSize="30" />
+                    <Button Content="Добавить новый рейс" 
+                            HorizontalAlignment="Right" 
+                            HorizontalContentAlignment="Center"
+                            Width="200" DockPanel.Dock="Right"
+                            Command="{Binding AddEditDataCommand}"
+                            />
+                </DockPanel>
+
+
+                <DockPanel Margin="10" DockPanel.Dock="Top">
+                    
+                    <Label FontSize="15" Content="Применить фильтр" DockPanel.Dock="Top"/>
+
+                    <ComboBox SelectedIndex="0" DockPanel.Dock="Right">
+                        <ComboBoxItem>По рейсу</ComboBoxItem>
+                        <ComboBoxItem>По пункту отправления</ComboBoxItem>
+                        <ComboBoxItem>По пункту прибытия</ComboBoxItem>
+                        <ComboBoxItem>По дате отправления</ComboBoxItem>
+                        <ComboBoxItem>По дате прибытия</ComboBoxItem>
+                        <ComboBoxItem>По модели самолета</ComboBoxItem>
+                        <ComboBoxItem>По количеству мест</ComboBoxItem>
+                        <ComboBoxItem>По кол-ву свободных мест</ComboBoxItem>
+                    </ComboBox>
+
+                    <TextBox 
+                        FontSize="15" Text="Введите запрос..."
+                        DockPanel.Dock="Left"/>
+                </DockPanel>
+                 
+                <DockPanel Margin="10" DockPanel.Dock="Top">
+                    <Label FontSize="15" Content="Применить сортировку" DockPanel.Dock="Top"/>
+
+                    <StackPanel Orientation="Horizontal">
+
+
+                        <ComboBox SelectedIndex="0">
+                            <ComboBoxItem>По возрастанию</ComboBoxItem>
+                            <ComboBoxItem>По убыванию</ComboBoxItem>
+                        </ComboBox>
+
+                        <ComboBox SelectedIndex="0">
+                            <ComboBoxItem>По рейсу</ComboBoxItem>
+                            <ComboBoxItem>По пункту отправления</ComboBoxItem>
+                            <ComboBoxItem>По пункту прибытия</ComboBoxItem>
+                            <ComboBoxItem>По дате отправления</ComboBoxItem>
+                            <ComboBoxItem>По дате прибытия</ComboBoxItem>
+                            <ComboBoxItem>По модели самолета</ComboBoxItem>
+                            <ComboBoxItem>По количеству мест</ComboBoxItem>
+                            <ComboBoxItem>По кол-ву свободных мест</ComboBoxItem>
+                        </ComboBox>
+
+                    </StackPanel>
+
+                </DockPanel>
+                
+               <ListBox HorizontalAlignment="Stretch">
+                   <ListBox.ItemTemplate>
+                       <DataTemplate>
+                           
+                           <DockPanel>
+                               
+                               <StackPanel VerticalAlignment="Center">
+                                   
+                                   <Grid>
+                                       
+                                       <Grid.RowDefinitions>
+                                           <RowDefinition/>
+                                           <RowDefinition/>
+                                           <RowDefinition/>
+                                       </Grid.RowDefinitions>
+                                       
+                                       <Grid.ColumnDefinitions>
+                                           <ColumnDefinition/>
+                                           <ColumnDefinition/>
+                                       </Grid.ColumnDefinitions>
+                                       
+                                       <Label Grid.Row="0" Grid.Column="0" Content="Рейс №" FontSize="15" />
+                                       <Label Grid.Row="0" Grid.Column="1" Content="115" FontWeight="Bold"/>
+                                       
+                                       <Label Grid.Column="0" Grid.Row="1" Content="Отменен:"/>
+                                       <Label Grid.Row="1" Grid.Column="1" FontWeight="Bold" Content="нет" />
+                                       
+                                   </Grid>
+                                   
+                                   <Button Content="Править" 
+                                           HorizontalAlignment="Stretch"
+                                           HorizontalContentAlignment="Center"  
+                                           Command="{Binding $parent[ListBox].((vm:FlightUserViewModel)DataContext).AddEditDataCommand}"
+                                           />
+                                   
+                               </StackPanel>
+                            
+                               <StackPanel Margin="10 0 0 0" Width="750" Height="255">
+                                   
+                                   <Border BorderBrush="White" 
+                                           BorderThickness="2"
+                                           CornerRadius="5"
+                                           Margin="0 0 0 10"
+                                           >
+                                       <Grid>
+                                           
+                                           <Grid.ColumnDefinitions>
+                                               <ColumnDefinition Width="150"/>
+                                               <ColumnDefinition/>
+                                           </Grid.ColumnDefinitions>
+                                           
+                                           <Image Source="../../Assets/aircraft-logo.png" 
+                                                  Width="100" Height="100" Margin="10" />
+                                           
+                                           <StackPanel Grid.Column="1" 
+                                                       VerticalAlignment="Center">
+                                               
+                                               <Grid>
+                                                   <Grid.ColumnDefinitions>
+                                                       <ColumnDefinition/>
+                                                       <ColumnDefinition/>
+                                                   </Grid.ColumnDefinitions>
+                                                   
+                                                   <Label Content="Пункт отправления:"/>
+                                                   <Label Grid.Column="1" Content="Екатеринбург (кольцово)"
+                                                          FontWeight="Bold"
+                                                          />
+                                               </Grid>
+                                               
+                                               <Grid>
+                                                   
+                                                   <Grid.ColumnDefinitions>
+                                                       <ColumnDefinition/>
+                                                       <ColumnDefinition/>
+                                                   </Grid.ColumnDefinitions>
+                                                   
+                                                   <Label Content="Дата отправления:"/>
+                                                   <Label Grid.Column="1" Content="01.01.1970 00:00:00"
+                                                          FontWeight="Bold"
+                                                          />
+                                               </Grid>
+                                           </StackPanel>
+                                           
+                                       </Grid>
+                                   </Border>
+                                   
+                                  <Border BorderBrush="White" 
+                                           BorderThickness="2"
+                                           CornerRadius="5"
+                                           Margin="0 0 0 10"
+                                           >
+                                       <Grid>
+                                           
+                                           <Grid.ColumnDefinitions>
+                                               <ColumnDefinition Width="150"/>
+                                               <ColumnDefinition/>
+                                           </Grid.ColumnDefinitions>
+                                           
+                                           <Image Source="../../Assets/aircraft-logo.png" 
+                                                  Width="100" Height="100" Margin="10" />
+                                           
+                                           <StackPanel Grid.Column="1" 
+                                                       VerticalAlignment="Center">
+                                               
+                                               <Grid>
+                                                   <Grid.ColumnDefinitions>
+                                                       <ColumnDefinition/>
+                                                       <ColumnDefinition/>
+                                                   </Grid.ColumnDefinitions>
+                                                   
+                                                   <Label Content="Пункт прибытия:"/>
+                                                   <Label Grid.Column="1" Content="США (Вашингтон)"
+                                                          FontWeight="Bold"
+                                                          />
+                                               </Grid>
+                                               
+                                               <Grid>
+                                                   
+                                                   <Grid.ColumnDefinitions>
+                                                       <ColumnDefinition/>
+                                                       <ColumnDefinition/>
+                                                   </Grid.ColumnDefinitions>
+                                                   
+                                                   <Label Content="Дата прибытия:"/>
+                                                   <Label Grid.Column="1" Content="02.01.1970 00:00:00"
+                                                          FontWeight="Bold"
+                                                          />
+                                               </Grid>
+                                           </StackPanel>
+                                           
+                                       </Grid>
+                                   </Border>
+                                   
+                               </StackPanel>
+                               
+                               <Border BorderBrush="White"
+                                       BorderThickness="2"
+                                       CornerRadius="5" 
+                                       Margin="10 0 0 0" 
+                                       Height="255"
+                                       >
+                                   <Grid HorizontalAlignment="Center">
+                                       <Grid.ColumnDefinitions>
+                                           <ColumnDefinition Width="150"/>
+                                           <ColumnDefinition Width="*"/>
+                                       </Grid.ColumnDefinitions>
+                                       
+                                       <Image Source="../../Assets/aircraft-logo.png"
+                                              Width="100" Height="100"
+                                              />
+                                       
+                                       <Grid Grid.Column="1" 
+                                             VerticalAlignment="Center" 
+                                             Margin="10 0 0 0">
+                                           
+                                           <Grid.ColumnDefinitions>
+                                               <ColumnDefinition/>
+                                               <ColumnDefinition/>
+                                           </Grid.ColumnDefinitions>
+                                           
+                                           <Grid.RowDefinitions>
+                                               <RowDefinition/>
+                                               <RowDefinition/>
+                                               <RowDefinition/>
+                                           </Grid.RowDefinitions>
+                                           
+                                           <Label Grid.Row="0" Grid.Column="0" Content="Самолет:" 
+                                                  FontSize="15"/>
+                                           <Label Grid.Row="0" Grid.Column="1" Content="ИЛ-86" 
+                                                  FontSize="15"
+                                                  FontWeight="Bold"
+                                                  />
+                                           
+                                           <Label Grid.Column="0" Grid.Row="1" Content="Всего мест:" 
+                                                  FontSize="15"/>
+                                           <Label Grid.Row="1" Grid.Column="1" Content="350" 
+                                                  FontSize="15"
+                                                  FontWeight="Bold"/>
+                                           
+                                           <Label Grid.Column="0" Grid.Row="2" Content="Мест свободно:" 
+                                                  FontSize="15"/>
+                                           <Label Grid.Row="2" Grid.Column="1" Content="10"
+                                                  FontSize="15"
+                                                  FontWeight="Bold"/>
+                                           
+                                       </Grid>
+                                       
+                                   </Grid>
+                               </Border>
+                               
+                           </DockPanel>
+                           
+                       </DataTemplate>
+                   </ListBox.ItemTemplate>
+                   
+                   <ListBox.Items>
+                       
+                       123
+                       
+                   </ListBox.Items>
+                   
+               </ListBox>
+                
+            </DockPanel>
+            
+        </SplitView.Content>
+            
+        <SplitView.Pane>
+        
+            <Border Background="#252525" 
+                    Width="320">
+                <ScrollViewer>
+                    <StackPanel Margin="10">
+                        
+                        <DockPanel>
+                            
+                            <Label Content="Изменить/Добавить рейс" FontSize="15"
+                                   Margin="0 0 0 10" />
+                            
+                            <Button Content="x" HorizontalAlignment="Right" 
+                                    VerticalAlignment="Top"
+                                    Command="{Binding HideSideBarCommand}"
+                                    />
+                            
+                        </DockPanel>
+                        
+                        <Label Content="Id записи (не подлежит изменению)"
+                               Margin="0 10 0 10"
+                               />
+                        <TextBox IsEnabled="False" Text="1" />
+                        
+                        <Label Content="Номер рейса" 
+                               Margin="0 10 0 10"/>
+                        <TextBox />
+                        
+                        <Label Content="Авиакомпания" 
+                               Margin="0 10 0 0"/>
+                        
+                        <ComboBox HorizontalAlignment="Stretch" 
+                                  Margin="0 10 0 10"/>
+                        
+                        <Label Content="Самолет"/>
+                        <ComboBox HorizontalAlignment="Stretch" 
+                                  Margin="0 10 0 10"/>
+                        
+                        <Label Content="Пункт отправки" 
+                               Margin="0 0 0 10"/>
+                        
+                        <ComboBox HorizontalAlignment="Stretch"
+                                  Margin="0 0 0 10"/>
+                        
+                        <DatePicker HorizontalAlignment="Stretch"/>
+                        <TimePicker HorizontalAlignment="Stretch"/>
+                        
+                        <Label Content="Пункт назначения" 
+                               Margin="0 10 0 10"/>
+                        
+                        <ComboBox HorizontalAlignment="Stretch"
+                                  Margin="0 0 0 10" />
+                        <DatePicker HorizontalAlignment="Stretch"/>
+                        <TimePicker HorizontalAlignment="Stretch"/>
+                        
+                        <StackPanel Orientation="Horizontal" 
+                                    Margin="0 10 0 10">
+                            
+                            <Label Content="Отмена рейса:" 
+                                   Margin="0 10 0 0" 
+                                   />
+                            
+                            <CheckBox
+                                      Margin="10 0 0 0"
+                                      VerticalAlignment="Center"/>
+                        </StackPanel>
+                        
+                        <Button Content="Сохранить" 
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                />
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+            
+        </SplitView.Pane>
+        
+    </SplitView>
+    
+</UserControl>

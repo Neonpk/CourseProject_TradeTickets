@@ -1,4 +1,5 @@
 using CourseProject_SellingTickets.Services;
+using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CourseProject_SellingTickets.ViewModels;
@@ -17,17 +18,22 @@ public static class AddViewModelsHostBuilderExtensions
             var resolver = Locator.CurrentMutable;
             var service = Locator.Current;
             
+            // Included services 
+            INavigationService? mainNavigation = service.GetService<INavigationService>("mainNavigation");
+            INavigationService? dispatcherNavigation = service.GetService<INavigationService>("dispatcherNavigation");
+            
+            
             //ViewModels
+                                
+            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( service.GetService<IFlightProvider>() ) );
+            
+            resolver.RegisterLazySingleton<AdminUserViewModel>( () => new AdminUserViewModel( mainNavigation ));
         
-            resolver.RegisterLazySingleton<AdminUserViewModel>( () => new AdminUserViewModel( Locator.Current.GetService<INavigationService>() ));
+            resolver.RegisterLazySingleton<DispatcherUserViewModel>( () => new DispatcherUserViewModel( mainNavigation, dispatcherNavigation ) );
+            
+            resolver.RegisterLazySingleton<AuthUserViewModel>(() => new AuthUserViewModel( mainNavigation ));
         
-            resolver.RegisterLazySingleton<DispatcherUserViewModel>( () => new DispatcherUserViewModel( Locator.Current.GetService<INavigationService>()) );
-        
-            resolver.RegisterLazySingleton<AuthUserViewModel>(() => new AuthUserViewModel(Locator.Current.GetService<INavigationService>() ));
-        
-            resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel(
-                service.GetService<INavigationService>()
-            ));
+            resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel( mainNavigation ));
             
         });
 

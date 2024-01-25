@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourseProject_SellingTickets.Models;
 
+#pragma warning disable
 [Table("photo")]
 public class PhotoDTO
 {

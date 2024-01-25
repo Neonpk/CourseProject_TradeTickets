@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,19 +10,22 @@ namespace CourseProject_SellingTickets.Services.TradeTicketsProvider;
 
 public class DatabaseFlightProvider : IFlightProvider
 {
-    private readonly ITradeTicketsDbContextFactory _dbContextFactory;
+    private readonly ITradeTicketsDbContextFactory? _dbContextFactory;
     
-    public DatabaseFlightProvider(ITradeTicketsDbContextFactory dbContextFactory)
+    public DatabaseFlightProvider(ITradeTicketsDbContextFactory? dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
     
     public async Task<IEnumerable<Flight>> GetAllFlights()
     {
-        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        if (_dbContextFactory!.Equals(null))
+            new Exception("DbContext not existing.");
+        
+        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.ToListAsync();
-            
+
             return flightDtos.Select(flight => ToFlight(flight));
         }
     }

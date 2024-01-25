@@ -18,16 +18,19 @@ public class MainWindowViewModel : ViewModelBase
     
     // Services
 
-    private IFlightProvider _provider;
+    private INavigationService? _navigationService;
+    public INavigationService? NavigationService { get { return _navigationService; } set { _navigationService = value; OnPropertyChanged(nameof(NavigationService)); } }
     
-    private INavigationService _navigationService;
-    public INavigationService NavigationService { get { return _navigationService; } set { _navigationService = value; OnPropertyChanged(nameof(NavigationService)); } }
+    // Observable properties 
+
+    private bool _databaseHasConnected;
+    public bool DatabaseHasConnected { get => _databaseHasConnected; set { _databaseHasConnected = value; OnPropertyChanged(nameof(DatabaseHasConnected)); } }
     
     // Commands 
     
-    public MainWindowViewModel(INavigationService navService)
+    public MainWindowViewModel(INavigationService? navService)
     {
         NavigationService = navService;
-        NavigationService.NavigateTo<AuthUserViewModel>();
+        NavigationService?.NavigateTo<AuthUserViewModel>();
     }
 }

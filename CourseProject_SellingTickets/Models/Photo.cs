@@ -10,7 +10,7 @@ public class Photo
     
     public Photo( string name, string urlPath, bool isDeleted )
     {
-        Name = Name;
+        Name = name;
         UrlPath = urlPath;
         IsDeleted = isDeleted;
     }

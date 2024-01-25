@@ -5,25 +5,26 @@
              xmlns:vm="clr-namespace:CourseProject_SellingTickets.ViewModels"
              xmlns:view="clr-namespace:CourseProject_SellingTickets.Views"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-             
+    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
     <Application.DataTemplates>
-        <local:ViewLocator/>
         
+        <local:ViewLocator />
+
         <DataTemplate DataType="{x:Type vm:AuthUserViewModel}">
             <view:AuthUserView />
         </DataTemplate>
-        
+
         <DataTemplate DataType="{x:Type vm:DispatcherUserViewModel}">
             <view:DispatcherUserView />
         </DataTemplate>
- 
+
         <DataTemplate DataType="{x:Type vm:AdminUserViewModel}">
             <view:AdminUserView />
         </DataTemplate>
-        
+
     </Application.DataTemplates>
-  
+
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>

@@ -4,9 +4,9 @@ namespace CourseProject_SellingTickets.DbContexts;
 
 public class TradeTicketsDbContextFactory : ITradeTicketsDbContextFactory
 {
-    private string _connectionString;
+    private string? _connectionString;
 
-    public TradeTicketsDbContextFactory(string connectionString)
+    public TradeTicketsDbContextFactory(string? connectionString)
     {
         _connectionString = connectionString;
     }

@@ -1,3 +1,4 @@
+using System.Reactive;
 using System.Windows.Input;
 using CourseProject_SellingTickets.Services;
 using ReactiveUI;
@@ -6,12 +7,31 @@ namespace CourseProject_SellingTickets.ViewModels;
 
 public class AdminUserViewModel : ViewModelBase
 {
+    // Observable properties 
+    
+    private bool _showedSideBar = true;
+    public bool ShowedSideBar { get => _showedSideBar; set { _showedSideBar = value; OnPropertyChanged(nameof(ShowedSideBar)); } }
+    
     // Services 
     
-    private INavigationService _navigationService;
-    public INavigationService NavigationService { get =>  _navigationService; set { _navigationService = value; OnPropertyChanged(nameof(NavigationService)); } }
+    private INavigationService? _navigationService;
+    public INavigationService? NavigationService { get =>  _navigationService; set { _navigationService = value; OnPropertyChanged(nameof(NavigationService)); } }
     
     // Commands (Event handlers)
+    
+    #pragma warning disable
+    private ICommand? _showSideBarCommand;
+
+    public ICommand ShowSideBarCommand
+    {
+        get
+        {
+            return _showSideBarCommand ??= ReactiveCommand.Create<Unit>((_) =>
+            {
+                ShowedSideBar = !ShowedSideBar;
+            });
+        }
+    }
     
     #pragma  warning disable
     private ICommand _exitCommand;
@@ -26,7 +46,7 @@ public class AdminUserViewModel : ViewModelBase
         } 
     }
     
-    public AdminUserViewModel(INavigationService navigationService)
+    public AdminUserViewModel(INavigationService? navigationService)
     {
         NavigationService = navigationService;
     }

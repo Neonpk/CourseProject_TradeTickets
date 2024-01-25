@@ -25,12 +25,12 @@ public class AuthUserViewModel : ViewModelBase
 
     private AuthStates _authState;
     public AuthStates AuthState { get => _authState; set { _authState = value; OnPropertyChanged(nameof(AuthState)); } }
-    public string Password { get; set; }
+    public string Password { get; set; } = "";
     
     // Services 
     
-    private INavigationService _navigationService;
-    public INavigationService NavigationService
+    private INavigationService? _navigationService;
+    public INavigationService? NavigationService
     {
         get { return _navigationService; }
         set
@@ -42,15 +42,15 @@ public class AuthUserViewModel : ViewModelBase
     
     // Constructor
 
-    public AuthUserViewModel(INavigationService _navService)
+    public AuthUserViewModel(INavigationService? navService)
     {
-        NavigationService = _navService;
+        NavigationService = navService;
     }
     
     // Commands (Event handlers) 
     
     #pragma  warning disable
-    private ICommand _selectOperationModeCommand;
+    private ICommand? _selectOperationModeCommand;
     public ICommand SelectOperationModeCommand
     {
         get
@@ -76,7 +76,7 @@ public class AuthUserViewModel : ViewModelBase
     }
     
     #pragma warning disable
-    private ICommand _loginCommand;
+    private ICommand? _loginCommand;
     public ICommand LoginCommand
     {
         get

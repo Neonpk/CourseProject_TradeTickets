@@ -5,17 +5,17 @@ namespace CourseProject_SellingTickets.Services;
 
 public interface INavigationService
 {
-    ObservableObject CurrentView { get; }
+    ObservableObject? CurrentView { get; }
     void NavigateTo<T>() where T : ObservableObject;
 
 }
 
 public class NavigationService : ObservableObject, INavigationService
 {
-    private readonly Func<Type, ViewModelBase> _viewModelFactory;
+    private readonly Func<Type, ViewModelBase?>? _viewModelFactory;
     
-    private ObservableObject _currentView;
-    public ObservableObject CurrentView
+    private ObservableObject? _currentView;
+    public ObservableObject? CurrentView
     {
         get => _currentView;
         private set
@@ -25,14 +25,14 @@ public class NavigationService : ObservableObject, INavigationService
         }
     }
 
-    public NavigationService(Func<Type, ViewModelBase> viewModelFactory)
+    public NavigationService(Func<Type, ViewModelBase?>? viewModelFactory)
     {
         _viewModelFactory = viewModelFactory;
     }
 
     public void NavigateTo<TViewModel>() where TViewModel : ObservableObject
     {
-        ObservableObject viewModel = _viewModelFactory.Invoke(typeof(TViewModel));
+        ObservableObject? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
         CurrentView = viewModel;
     }
 }

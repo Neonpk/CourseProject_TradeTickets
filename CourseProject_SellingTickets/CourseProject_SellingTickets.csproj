@@ -34,6 +34,10 @@
         <DependentUpon>AuthUserControl.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\FlightUserView.axaml.cs">
+        <DependentUpon>FlightUserView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 

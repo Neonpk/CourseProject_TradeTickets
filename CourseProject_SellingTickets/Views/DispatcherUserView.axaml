@@ -3,31 +3,75 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
+             xmlns:view="using:CourseProject_SellingTickets.Views"
+             xmlns:converter="using:CourseProject_SellingTickets.Converters"
              x:DataType="vm:DispatcherUserViewModel"
              Background="#0f0f0f"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CourseProject_SellingTickets.Views.DispatcherUserView">
     
-    <Grid>
+    <UserControl.Resources>
+        <converter:HideButtonTextConverter x:Key="HideButtonTextConverter"/>
+    </UserControl.Resources>
     
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="180"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <SplitView DisplayMode="CompactInline" PaneBackground="#252525" 
+               IsPaneOpen="{Binding ShowedSideBar}" 
+               OpenPaneLength="200" CompactPaneLength="30" 
+               Content="{Binding NavigationDispatcherService.CurrentView}">
+        <SplitView.Pane>
+            <DockPanel>
+                
+                <DockPanel DockPanel.Dock="Top">
+                
+                    <Button Content="{Binding ShowedSideBar, Converter={StaticResource HideButtonTextConverter}}"
+                            Command="{Binding ShowSideBarCommand}"
+                            />
+                
+                    <Label Content="Управление рейсами"
+                           HorizontalAlignment="Center"
+                           DockPanel.Dock="Right"
+                           FontSize="14"
+                           Margin="10"
+                    />
+                    
+                </DockPanel>
+                    
+                <Button
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    DockPanel.Dock="Top"
+                    Content="Рейсы" FontSize="15"
+                    IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding FetchCommand}"
+                    CommandParameter="flights"
+                    />
+                    
+                <Button 
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    DockPanel.Dock="Top"
+                    Content="Билеты" FontSize="15"
+                    IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding FetchCommand}"
+                    CommandParameter="tickets"
+                    />
+                    
+                <Button Content="Выход" FontSize="15" 
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        IsVisible="{Binding ShowedSideBar}"
+                        Command="{Binding ExitCommand}"/>
+                
+                </DockPanel>
+        </SplitView.Pane>
             
-        <Border Background="#252525">
-        </Border>
-            
-        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-            <Label Content="Панель диспетчера"/>
-            
-            <Button Content="Fetch data" HorizontalAlignment="Center"
-                    Command="{Binding FetchCommand}"/>
-            
-            <Button HorizontalAlignment="Center" Content="Выход" 
-                    Command="{Binding ExitCommand}"/>
-        </StackPanel>
+        <SplitView.ContentTemplate>
+            <DataTemplate DataType="{x:Type vm:FlightUserViewModel}">
+                <view:FlightUserView />
+            </DataTemplate>
+        </SplitView.ContentTemplate>
         
-    </Grid>
+    </SplitView>
     
 </UserControl>

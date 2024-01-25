@@ -12,10 +12,10 @@ public class AircraftDTO
     public System.Int64 Id { get; set; }
     
     [Column("model")]
-    public string Model { get; set; }
+    public string? Model { get; set; }
     
     [Column("type")]
-    public string Type { get; set; }
+    public string? Type { get; set; }
     
     [Column("total_place")]
     public int TotalPlace { get; set; }
@@ -26,5 +26,5 @@ public class AircraftDTO
     [ForeignKey("Photo")]
     public System.Int64 PhotoId { get; set; }
 
-    public virtual PhotoDTO Photo { get; set; }
+    public virtual PhotoDTO? Photo { get; set; }
 }

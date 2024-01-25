@@ -20,9 +20,7 @@ namespace CourseProject_SellingTickets;
 
 public partial class App : Application
 {
-    private IServiceProvider _container;
-    private IHost _host;
-    
+    private IHost? _host;
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -41,18 +39,29 @@ public partial class App : Application
                 
                 // Integrate Database (PostgreSQL) 
 
+                /*
                 resolver.RegisterLazySingleton<ITradeTicketsDbContextFactory>(() =>
                     new TradeTicketsDbContextFactory(hostContext.Configuration.GetConnectionString("Default")));
+                */
                 
-                // Navigation Service 
-        
-                resolver.RegisterLazySingleton<Func<Type, ViewModelBase>>(
-                    () => viewModelType => (ViewModelBase)Locator.Current.GetService(viewModelType));
+                resolver.RegisterLazySingleton<ITradeTicketsDbContextFactory>(() => 
+                    new TradeTicketsDbContextFactory("Server=127.0.0.1;Port=5432;Database=TradeTickets;User Id=postgres;Password=;"));
+                
+                // Navigation Services 
+                
+                resolver.RegisterLazySingleton<Func<Type, ViewModelBase?>>(
+                    () => viewModelType => (ViewModelBase?)service.GetService(viewModelType));
+                
+                var funcFactory = service.GetService<Func<Type, ViewModelBase>>();
+                
+                resolver.RegisterLazySingleton<INavigationService>(() => 
+                    new NavigationService( funcFactory ), "mainNavigation");
 
                 resolver.RegisterLazySingleton<INavigationService>(() => 
-                    new NavigationService(Locator.Current.GetService<Func<Type, ViewModelBase>>()));
+                    new NavigationService( funcFactory ), "dispatcherNavigation");
                 
             })
+            .AddDatabaseProviders()
             .AddViewModels()
             .Build();
         

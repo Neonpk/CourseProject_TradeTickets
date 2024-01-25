@@ -2,6 +2,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using CourseProject_SellingTickets.ViewModels;
+using DynamicData.Tests;
 
 namespace CourseProject_SellingTickets;
 
@@ -11,7 +12,7 @@ public class ViewLocator : IDataTemplate
     {
         if (data is null)
             return null;
-
+        
         var name = data.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
         var type = Type.GetType(name);
 
