@@ -1,26 +1,14 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using Avalonia.Media;
-using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Converters;
 
-public class AuthConverterStateColor : IValueConverter
+public class CompletedFlightStringConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        switch ( (AuthStates)value! )
-        {
-            case AuthStates.Success:
-                return Brushes.Orange;
-            
-            case AuthStates.Failed:
-                return Brushes.Red;
-        }
-
-        return Brushes.White;
-
+        return DateTime.Now > (DateTime)value! ? "Да" : "Нет";
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

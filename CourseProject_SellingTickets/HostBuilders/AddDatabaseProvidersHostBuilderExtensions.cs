@@ -1,5 +1,8 @@
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Services;
+using CourseProject_SellingTickets.Services.AircraftProvider;
+using CourseProject_SellingTickets.Services.AirlineProvider;
+using CourseProject_SellingTickets.Services.PlaceProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using CourseProject_SellingTickets.ViewModels;
 using Microsoft.Extensions.Hosting;
@@ -17,9 +20,20 @@ public static class AddDatabaseProvidersHostBuilderExtensions
             var service = Locator.Current;
             
             //DB Providers
+
+            var tradeTicketsDbContext = service.GetService<ITradeTicketsDbContextFactory>();
             
-            resolver.RegisterLazySingleton<IFlightProvider>(() => 
-                new DatabaseFlightProvider( service.GetService<ITradeTicketsDbContextFactory>() ));
+            resolver.RegisterLazySingleton<IFlightDbProvider>(() => 
+                new DatabaseFlightDbProvider( tradeTicketsDbContext ));
+            
+            resolver.RegisterLazySingleton<IAircraftDbProvider>(() => 
+                new DatabaseAircraftDbProvider( tradeTicketsDbContext ));
+            
+            resolver.RegisterLazySingleton<IAirlineDbProvider>(() => 
+                new DatabaseAirlineDbProvider( tradeTicketsDbContext ));
+            
+            resolver.RegisterLazySingleton<IPlaceDbProvider>(() => 
+                new DatabasePlaceDbProvider( tradeTicketsDbContext ));
 
         });
 

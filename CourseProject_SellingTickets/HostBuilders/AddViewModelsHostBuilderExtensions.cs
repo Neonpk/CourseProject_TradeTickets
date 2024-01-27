@@ -1,4 +1,5 @@
 using CourseProject_SellingTickets.Services;
+using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,11 +22,12 @@ public static class AddViewModelsHostBuilderExtensions
             // Included services 
             INavigationService? mainNavigation = service.GetService<INavigationService>("mainNavigation");
             INavigationService? dispatcherNavigation = service.GetService<INavigationService>("dispatcherNavigation");
-            
+
+            IFlightDbProvider? flightProvider = service.GetService<IFlightDbProvider>();
             
             //ViewModels
                                 
-            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( service.GetService<IFlightProvider>() ) );
+            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( service.GetService<FlightProvider>() ) );
             
             resolver.RegisterLazySingleton<AdminUserViewModel>( () => new AdminUserViewModel( mainNavigation ));
         

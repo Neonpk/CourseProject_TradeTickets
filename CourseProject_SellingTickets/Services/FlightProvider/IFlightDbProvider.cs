@@ -4,7 +4,7 @@ using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Services.TradeTicketsProvider;
 
-public interface IFlightProvider
+public interface IFlightDbProvider
 {
     Task<IEnumerable<Flight>> GetAllFlights();
 }

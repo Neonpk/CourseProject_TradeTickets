@@ -45,7 +45,7 @@ public partial class App : Application
                 */
                 
                 resolver.RegisterLazySingleton<ITradeTicketsDbContextFactory>(() => 
-                    new TradeTicketsDbContextFactory("Server=127.0.0.1;Port=5432;Database=TradeTickets;User Id=postgres;Password=;"));
+                    new TradeTicketsDbContextFactory("Server=127.0.0.1;Port=5432;Database=TradeTickets;User Id=postgres;Password=;CommandTimeout=20;"));
                 
                 // Navigation Services 
                 
@@ -59,9 +59,13 @@ public partial class App : Application
 
                 resolver.RegisterLazySingleton<INavigationService>(() => 
                     new NavigationService( funcFactory ), "dispatcherNavigation");
-                
+
+                resolver.RegisterLazySingleton<INavigationService>(() =>
+                    new NavigationService(funcFactory), "administratorNavigation");
+
             })
             .AddDatabaseProviders()
+            .AddViewModelsProviders()
             .AddViewModels()
             .Build();
         

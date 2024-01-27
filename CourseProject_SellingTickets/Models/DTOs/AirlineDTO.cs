@@ -9,7 +9,6 @@ public class AirlineDTO
 {
     // Columns
     
-    [Key]
     [Column("id")]
     public System.Int64 Id { get; set; }
     

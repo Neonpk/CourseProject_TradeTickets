@@ -6,33 +6,33 @@ using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseProject_SellingTickets.Services.TradeTicketsProvider;
+namespace CourseProject_SellingTickets.Services.AirlineProvider;
 
-public class DatabaseFlightProvider : IFlightProvider
+public class DatabaseAirlineDbProvider : IAirlineDbProvider
 {
     private readonly ITradeTicketsDbContextFactory? _dbContextFactory;
     
-    public DatabaseFlightProvider(ITradeTicketsDbContextFactory? dbContextFactory)
+    public DatabaseAirlineDbProvider(ITradeTicketsDbContextFactory? dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
     
-    public async Task<IEnumerable<Flight>> GetAllFlights()
+    public async Task<IEnumerable<Airline>> GetAllAirlines()
     {
         if (_dbContextFactory!.Equals(null))
             new Exception("DbContext not existing.");
         
         using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
         {
-            IEnumerable<FlightDTO> flightDtos = await context.Flights.ToListAsync();
+            IEnumerable<AirlineDTO> airlineDtos = await context.Airlines.ToListAsync();
 
-            return flightDtos.Select(flight => ToFlight(flight));
+            return airlineDtos.Select(airline => ToAirline(airline));
         }
     }
     
-    private static Flight ToFlight(FlightDTO dto)
+    private static Airline ToAirline(AirlineDTO dto)
     {
-        return new Flight( dto );
+        return new Airline( dto.Id, dto.Name );
     }
     
 }
