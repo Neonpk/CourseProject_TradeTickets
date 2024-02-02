@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourseProject_SellingTickets.Models;
@@ -6,25 +7,28 @@ namespace CourseProject_SellingTickets.Models;
 [Table("aircraft")]
 public class AircraftDTO
 {
+
     //Columns
     
-    [Column("id")] 
-    public System.Int64 Id { get; set; }
+    [Key]
+    [Column("id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public System.Int64 Id { get; init; }
     
     [Column("model")]
-    public string? Model { get; set; }
+    public string? Model { get; init; }
     
     [Column("type")]
-    public string? Type { get; set; }
+    public string? Type { get; init; }
     
     [Column("total_place")]
-    public int TotalPlace { get; set; }
+    public int TotalPlace { get; init; }
     
     // Foreign keys (Navigation)
     
     [Column("photo_id")]
     [ForeignKey("Photo")]
-    public System.Int64 PhotoId { get; set; }
+    public System.Int64 PhotoId { get; init; }
 
-    public virtual PhotoDTO? Photo { get; set; }
+    public virtual PhotoDTO? Photo { get; init; }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourseProject_SellingTickets.Models;
@@ -8,16 +9,18 @@ public class DiscountDTO
 {
     // Columns
     
+    [Key]
     [Column("id")]
-    public System.Int64 Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public System.Int64 Id { get; init; }
     
     [Column("name")]
-    public string Name { get; set; }
+    public string Name { get; init; }
     
     [Column("discount_size")]
-    public int DiscountSize { get; set; }
+    public int DiscountSize { get; init; }
     
     [Column("description")]
-    public string Description { get; set; }
+    public string Description { get; init; }
     
 }

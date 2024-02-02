@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourseProject_SellingTickets.Models;
@@ -8,16 +9,18 @@ public class PhotoDTO
 {
     // Columns 
     
+    [Key]
     [Column("id")]
-    public System.Int64 Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public System.Int64 Id { get; init; }
     
     [Column("name")]
-    public string Name { get; set; }
+    public string Name { get; init; }
     
     [Column("url_path")]
-    public string UrlPath { get; set; }
+    public string UrlPath { get; init; }
     
     [Column("is_deleted")]
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; init; }
     
 }

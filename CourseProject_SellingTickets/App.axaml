@@ -26,6 +26,12 @@
     </Application.DataTemplates>
 
     <Application.Styles>
+        
         <FluentTheme />
+        
+        <StyleInclude Source="/Controls/Styles/GroupBox_HeaderedContentControl.axaml" />
+        <StyleInclude Source="/Controls/DateTimePicker.axaml"/>
+        
     </Application.Styles>
+    
 </Application>

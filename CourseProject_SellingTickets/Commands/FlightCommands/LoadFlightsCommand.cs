@@ -47,8 +47,8 @@ public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
         flightUserViewModel.IsLoading = false;
     }
 
-    public LoadFlightsCommand(FlightUserViewModel flightUserViewModel, IFlightProvider flightDbProvider) :
-        base(_ => Observable.Start(() => LoadData(flightUserViewModel, flightDbProvider)),
+    public LoadFlightsCommand(FlightUserViewModel flightUserViewModel, IFlightProvider flightProvider) :
+        base(_ => Observable.Start(() => LoadData(flightUserViewModel, flightProvider)),
             canExecute: Observable.Return(true))
     {
         

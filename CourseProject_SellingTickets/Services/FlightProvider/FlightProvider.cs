@@ -14,6 +14,9 @@ public interface IFlightProvider
     public Task<IEnumerable<Airline>> GetAllAirlines();
     public Task<IEnumerable<Aircraft>> GetAllAircrafts();
     public Task<IEnumerable<Place>> GetAllPlaces();
+
+    public Task<bool> CreateOrEditFlight(Flight? flight);
+    public Task<bool> DeleteFlight(Flight? flight);
 }
 public class FlightProvider : IFlightProvider
 {
@@ -30,6 +33,16 @@ public class FlightProvider : IFlightProvider
         _aircraftDbProvider = aircraftDbProvider;
         _airlineDbProvider = airlineDbProvider;
         _placeDbProvider = placeDbProvider;
+    }
+
+    public async Task<bool> CreateOrEditFlight(Flight? flight)
+    {
+        return await _flightDbProvider!.CreateOrEditFlight(flight);
+    }
+
+    public async Task<bool> DeleteFlight(Flight? flight)
+    {
+        return await _flightDbProvider!.DeleteFlight(flight);
     }
     
     public async Task<IEnumerable<Flight>> GetAllFlights()

@@ -31,7 +31,12 @@ public partial class App : Application
         
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((hostContext, hostService) => {
-                    
+                
+                // Enable Legacy TimestampBehavior for PostgreSQL
+                
+                AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+                AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+                
                 // Avalonia Locators 
                 
                 var resolver = Locator.CurrentMutable;

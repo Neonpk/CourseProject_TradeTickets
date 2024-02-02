@@ -4,15 +4,15 @@ public class Aircraft
 {
     //Columns
     
-    public System.Int64 Id { get; }
+    public System.Int64 Id { get; set; }
     
-    public string? Model { get; }
+    public string? Model { get; set; }
     
-    public string? Type { get; }
+    public string? Type { get; set; }
     
-    public int TotalPlace { get; }
+    public int TotalPlace { get; set; }
     
-    public Photo Photo { get; }
+    public Photo Photo { get; set; }
 
     public Aircraft(System.Int64 id, string? model, string? type, int totalPlace, Photo photo)
     {
@@ -22,5 +22,27 @@ public class Aircraft
         TotalPlace = totalPlace;
         Photo = photo;
     }
+
+    
+    public override bool Equals(object? obj)
+    {
+        
+        if (obj is Aircraft o)
+        {
+            return o.Id.Equals(Id) && 
+                   o.Model!.Equals(Model) &&
+                   o.Type!.Equals(Type) && 
+                   o.TotalPlace.Equals(TotalPlace) &&
+                   o.Photo.Equals(Photo);
+        }
+        
+        return base.Equals(obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+    
     
 }

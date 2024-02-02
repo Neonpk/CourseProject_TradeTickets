@@ -13,10 +13,6 @@
         <converters:AuthConverterStateString x:Key="AuthConverterStateString"/>
     </UserControl.Resources>
     
-    <UserControl.Styles>
-        <StyleInclude Source="/Controls/Styles/GroupBox_HeaderedContentControl.axaml" />
-    </UserControl.Styles>
-    
    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>

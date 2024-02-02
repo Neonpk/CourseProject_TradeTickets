@@ -16,12 +16,7 @@
         Width="850"
         Title="Информационная система по управлению Авиарейсов">
         
-        <Grid>
-                <Grid.RowDefinitions>
-                        <RowDefinition Height="100" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="40" />
-                </Grid.RowDefinitions>
+        <Grid RowDefinitions="100, *, 40">
                 
                 <Border Background="#252525">
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">

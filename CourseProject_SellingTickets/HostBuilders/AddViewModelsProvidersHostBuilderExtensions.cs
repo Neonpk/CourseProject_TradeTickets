@@ -27,7 +27,7 @@ public static class AddViewModelsProvidersHostBuilderExtensions
             
             //ViewModels
             
-            resolver.RegisterLazySingleton<FlightProvider>(() => 
+            resolver.RegisterLazySingleton<IFlightProvider>(() => 
                 new FlightProvider(iFlightDbProvider, iAircraftDbProvider, iAirlineDbProvider, iPlaceDbProvider));
             
         });

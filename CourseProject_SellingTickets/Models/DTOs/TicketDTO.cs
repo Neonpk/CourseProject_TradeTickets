@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourseProject_SellingTickets.Models;
@@ -8,37 +9,40 @@ public class TicketDTO
 {
     // Columns
     
+    [Key]
     [Column("id")]
-    public System.Int64 Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public System.Int64 Id { get; init; }
     
     [Column("flight_id")]
     [ForeignKey("Flight")]
-    public System.Int64 FlightId { get; set; }
+    public System.Int64 FlightId { get; init; }
     
     [Column("class_id")]
     [ForeignKey("FlightClass")]
-    public System.Int64 ClassId { get; set; }
+    public System.Int64 ClassId { get; init; }
     
     [Column("place_number")]
-    public int PlaceNumber { get; set; }
+    public int PlaceNumber { get; init; }
     
     [Column("price")]
-    public int Price { get; set; }
+    public int Price { get; init; }
     
     [Column("discount_id")]
     [ForeignKey("Discount")]
-    public System.Int64 DiscountId { get; set; }
+    public System.Int64 DiscountId { get; init; }
     
     [Column("is_sold")]
-    public bool IsSold { get; set; }
+    public bool IsSold { get; init; }
 
     [Column("discount_price")] 
+    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public float DiscountPrice { get; init; }
     
     // Foreign keys (Navigation)
     
-    public virtual FlightDTO Flight { get; set; }
-    public virtual FlightClassDTO FlightClass { get; set; }
-    public virtual DiscountDTO Discount { get; set; }
+    public virtual FlightDTO Flight { get; init; }
+    public virtual FlightClassDTO FlightClass { get; init; }
+    public virtual DiscountDTO Discount { get; init; }
     
 }

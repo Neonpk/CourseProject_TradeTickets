@@ -17,20 +17,20 @@ public class FlightUserViewModel : ViewModelBase
 {
     // Private 
 
-    private FlightProvider? _flightProvider;
+    private IFlightProvider? _flightProvider;
 
     //Observable properties 
     
     // => // Combobox Collections
-
-    private List<Aircraft>? _aircrafts;
-    public List<Aircraft> Aircrafts { get => _aircrafts ??= new List<Aircraft>(); set { _aircrafts = value; OnPropertyChanged(nameof(Aircrafts)); } }
     
-    private List<Airline>? _airlines;
-    public List<Airline> Airlines { get => _airlines ??= new List<Airline>(); set { _airlines = value; OnPropertyChanged(nameof(Airlines)); } }
+    private ObservableCollection<Aircraft>? _aircrafts;
+    public ObservableCollection<Aircraft> Aircrafts { get => _aircrafts ??= new ObservableCollection<Aircraft>(); }
     
-    private List<Place>? _places;
-    public List<Place> Places { get => _places ??= new List<Place>(); set { _places = value; OnPropertyChanged(nameof(Places)); } }
+    private ObservableCollection<Airline>? _airlines;
+    public ObservableCollection<Airline> Airlines { get => _airlines ??= new ObservableCollection<Airline>(); }
+    
+    private ObservableCollection<Place>? _places;
+    public ObservableCollection<Place> Places { get => _places ??= new ObservableCollection<Place>(); }
     
     // => // Filters
         
@@ -48,32 +48,41 @@ public class FlightUserViewModel : ViewModelBase
     private bool? _isLoading;
     public bool? IsLoading { get => _isLoading; set { _isLoading = value; OnPropertyChanged(nameof(IsLoading)); } }
 
+    private bool? _isLoadingEditMode;
+    public bool? IsLoadingEditMode { get => _isLoadingEditMode; set { _isLoadingEditMode = value; OnPropertyChanged(nameof(IsLoadingEditMode)); } }
+    
     private string? _errorMessage;
     public string? ErrorMessage { get => _errorMessage; set { _errorMessage = value; OnPropertyChanged(nameof(ErrorMessage)); } }
     public bool HasErrorMessage => !string.IsNullOrEmpty(ErrorMessage);
     
+    
     // => // ObservableCollection
     
     private ObservableCollection<Flight>? _flightsItems;
-    public ObservableCollection<Flight>? FlightItems { get => _flightsItems; set { _flightsItems = value; OnPropertyChanged(nameof(FlightItems)); } }
+    public ObservableCollection<Flight>? FlightItems { get => _flightsItems ??= new ObservableCollection<Flight>(); }
     
     // Commands 
 
     private ICommand? _hideSideBarCommand;
-    public ICommand HideSideBarCommand { get => _hideSideBarCommand ??= ReactiveCommand.Create<object>((_) => SideBarShowed = false); }
+    public ICommand HideSideBarCommand { get => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false); }
     
     private ReactiveCommand<Unit, Unit>? _loadFLightsCommand;
     public ReactiveCommand<Unit,Unit>? LoadFlightsCommand { get => _loadFLightsCommand ??= new LoadFlightsCommand(this, _flightProvider!); }
     
     private ReactiveCommand<bool,Unit>? _addEditDataCommand;
     public ReactiveCommand<bool,Unit>? AddEditDataCommand { get => _addEditDataCommand ??= new AddEditFlightCommand(this, _flightProvider!); }
+
+    private ReactiveCommand<Unit, Unit>? _saveFlightDataCommand;
+    public ReactiveCommand<Unit, Unit>? SaveFlightDataCommand { get => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!); }
+
+    private ReactiveCommand<Unit, Unit>? _deleteFlightDataCommand;
+    public ReactiveCommand<Unit, Unit>? DeleteFlightDataCommand { get => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider); }
     
     // Constructor 
-    public FlightUserViewModel(FlightProvider? flightProvider)
+    public FlightUserViewModel(IFlightProvider? flightProvider)
     {
         _flightProvider = flightProvider;
         
-        FlightItems = new ObservableCollection<Flight>();
         LoadFlightsCommand!.Execute();
     }
 

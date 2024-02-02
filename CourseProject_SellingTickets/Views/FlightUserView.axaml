@@ -4,13 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
              xmlns:converter="using:CourseProject_SellingTickets.Converters"
+             xmlns:model="using:CourseProject_SellingTickets.Models"
+             xmlns:controls="using:CourseProject_SellingTickets.Controls"
              xmlns:s="clr-namespace:System;assembly=mscorlib"
              x:DataType="vm:FlightUserViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CourseProject_SellingTickets.Views.FlightUserView">
     
+    
     <UserControl.Resources>
-        <converter:ImageSourceWebConverter x:Key="ImageSourceWebConverter"/>
         <converter:CancelFlightStringConverter x:Key="CancelFlightStringConverter"/>
         <converter:FlightStatusColorConverter x:Key="FlightStatusColorConverter"/>
         <converter:InvertBoolConverter x:Key="InvertBoolConverter"/>
@@ -92,7 +94,8 @@
 
                 </DockPanel>
                 
-               <ListBox HorizontalAlignment="Stretch" 
+               <ListBox 
+                        HorizontalAlignment="Stretch" 
                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                         ItemsSource="{Binding FlightItems, FallbackValue=1}"
                         SelectedValue="{Binding SelectedFlight}"
@@ -100,13 +103,7 @@
                    <ListBox.ItemTemplate>
                        <DataTemplate>
                            
-                           <Grid>
-                               
-                               <Grid.ColumnDefinitions>
-                                   <ColumnDefinition Width="270"/>
-                                   <ColumnDefinition Width="500"/>
-                                   <ColumnDefinition Width="*"/>
-                               </Grid.ColumnDefinitions>
+                           <Grid ColumnDefinitions="270, 500, *">
                                
                                <StackPanel VerticalAlignment="Center">
                                    
@@ -119,20 +116,8 @@
                                            </MultiBinding>
                                        </Border.Background>
                                        
-                                       <Grid>
-                                           
-                                           <Grid.RowDefinitions>
-                                               <RowDefinition/>
-                                               <RowDefinition/>
-                                               <RowDefinition/>
-                                               <RowDefinition/>
-                                               <RowDefinition/>
-                                           </Grid.RowDefinitions>
-                                           
-                                           <Grid.ColumnDefinitions>
-                                               <ColumnDefinition/>
-                                               <ColumnDefinition/>
-                                           </Grid.ColumnDefinitions>
+                                       <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" 
+                                             ColumnDefinitions="Auto, Auto">
                                            
                                            <Label Grid.Row="0" Grid.ColumnSpan="2" 
                                                   FontWeight="Bold" Content="{Binding Airline.Name}"/>
@@ -151,7 +136,7 @@
                                                   Content="{Binding ArrivalTime, Converter={StaticResource CompletedFlightStringConverter}}"/>
                                            
                                            <Label Grid.Column="0" Grid.Row="4" Content="Время полета: "/>
-                                           <Label Grid.Column="1" Grid.Row="4" FontWeight="Bold" Content="{Binding DurationTime}"/>
+                                           <Label Grid.Column="1" Grid.Row="4" FontWeight="Bold" Content="{Binding DurationTime, StringFormat={}{0:dd} дн. {0:hh} ч. {0:mm} м.}"/>
                                           
                                        </Grid>
                                    </Border>
@@ -160,7 +145,8 @@
                                            HorizontalAlignment="Stretch"
                                            HorizontalContentAlignment="Center"  
                                            Margin="0 10 0 0"
-                                           Command="{Binding $parent[ListBox].((vm:FlightUserViewModel)DataContext).AddEditDataCommand}"
+                                           IsEnabled="{Binding  Path=$parent[ListBox].((vm:FlightUserViewModel)DataContext).IsLoadingEditMode, Converter={StaticResource InvertBoolConverter}}"
+                                           Command="{Binding Path=$parent[ListBox].((vm:FlightUserViewModel)DataContext).AddEditDataCommand}"
                                            CommandParameter="{StaticResource FalseValue}"
                                            />
                                    
@@ -168,6 +154,8 @@
                                            HorizontalAlignment="Stretch"
                                            HorizontalContentAlignment="Center"
                                            Margin="0 10 0 0"
+                                           IsEnabled="{Binding  Path=$parent[ListBox].((vm:FlightUserViewModel)DataContext).IsLoadingEditMode, Converter={StaticResource InvertBoolConverter}}"
+                                           Command="{Binding Path=$parent[ListBox].((vm:FlightUserViewModel)DataContext).DeleteFlightDataCommand}"
                                            />
                                    
                                </StackPanel>
@@ -176,32 +164,24 @@
                                        BorderThickness="2"
                                        CornerRadius="5" 
                                        Margin="10 0 0 0">
-                                   <Grid>
-                                       
-                                       <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="150"/>
-                                            <ColumnDefinition Width="*"/>
-                                       </Grid.ColumnDefinitions>
+                                   <Grid ColumnDefinitions="150, Auto">
                                            
-                                       <Image 
-                                           Source="{Binding Aircraft.Photo.UrlPath}"
-                                           Width="100" Height="100"
-                                              />
+                                       <Border BorderThickness="2" 
+                                               CornerRadius="5"
+                                               Width="150" Height="100"
+                                               Margin="30"
+                                               >
+                                           <Border.Background>
+                                               <ImageBrush Stretch="Fill" Source="{Binding AircraftImage^}"/>
+                                           </Border.Background>
+                                       </Border>
                                            
                                        <Grid Grid.Column="1" 
                                              VerticalAlignment="Center" 
-                                             Margin="10 0 0 0">
-                                               
-                                           <Grid.ColumnDefinitions>
-                                               <ColumnDefinition/>
-                                               <ColumnDefinition/>
-                                           </Grid.ColumnDefinitions>
-                                               
-                                           <Grid.RowDefinitions>
-                                               <RowDefinition/>
-                                               <RowDefinition/>
-                                               <RowDefinition/>
-                                           </Grid.RowDefinitions>
+                                             Margin="10 0 0 0"
+                                             ColumnDefinitions="Auto, Auto"
+                                             RowDefinitions="Auto, Auto, Auto"
+                                             >
                                                
                                            <Label Grid.Row="0" Grid.Column="0" Content="Самолет:" 
                                                   FontSize="15"/>
@@ -236,37 +216,33 @@
                                            CornerRadius="5"
                                            Margin="0 0 0 10"
                                           >
-                                       <Grid>
+                                       <Grid ColumnDefinitions="150, *">
                                            
-                                           <Grid.ColumnDefinitions>
-                                               <ColumnDefinition Width="150"/>
-                                               <ColumnDefinition/>
-                                           </Grid.ColumnDefinitions>
-                                           
-                                           <Image Source="{Binding DeparturePlace.Photo.UrlPath}" 
-                                                  Width="100" Height="100" Margin="10" />
+                                          <Border BorderThickness="2" 
+                                                   CornerRadius="5"
+                                                   Width="150" Height="100"
+                                                   Margin="10">
+                                               <Border.Background>
+                                                   <ImageBrush Stretch="Fill" Source="{Binding DeparturePlaceImage^}"/>
+                                               </Border.Background>
+                                           </Border>
                                            
                                            <StackPanel Grid.Column="1" 
                                                        VerticalAlignment="Center">
                                                
-                                               <Grid>
-                                                   <Grid.ColumnDefinitions>
-                                                       <ColumnDefinition/>
-                                                       <ColumnDefinition/>
-                                                   </Grid.ColumnDefinitions>
+                                               <Grid ColumnDefinitions="*, *">
                                                    
-                                                   <Label Content="Пункт отправления:"/>
-                                                   <Label Grid.Column="1" Content="{Binding FullInfoDeparturePlace}"
-                                                          FontWeight="Bold"
-                                                          />
+                                                   <Label Content="Пункт отправления:" HorizontalAlignment="Left"/>
+                                                   
+                                                   <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Left">
+                                                       <Run Text="{Binding DeparturePlace.Name}"/>
+                                                       <Run Text=" - "/>
+                                                       <Run Text="{Binding DeparturePlace.Description}"/>
+                                                   </TextBlock>
+                                                   
                                                </Grid>
                                                
-                                               <Grid>
-                                                   
-                                                   <Grid.ColumnDefinitions>
-                                                       <ColumnDefinition/>
-                                                       <ColumnDefinition/>
-                                                   </Grid.ColumnDefinitions>
+                                               <Grid ColumnDefinitions="*, *">
                                                    
                                                    <Label Content="Дата отправления:"/>
                                                    <Label Grid.Column="1" Content="{Binding DepartureTime}"
@@ -282,37 +258,32 @@
                                            BorderThickness="2"
                                            CornerRadius="5"
                                           >
-                                       <Grid>
+                                       <Grid ColumnDefinitions="150, *">
                                            
-                                           <Grid.ColumnDefinitions>
-                                               <ColumnDefinition Width="150"/>
-                                               <ColumnDefinition/>
-                                           </Grid.ColumnDefinitions>
-                                           
-                                           <Image Source="{Binding DestinationPlace.Photo.UrlPath}" 
-                                                  Width="100" Height="100" Margin="10" />
+                                           <Border BorderThickness="2" 
+                                                   CornerRadius="5"
+                                                   Width="150" Height="100"
+                                                   Margin="10">
+                                               <Border.Background>
+                                                   <ImageBrush Stretch="Fill" Source="{Binding DestinationPlaceImage^}"/>
+                                               </Border.Background>
+                                           </Border>
                                            
                                            <StackPanel Grid.Column="1" 
                                                        VerticalAlignment="Center">
                                                
-                                               <Grid>
-                                                   <Grid.ColumnDefinitions>
-                                                       <ColumnDefinition/>
-                                                       <ColumnDefinition/>
-                                                   </Grid.ColumnDefinitions>
+                                               <Grid ColumnDefinitions="*, *">
                                                    
-                                                   <Label Content="Пункт прибытия:"/>
-                                                   <Label Grid.Column="1" Content="{Binding FullInfoDestinationPlace}"
-                                                          FontWeight="Bold"
-                                                          />
+                                                   <Label Content="Пункт прибытия:" HorizontalAlignment="Left"/>
+                                                   
+                                                   <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Left">
+                                                       <Run Text="{Binding DestinationPlace.Name}"/>
+                                                       <Run Text=" - "/>
+                                                       <Run Text="{Binding DestinationPlace.Description}"/>
+                                                   </TextBlock>
                                                </Grid>
                                                
-                                               <Grid>
-                                                   
-                                                   <Grid.ColumnDefinitions>
-                                                       <ColumnDefinition/>
-                                                       <ColumnDefinition/>
-                                                   </Grid.ColumnDefinitions>
+                                               <Grid ColumnDefinitions="*, *">
                                                    
                                                    <Label Content="Дата прибытия:"/>
                                                    <Label Grid.Column="1" Content="{Binding ArrivalTime}"
@@ -373,6 +344,7 @@
                             SelectedValue="{Binding SelectedFlight.Airline}"
                             HorizontalAlignment="Stretch" 
                             Margin="0 10 0 10"
+                            PlaceholderText="Выберите авикомпанию."
                             >
                             
                             <ComboBox.ItemTemplate>
@@ -388,16 +360,16 @@
                             ItemsSource="{Binding Aircrafts}"
                             SelectedValue="{Binding SelectedFlight.Aircraft}"
                             HorizontalAlignment="Stretch" 
-                            Margin="0 10 0 10">
+                            Margin="0 10 0 10"
+                            PlaceholderText="Выберите самолет."
+                            >
                             
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock>
-                                        <Run Text="{Binding Model}"/>
-                                        <Run Text=" (Мест:"/>
-                                        <Run Text="{Binding TotalPlace}"/>
-                                        <Run Text=")"/>
-                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Model}" />
+                                        <TextBlock Text="{Binding TotalPlace, StringFormat={} (мест: {0})}"/>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                             
@@ -410,24 +382,23 @@
                             ItemsSource="{Binding Places}"
                             SelectedValue="{Binding SelectedFlight.DeparturePlace}"
                             HorizontalAlignment="Stretch"
-                            Margin="0 0 0 10">
+                            Margin="0 0 0 10"
+                            PlaceholderText="Выберите место отправки."
+                            >
                             
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock>
-                                        <Run Text="{Binding Name}"/>
-                                        <Run Text=" - "/>
-                                        <Run Text="{Binding Description}"/>
-                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}"/>
+                                        <TextBlock Text="{Binding Description, StringFormat={} - {0}}"/>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                             
                         </ComboBox>
                         
-                        <CalendarDatePicker HorizontalAlignment="Stretch" 
-                                    SelectedDate="{Binding SelectedFlight.DepartureTime.Date}"/>
-                        <TimePicker HorizontalAlignment="Stretch" 
-                                    SelectedTime="{Binding SelectedFlight.DepartureTime.TimeOfDay}"/>
+                        <controls:DateTimePicker 
+                            SelectedDate="{Binding SelectedFlight.DepartureTime}"/>
                         
                         <Label Content="Пункт назначения" 
                                Margin="0 10 0 10"/>
@@ -436,26 +407,25 @@
                             ItemsSource="{Binding Places}"
                             SelectedValue="{Binding SelectedFlight.DestinationPlace}"
                             HorizontalAlignment="Stretch"
-                            Margin="0 0 0 10">
+                            Margin="0 0 0 10"
+                            PlaceholderText="Выберите место назначения."
+                            >
                             
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock>
-                                        <Run Text="{Binding Name}"/>
-                                        <Run Text=" - "/>
-                                        <Run Text="{Binding Description}"/>
-                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}"/>
+                                        <TextBlock Text="{Binding Description, StringFormat={} - {0}}"/>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                             
                         </ComboBox>
                         
-                        <CalendarDatePicker HorizontalAlignment="Stretch"
-                                    SelectedDate="{Binding SelectedFlight.ArrivalTime.Date}"
-                                    />
-                        <TimePicker HorizontalAlignment="Stretch"
-                                    SelectedTime="{Binding SelectedFlight.ArrivalTime.TimeOfDay}"
-                                    />
+                        
+                        <controls:DateTimePicker 
+                            SelectedDate="{Binding SelectedFlight.ArrivalTime}"/>
+                        
                         
                         <StackPanel Orientation="Horizontal" 
                                     Margin="0 10 0 10">
@@ -473,7 +443,11 @@
                         <Button Content="Сохранить" 
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
+                                IsEnabled="{Binding IsLoadingEditMode, Converter={StaticResource InvertBoolConverter}}"
+                                Command="{Binding SaveFlightDataCommand}"
                                 />
+                        
+                        <TextBox Text="{Binding ErrorMessage}" />
                         
                     </StackPanel>
                 </ScrollViewer>

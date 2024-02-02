@@ -20,14 +20,15 @@ public static class AddViewModelsHostBuilderExtensions
             var service = Locator.Current;
             
             // Included services 
+            
             INavigationService? mainNavigation = service.GetService<INavigationService>("mainNavigation");
             INavigationService? dispatcherNavigation = service.GetService<INavigationService>("dispatcherNavigation");
 
-            IFlightDbProvider? flightProvider = service.GetService<IFlightDbProvider>();
+            IFlightProvider? flightProvider = service.GetService<IFlightProvider>();
             
-            //ViewModels
+            //General ViewModels
                                 
-            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( service.GetService<FlightProvider>() ) );
+            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( flightProvider ) );
             
             resolver.RegisterLazySingleton<AdminUserViewModel>( () => new AdminUserViewModel( mainNavigation ));
         

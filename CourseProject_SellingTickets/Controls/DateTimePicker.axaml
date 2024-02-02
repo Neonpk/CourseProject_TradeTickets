@@ -1,0 +1,30 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:CourseProject_SellingTickets.Controls">
+    <Design.PreviewWith>
+        <controls:DateTimePicker />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|DateTimePicker">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                
+                <StackPanel>
+                    
+                    <CalendarDatePicker 
+                        SelectedDate="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DateOnly, Mode=TwoWay}"
+                        HorizontalAlignment="Stretch"
+                        Watermark="01.01.1970"
+                        />
+                    
+                    <TimePicker 
+                        SelectedTime="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TimeOnly, Mode=TwoWay}"
+                        HorizontalAlignment="Stretch"/>
+                    
+                </StackPanel>
+                
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

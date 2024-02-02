@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CourseProject_SellingTickets.Models;
@@ -9,9 +10,11 @@ public class FlightClassDTO
     
     // Columns
     
+    [Key]
     [Column("id")]
-    public System.Int64 Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public System.Int64 Id { get; init; }
     
     [Column("class_name")]
-    public string ClassName { get; set; }
+    public string ClassName { get; init; }
 }

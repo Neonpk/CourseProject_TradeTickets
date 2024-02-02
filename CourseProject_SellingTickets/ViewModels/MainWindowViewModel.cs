@@ -12,6 +12,7 @@ using Avalonia.Media.Imaging;
 using CourseProject_SellingTickets.Helpers;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
+using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using ReactiveUI;
 
@@ -33,7 +34,9 @@ public class MainWindowViewModel : ViewModelBase
     
     public MainWindowViewModel(INavigationService? navService)
     {
+        
         NavigationService = navService;
         NavigationService?.NavigateTo<AuthUserViewModel>();
+
     }
 }
