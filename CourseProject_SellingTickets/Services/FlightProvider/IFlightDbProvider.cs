@@ -9,5 +9,4 @@ public interface IFlightDbProvider
     Task<IEnumerable<Flight>> GetAllFlights();
     Task<bool> CreateOrEditFlight(Flight? flight);
     Task<bool> DeleteFlight(Flight? flight);
-
 }

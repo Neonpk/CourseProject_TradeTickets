@@ -34,7 +34,7 @@ public class FlightProvider : IFlightProvider
         _airlineDbProvider = airlineDbProvider;
         _placeDbProvider = placeDbProvider;
     }
-
+    
     public async Task<bool> CreateOrEditFlight(Flight? flight)
     {
         return await _flightDbProvider!.CreateOrEditFlight(flight);

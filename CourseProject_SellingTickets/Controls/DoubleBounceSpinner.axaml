@@ -4,13 +4,70 @@
     <Design.PreviewWith>
         <controls:DoubleBounceSpinner />
     </Design.PreviewWith>
-
+    
+    <Style Selector="Ellipse.bouncing">
+        <Style.Animations>
+           <Animation Duration="0:0:.75" IterationCount="infinite" PlaybackDirection="AlternateReverse" Easing="SineEaseInOut">
+               <KeyFrame Cue="0%">
+                   <Setter Property="ScaleTransform.ScaleX" Value="1" />
+                   <Setter Property="ScaleTransform.ScaleY" Value="1" />
+               </KeyFrame>
+               
+               <KeyFrame Cue="100%">
+                   <Setter Property="ScaleTransform.ScaleX" Value="0"/>
+                   <Setter Property="ScaleTransform.ScaleY" Value="0"/>
+               </KeyFrame>
+           </Animation>
+       </Style.Animations>
+    </Style>
+    
+    <Style Selector="Ellipse.bouncing1">
+        <Style.Animations>
+            <Animation Duration="0:0:.75" IterationCount="infinite" PlaybackDirection="AlternateReverse" Easing="SineEaseInOut">
+                <KeyFrame Cue="0%">
+                    <Setter Property="ScaleTransform.ScaleX" Value="0" />
+                    <Setter Property="ScaleTransform.ScaleY" Value="0" />
+                </KeyFrame>
+               
+                <KeyFrame Cue="100%">
+                    <Setter Property="ScaleTransform.ScaleX" Value="1"/>
+                    <Setter Property="ScaleTransform.ScaleY" Value="1"/>
+                </KeyFrame>
+            </Animation>
+        </Style.Animations>
+    </Style>
+    
     <Style Selector="controls|DoubleBounceSpinner">
+        
         <!-- Set Defaults -->
         <Setter Property="Template">
             <ControlTemplate>
-                <TextBlock Text="Templated Control" />
+                
+                <Grid IsVisible="{TemplateBinding IsActive}"
+                      Background="Transparent"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center">
+                    
+                    <Ellipse Fill="{TemplateBinding Foreground}"
+                             Classes="bouncing"
+                             Width="{TemplateBinding Diameter}" 
+                             Height="{TemplateBinding Diameter}"
+                             Opacity="0.7"
+                             />
+                    
+                    <Ellipse Fill="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SecondForeground}"
+                             Classes="bouncing1"
+                             Width="{TemplateBinding Diameter}" 
+                             Height="{TemplateBinding Diameter}"
+                             Opacity="0.7"
+                    />
+                    
+                </Grid>
+                
             </ControlTemplate>
         </Setter>
     </Style>
+    
+    
+    
 </Styles>

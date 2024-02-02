@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using CourseProject_SellingTickets.Commands;
 using CourseProject_SellingTickets.Models;
+using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using DynamicData;
@@ -18,6 +20,7 @@ public class FlightUserViewModel : ViewModelBase
     // Private 
 
     private IFlightProvider? _flightProvider;
+    private IConnectionStateProvider? _connectionStateProvider;
 
     //Observable properties 
     
@@ -44,6 +47,9 @@ public class FlightUserViewModel : ViewModelBase
     public Flight? SelectedFlight { get => _selectedFlight; set { _selectedFlight = value; OnPropertyChanged(nameof(SelectedFlight)); } }
     
     // => // Loading page properties 
+
+    private bool? _databaseHasConnected;
+    public bool? DatabaseHasConnected { get => _databaseHasConnected; set { _databaseHasConnected = value; OnPropertyChanged(nameof(DatabaseHasConnected)); } }
     
     private bool? _isLoading;
     public bool? IsLoading { get => _isLoading; set { _isLoading = value; OnPropertyChanged(nameof(IsLoading)); } }
@@ -52,9 +58,9 @@ public class FlightUserViewModel : ViewModelBase
     public bool? IsLoadingEditMode { get => _isLoadingEditMode; set { _isLoadingEditMode = value; OnPropertyChanged(nameof(IsLoadingEditMode)); } }
     
     private string? _errorMessage;
-    public string? ErrorMessage { get => _errorMessage; set { _errorMessage = value; OnPropertyChanged(nameof(ErrorMessage)); } }
+    public string? ErrorMessage { get => _errorMessage; set { _errorMessage = value; OnPropertyChanged(nameof(ErrorMessage)); OnPropertyChanged(nameof(HasErrorMessage)); } }
     public bool HasErrorMessage => !string.IsNullOrEmpty(ErrorMessage);
-    
+    public bool HasFlights => _flightsItems!.Any();
     
     // => // ObservableCollection
     
@@ -67,10 +73,11 @@ public class FlightUserViewModel : ViewModelBase
     public ICommand HideSideBarCommand { get => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false); }
     
     private ReactiveCommand<Unit, Unit>? _loadFLightsCommand;
-    public ReactiveCommand<Unit,Unit>? LoadFlightsCommand { get => _loadFLightsCommand ??= new LoadFlightsCommand(this, _flightProvider!); }
+    public ReactiveCommand<Unit,Unit>? LoadFlightsCommand { get => 
+        _loadFLightsCommand ??= new LoadFlightsCommand(this, _flightProvider!, _connectionStateProvider!); }
     
     private ReactiveCommand<bool,Unit>? _addEditDataCommand;
-    public ReactiveCommand<bool,Unit>? AddEditDataCommand { get => _addEditDataCommand ??= new AddEditFlightCommand(this, _flightProvider!); }
+    public ReactiveCommand<bool,Unit>? AddEditDataCommand { get => _addEditDataCommand ??= new AddEditFlightCommand(this!); }
 
     private ReactiveCommand<Unit, Unit>? _saveFlightDataCommand;
     public ReactiveCommand<Unit, Unit>? SaveFlightDataCommand { get => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!); }
@@ -79,9 +86,10 @@ public class FlightUserViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? DeleteFlightDataCommand { get => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider); }
     
     // Constructor 
-    public FlightUserViewModel(IFlightProvider? flightProvider)
+    public FlightUserViewModel(IFlightProvider? flightProvider, IConnectionStateProvider? connectionStateProvider)
     {
         _flightProvider = flightProvider;
+        _connectionStateProvider = connectionStateProvider;
         
         LoadFlightsCommand!.Execute();
     }

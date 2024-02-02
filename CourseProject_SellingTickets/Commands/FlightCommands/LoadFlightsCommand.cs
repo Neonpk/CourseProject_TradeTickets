@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CourseProject_SellingTickets.Models;
+using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.ViewModels;
 using DynamicData;
@@ -15,13 +17,16 @@ namespace CourseProject_SellingTickets.Commands;
 public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
 {
     
-    private static void LoadData(FlightUserViewModel flightUserViewModel, IFlightProvider flightDbProvider)
+    private static void LoadData(FlightUserViewModel flightUserViewModel, IFlightProvider flightDbProvider, IConnectionStateProvider connectionStateProvider)
     {
         flightUserViewModel.ErrorMessage = string.Empty;
         flightUserViewModel.IsLoading = true;
 
+        flightUserViewModel.DatabaseHasConnected = connectionStateProvider.IsConnected().Result;
+        
         try
         {
+            
             IEnumerable<Flight> flights = flightDbProvider!.GetAllFlights().Result;
             IEnumerable<Aircraft> aircrafts = flightDbProvider!.GetAllAircrafts().Result;
             IEnumerable<Airline> airlines = flightDbProvider!.GetAllAirlines().Result;
@@ -38,17 +43,18 @@ public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
             
             flightUserViewModel.FlightItems!.Clear();
             flightUserViewModel.FlightItems!.AddRange(flights);
+            
         }
         catch (Exception e)
         {
-            flightUserViewModel.ErrorMessage = $"Failed to load flight data: ({e.Message})";
+            flightUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
         }
-
+        
         flightUserViewModel.IsLoading = false;
     }
 
-    public LoadFlightsCommand(FlightUserViewModel flightUserViewModel, IFlightProvider flightProvider) :
-        base(_ => Observable.Start(() => LoadData(flightUserViewModel, flightProvider)),
+    public LoadFlightsCommand(FlightUserViewModel flightUserViewModel, IFlightProvider flightProvider, IConnectionStateProvider connectionStateProvider) :
+        base(_ => Observable.Start(() => LoadData(flightUserViewModel, flightProvider, connectionStateProvider)),
             canExecute: Observable.Return(true))
     {
         

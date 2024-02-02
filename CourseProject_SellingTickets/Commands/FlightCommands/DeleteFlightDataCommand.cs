@@ -22,12 +22,10 @@ public class DeleteFlightDataCommand : ReactiveCommand<Unit, Unit>
             bool isDeleted = flightProvider!.DeleteFlight(selectedFlight).Result;
 
             flightUserViewModel.LoadFlightsCommand?.Execute();
-            
-            flightUserViewModel.ErrorMessage = isDeleted ? "The row was deleted." : "Failed to delete row";
         }
         catch (Exception e)
         {
-            flightUserViewModel.ErrorMessage = $"Failed to delete flight data: ({e.InnerException!.InnerException!.Message})";
+            flightUserViewModel.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.InnerException!.Message})";
         }
 
         flightUserViewModel.IsLoadingEditMode = false;

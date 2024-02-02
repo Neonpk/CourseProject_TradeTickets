@@ -22,12 +22,10 @@ public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
             var isSaved = flightProvider.CreateOrEditFlight(selectedFlight).Result;
             
             flightUserViewModel.LoadFlightsCommand?.Execute();
-            
-            flightUserViewModel.ErrorMessage = isSaved ? "Ok" : "Failed to save";
         }
         catch (Exception e)
         {
-            flightUserViewModel.ErrorMessage = $"Failed to save flight data: ({e.InnerException!.InnerException!.Message})";
+            flightUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.InnerException!.Message})";
         }
 
         flightUserViewModel.IsLoadingEditMode = false;

@@ -24,11 +24,13 @@ public static class AddViewModelsHostBuilderExtensions
             INavigationService? mainNavigation = service.GetService<INavigationService>("mainNavigation");
             INavigationService? dispatcherNavigation = service.GetService<INavigationService>("dispatcherNavigation");
 
+            IConnectionStateProvider? connectionStateProvider = service.GetService<IConnectionStateProvider>();
+            
             IFlightProvider? flightProvider = service.GetService<IFlightProvider>();
             
             //General ViewModels
                                 
-            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( flightProvider ) );
+            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( flightProvider, connectionStateProvider ) );
             
             resolver.RegisterLazySingleton<AdminUserViewModel>( () => new AdminUserViewModel( mainNavigation ));
         

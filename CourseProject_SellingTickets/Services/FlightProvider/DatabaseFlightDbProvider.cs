@@ -18,7 +18,7 @@ public class DatabaseFlightDbProvider : IFlightDbProvider
     {
         _dbContextFactory = dbContextFactory;
     }
-
+    
     public async Task<IEnumerable<Flight>> GetAllFlights()
     {
         if (_dbContextFactory!.Equals(null))
@@ -49,6 +49,7 @@ public class DatabaseFlightDbProvider : IFlightDbProvider
         
         using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
         {
+            
             FlightDTO flightDto = ToFlightDTO(flight);
             
             if (flightDto.Id.Equals(null))
