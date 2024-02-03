@@ -2,11 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
+using CourseProject_SellingTickets.Extensions;
 using CourseProject_SellingTickets.Models;
 using DynamicData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace CourseProject_SellingTickets.Services.TradeTicketsProvider;
 
@@ -41,6 +44,81 @@ public class DatabaseFlightDbProvider : IFlightDbProvider
         }
     }
 
+    public async Task<IEnumerable<Flight>> GetTopFlights(int topRows = 50)
+    {
+        if (_dbContextFactory!.Equals(null))
+            new Exception("DbContext not existing.");
+
+        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        {
+            IEnumerable<FlightDTO> flightDtos = await context.Flights.
+                OrderByDescending(x => x.Id).
+                Take(topRows).
+                AsNoTracking().
+                Include( x => x.Aircraft ).
+                Include( x => x.Airline ). 
+                Include( x => x.DeparturePlace ).
+                Include( x => x.DestinationPlace ).
+                Include( x => x.Aircraft!.Photo ).
+                Include( x => x.DeparturePlace!.Photo ).
+                Include( x => x.DestinationPlace!.Photo ).
+                ToListAsync();
+
+            return flightDtos.Select(flight => ToFlight(flight));
+        }
+    }
+    
+    public async Task<IEnumerable<Flight>> GetFlightsByFilter( Expression<Func<FlightDTO, bool>> searchFunc, int topRows = -1)
+    {
+        if (_dbContextFactory!.Equals(null))
+            new Exception("DbContext not existing.");
+
+        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        {
+            IEnumerable<FlightDTO> flightDtos = await context.Flights.
+                Where(searchFunc).
+                OrderByDescending( x => x.Id ).
+                TakeOrDefault(topRows).
+                AsNoTracking().
+                Include( x => x.Aircraft ).
+                Include( x => x.Airline ). 
+                Include( x => x.DeparturePlace ).
+                Include( x => x.DestinationPlace ).
+                Include( x => x.Aircraft!.Photo ).
+                Include( x => x.DeparturePlace!.Photo ).
+                Include( x => x.DestinationPlace!.Photo ).
+                ToListAsync();
+            
+            return flightDtos.Select(flight => ToFlight(flight));
+        }
+    }
+    
+    public async Task<IEnumerable<Flight>> GetFlightsByFilterSort<TKeySelector>
+        ( Expression<Func<FlightDTO, bool>> searchFunc, Expression<Func<FlightDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1)
+    {
+        if (_dbContextFactory!.Equals(null))
+            new Exception("DbContext not existing.");
+
+        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        {
+            IEnumerable<FlightDTO> flightDtos = await context.Flights.
+                Where(searchFunc).
+                OrderByModeOrDefault( sortFunc, sortMode ).
+                TakeOrDefault(topRows).
+                AsNoTracking().
+                Include( x => x.Aircraft ).
+                Include( x => x.Airline ). 
+                Include( x => x.DeparturePlace ).
+                Include( x => x.DestinationPlace ).
+                Include( x => x.Aircraft!.Photo ).
+                Include( x => x.DeparturePlace!.Photo ).
+                Include( x => x.DestinationPlace!.Photo ).
+                ToListAsync();
+            
+            return flightDtos.Select(flight => ToFlight(flight));
+        }
+    }
+    
     public async Task<bool> CreateOrEditFlight(Flight? flight)
     {
         

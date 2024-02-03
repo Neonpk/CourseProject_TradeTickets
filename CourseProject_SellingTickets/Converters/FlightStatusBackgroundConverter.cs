@@ -8,20 +8,23 @@ using Brushes = Avalonia.Media.Brushes;
 
 namespace CourseProject_SellingTickets.Converters;
 
-public class FlightStatusColorConverter : IMultiValueConverter
+public class FlightStatusBackgroundConverter : IMultiValueConverter
 {
     public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
     {
-        bool isCanceled = (bool)values[0]!;
-        DateTime arrivalTime = (DateTime)values[1]!;
+        bool inProgress = (bool)values[0]!;
+        bool isCompleted = (bool)values[1]!;
+        bool isCanceled = (bool)values[2]!;
 
         if (isCanceled)
             return Brushes.Firebrick;
 
-        if (DateTime.Now > arrivalTime && !isCanceled)
-            return Brushes.Green;
-        
-        return null;
+        if (isCompleted && !isCanceled)
+            return Brushes.DarkGreen;
 
+        if (inProgress && !isCanceled)
+            return Brushes.OrangeRed;
+
+        return Brushes.Transparent;
     }
 }

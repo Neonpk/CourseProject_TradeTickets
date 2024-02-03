@@ -17,7 +17,7 @@ namespace CourseProject_SellingTickets.Commands;
 public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
 {
     
-    private static void LoadData(FlightUserViewModel flightUserViewModel, IFlightProvider flightDbProvider, IConnectionStateProvider connectionStateProvider)
+    private static void LoadDataAsync(FlightUserViewModel flightUserViewModel, IFlightProvider flightDbProvider, IConnectionStateProvider connectionStateProvider)
     {
         flightUserViewModel.ErrorMessage = string.Empty;
         flightUserViewModel.IsLoading = true;
@@ -26,8 +26,8 @@ public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
         
         try
         {
+            IEnumerable<Flight> flights = flightDbProvider!.GetTopFlights().Result;
             
-            IEnumerable<Flight> flights = flightDbProvider!.GetAllFlights().Result;
             IEnumerable<Aircraft> aircrafts = flightDbProvider!.GetAllAircrafts().Result;
             IEnumerable<Airline> airlines = flightDbProvider!.GetAllAirlines().Result;
             IEnumerable<Place> places = flightDbProvider!.GetAllPlaces().Result;
@@ -51,10 +51,12 @@ public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
         }
         
         flightUserViewModel.IsLoading = false;
+
+        flightUserViewModel.SortFlightsCommand!.Execute();
     }
 
     public LoadFlightsCommand(FlightUserViewModel flightUserViewModel, IFlightProvider flightProvider, IConnectionStateProvider connectionStateProvider) :
-        base(_ => Observable.Start(() => LoadData(flightUserViewModel, flightProvider, connectionStateProvider)),
+        base(_ => Observable.Start(() => LoadDataAsync(flightUserViewModel, flightProvider, connectionStateProvider)),
             canExecute: Observable.Return(true))
     {
         

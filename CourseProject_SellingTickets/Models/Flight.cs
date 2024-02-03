@@ -30,10 +30,20 @@ public class Flight
     public bool IsCanceled { get; set; }
     
     // Custom Properties
-    public Task<Bitmap?> DeparturePlaceImage { get => ImageHelper.LoadFromWeb(new Uri(DeparturePlace.Photo.UrlPath)); }
-    public Task<Bitmap?> DestinationPlaceImage { get => ImageHelper.LoadFromWeb(new Uri(DestinationPlace.Photo.UrlPath)); }
-    public Task<Bitmap?> AircraftImage { get => ImageHelper.LoadFromWeb(new Uri(Aircraft.Photo.UrlPath)); }
-    
+
+    private Task<Bitmap?>? _departurePlaceImage;
+    public Task<Bitmap?> DeparturePlaceImage { get => _departurePlaceImage ??= ImageHelper.LoadFromWeb(new Uri(DeparturePlace.Photo.UrlPath)); }
+
+    private Task<Bitmap?>? _destinationPlaceImage;
+    public Task<Bitmap?> DestinationPlaceImage { get => _destinationPlaceImage ??= ImageHelper.LoadFromWeb(new Uri(DestinationPlace.Photo.UrlPath)); }
+
+    private Task<Bitmap?>? _aircraftImage;
+    public Task<Bitmap?> AircraftImage { get => _aircraftImage ??= ImageHelper.LoadFromWeb(new Uri(Aircraft.Photo.UrlPath)); }
+
+    // Flight Status
+    public bool IsCompleted { get => DateTime.Now > ArrivalTime && !IsCanceled; }
+    public bool InProgress { get => DateTime.Now > DepartureTime && DateTime.Now < ArrivalTime && !IsCanceled; }
+
     //Constructor
     
     public Flight() {}

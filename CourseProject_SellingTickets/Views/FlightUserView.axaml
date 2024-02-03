@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
              xmlns:converter="using:CourseProject_SellingTickets.Converters"
-             xmlns:model="using:CourseProject_SellingTickets.Models"
              xmlns:controls="using:CourseProject_SellingTickets.Controls"
              xmlns:s="clr-namespace:System;assembly=mscorlib"
              x:DataType="vm:FlightUserViewModel"
@@ -14,7 +13,7 @@
     
     <UserControl.Resources>
         <converter:CancelFlightStringConverter x:Key="CancelFlightStringConverter"/>
-        <converter:FlightStatusColorConverter x:Key="FlightStatusColorConverter"/>
+        <converter:FlightStatusBackgroundConverter x:Key="FlightStatusColorConverter"/>
         <converter:InvertBoolConverter x:Key="InvertBoolConverter"/>
         <converter:CompletedFlightStringConverter x:Key="CompletedFlightStringConverter"/>
         <converter:InitializeDataErrorConverter x:Key="InitializeDataErrorConverter"/>
@@ -59,7 +58,6 @@
                     
                 </DockPanel>
 
-
                 <DockPanel Margin="10" DockPanel.Dock="Top">
                     
                     <DockPanel.IsEnabled>
@@ -80,11 +78,17 @@
                         <ComboBoxItem>По модели самолета</ComboBoxItem>
                         <ComboBoxItem>По количеству мест</ComboBoxItem>
                         <ComboBoxItem>По кол-ву свободных мест</ComboBoxItem>
+                        <ComboBoxItem>По отмененным рейсам</ComboBoxItem>
+                        <ComboBoxItem>По длительности полета</ComboBoxItem>
+                        <ComboBoxItem>По полетам в процессе</ComboBoxItem>
+                        <ComboBoxItem>По выполненым полетам</ComboBoxItem>
                     </ComboBox>
 
                     <TextBox 
-                        FontSize="15" Text="{Binding TextFilter}"
-                        DockPanel.Dock="Left"/>
+                        FontSize="15" Text="{Binding SearchTerm}"
+                        DockPanel.Dock="Left" Watermark="Введите поисковый запрос.">
+                        
+                    </TextBox>
                 </DockPanel>
                  
                 <DockPanel Margin="10" DockPanel.Dock="Top">
@@ -101,13 +105,12 @@
                     <StackPanel Orientation="Horizontal">
 
 
-                        <ComboBox SelectedIndex="0">
+                        <ComboBox SelectedIndex="{Binding SelectedSortMode}">
                             <ComboBoxItem>По возрастанию</ComboBoxItem>
                             <ComboBoxItem>По убыванию</ComboBoxItem>
                         </ComboBox>
 
-                        <ComboBox SelectedIndex="0" 
-                                  IsEnabled="{Binding IsLoading, Converter={StaticResource InvertBoolConverter}}">
+                        <ComboBox SelectedIndex="{Binding SelectedSortValue}">
                             <ComboBoxItem>По рейсу</ComboBoxItem>
                             <ComboBoxItem>По пункту отправления</ComboBoxItem>
                             <ComboBoxItem>По пункту прибытия</ComboBoxItem>
@@ -116,6 +119,10 @@
                             <ComboBoxItem>По модели самолета</ComboBoxItem>
                             <ComboBoxItem>По количеству мест</ComboBoxItem>
                             <ComboBoxItem>По кол-ву свободных мест</ComboBoxItem>
+                            <ComboBoxItem>По отмененным рейсам</ComboBoxItem>
+                            <ComboBoxItem>По длительности полета</ComboBoxItem>
+                            <ComboBoxItem>По полетам в процессе</ComboBoxItem>
+                            <ComboBoxItem>По выполненым полетам</ComboBoxItem>
                         </ComboBox>
 
                     </StackPanel>
@@ -155,7 +162,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Foreground="Orange"
-                                Text="Данных в базе нет"
+                                Text="Данные не найдены"
                                 IsVisible="{Binding HasFlights, Converter={StaticResource InvertBoolConverter}}"
                                 TextWrapping="WrapWithOverflow"/>
                             
@@ -178,8 +185,9 @@
                                                
                                                <Border.Background>
                                                    <MultiBinding Converter="{StaticResource FlightStatusColorConverter}">
-                                                        <Binding Path="IsCanceled"/>
-                                                        <Binding Path="ArrivalTime"/>
+                                                       <Binding Path="InProgress"/>
+                                                       <Binding Path="IsCompleted"/>
+                                                       <Binding Path="IsCanceled"/>
                                                    </MultiBinding>
                                                </Border.Background>
                                                
@@ -200,7 +208,14 @@
                                                    <Label Grid.Column="1" Grid.Row="3" 
                                                           FontWeight="Bold"
                                                           IsVisible="{Binding IsCanceled, Converter={StaticResource InvertBoolConverter}}"
-                                                          Content="{Binding ArrivalTime, Converter={StaticResource CompletedFlightStringConverter}}"/>
+                                                          >
+                                                       <Label.Content>
+                                                           <MultiBinding Converter="{StaticResource CompletedFlightStringConverter}">
+                                                               <Binding Path="IsCompleted" />
+                                                               <Binding Path="InProgress" />
+                                                           </MultiBinding>
+                                                       </Label.Content>
+                                                   </Label>
                                                    
                                                    <Label Grid.Column="0" Grid.Row="4" Content="Время полета: "/>
                                                    <Label Grid.Column="1" Grid.Row="4" FontWeight="Bold" Content="{Binding DurationTime, StringFormat={}{0:dd} дн. {0:hh} ч. {0:mm} м.}"/>
@@ -233,6 +248,7 @@
                                                Margin="10 0 0 0">
                                            <Grid ColumnDefinitions="150, Auto">
                                                    
+                                               
                                                <Border BorderThickness="2" 
                                                        CornerRadius="5"
                                                        Width="150" Height="100"
@@ -242,6 +258,7 @@
                                                        <ImageBrush Stretch="Fill" Source="{Binding AircraftImage^}"/>
                                                    </Border.Background>
                                                </Border>
+                                               
                                                    
                                                <Grid Grid.Column="1" 
                                                      VerticalAlignment="Center" 
@@ -285,6 +302,7 @@
                                                   >
                                                <Grid ColumnDefinitions="150, *">
                                                    
+                                                   
                                                   <Border BorderThickness="2" 
                                                            CornerRadius="5"
                                                            Width="150" Height="100"
@@ -293,6 +311,7 @@
                                                            <ImageBrush Stretch="Fill" Source="{Binding DeparturePlaceImage^}"/>
                                                        </Border.Background>
                                                    </Border>
+                                                   
                                                    
                                                    <StackPanel Grid.Column="1" 
                                                                VerticalAlignment="Center">
@@ -327,6 +346,7 @@
                                                   >
                                                <Grid ColumnDefinitions="150, *">
                                                    
+                                                   
                                                    <Border BorderThickness="2" 
                                                            CornerRadius="5"
                                                            Width="150" Height="100"
@@ -335,6 +355,7 @@
                                                            <ImageBrush Stretch="Fill" Source="{Binding DestinationPlaceImage^}"/>
                                                        </Border.Background>
                                                    </Border>
+                                                   
                                                    
                                                    <StackPanel Grid.Column="1" 
                                                                VerticalAlignment="Center">

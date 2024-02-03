@@ -53,6 +53,7 @@
                              IsEnabled="True"
                              Height="27" FontSize="20"
                              Text="{Binding Password}"
+                             PasswordChar="*" Watermark="Введите пароль."
                              />
 
                 </Grid>
