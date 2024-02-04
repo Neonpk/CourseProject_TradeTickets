@@ -20,7 +20,7 @@ public class FlightUserViewModel : ViewModelBase
 {
     // Private 
 
-    private IFlightProvider? _flightProvider;
+    private IFlightVmProvider? _flightProvider;
     private IConnectionStateProvider? _connectionStateProvider;
 
     //Observable properties 
@@ -45,6 +45,9 @@ public class FlightUserViewModel : ViewModelBase
     public string? SearchTerm { get => _searchTerm; set { _searchTerm = value; OnPropertyChanged(nameof(SearchTerm)); OnPropertyChanged(nameof(HasSearching)); } }
     public bool HasSearching => !string.IsNullOrEmpty(SearchTerm);
 
+    private int _limitRows = 50;
+    public int LimitRows { get => _limitRows; set { _limitRows = value; OnPropertyChanged(nameof(LimitRows)); } }
+    
     // => // Filters // => // Sort Modes
 
     private int _selectedSortValue;
@@ -52,6 +55,11 @@ public class FlightUserViewModel : ViewModelBase
 
     private int _selectedSortMode;
     public int SelectedSortMode { get => _selectedSortMode; set { _selectedSortMode = value; OnPropertyChanged(nameof(SelectedSortMode)); } }
+    
+    // => // Filters => // Search Terms
+
+    private int _selectedSearchMode;
+    public int SelectedSearchMode { get => _selectedSearchMode; set { _selectedSearchMode = value; OnPropertyChanged(nameof(SelectedSearchMode)); } }
 
     // Selected Model from the list
     
@@ -95,22 +103,24 @@ public class FlightUserViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? SaveFlightDataCommand { get => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!); }
 
     private ReactiveCommand<Unit, Unit>? _deleteFlightDataCommand;
-    public ReactiveCommand<Unit, Unit>? DeleteFlightDataCommand { get => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider); }
+    public ReactiveCommand<Unit, Unit>? DeleteFlightDataCommand { get => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider!); }
 
     private ReactiveCommand<Unit, Unit>? _sortFlightsCommand;
     public ReactiveCommand<Unit, Unit>? SortFlightsCommand { get => _sortFlightsCommand ??= new SortFlightsCommand(this); } 
     
+    private ReactiveCommand<bool, IEnumerable<Flight>?>? _searchTermFlightCommand;
+    public ReactiveCommand<bool, IEnumerable<Flight>?>? SearchTermFlightCommand { get => _searchTermFlightCommand ??= new SearchTermFlightCommand(this, _flightProvider!)!; } 
+    
     // Constructor 
-    public FlightUserViewModel(IFlightProvider? flightProvider, IConnectionStateProvider? connectionStateProvider)
+    public FlightUserViewModel(IFlightVmProvider? flightProvider, IConnectionStateProvider? connectionStateProvider)
     {
         _flightProvider = flightProvider;
         _connectionStateProvider = connectionStateProvider;
         
         LoadFlightsCommand!.Execute();
 
-        this.WhenPropertyChanged(x => x.SelectedSortMode).Subscribe(x => SortFlightsCommand!.Execute());
-        this.WhenPropertyChanged(x => x.SelectedSortValue).Subscribe(x => SortFlightsCommand!.Execute());
-        
+        this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
+            Subscribe(x => SortFlightsCommand!.Execute());
     }
 
 }

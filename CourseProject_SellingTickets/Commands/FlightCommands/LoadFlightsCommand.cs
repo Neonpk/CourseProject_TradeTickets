@@ -17,8 +17,11 @@ namespace CourseProject_SellingTickets.Commands;
 public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
 {
     
-    private static void LoadDataAsync(FlightUserViewModel flightUserViewModel, IFlightProvider flightDbProvider, IConnectionStateProvider connectionStateProvider)
+    private static void LoadDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmDbProvider, IConnectionStateProvider connectionStateProvider
+        )
     {
+        var limitRows = flightUserViewModel.LimitRows;
+        
         flightUserViewModel.ErrorMessage = string.Empty;
         flightUserViewModel.IsLoading = true;
 
@@ -26,11 +29,21 @@ public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
         
         try
         {
-            IEnumerable<Flight> flights = flightDbProvider!.GetTopFlights().Result;
-            
-            IEnumerable<Aircraft> aircrafts = flightDbProvider!.GetAllAircrafts().Result;
-            IEnumerable<Airline> airlines = flightDbProvider!.GetAllAirlines().Result;
-            IEnumerable<Place> places = flightDbProvider!.GetAllPlaces().Result;
+            List<Flight> flights = new List<Flight>();
+
+            if (flightUserViewModel.HasSearching) 
+            {
+                flightUserViewModel.SearchTermFlightCommand!.Execute(true)
+                    .Subscribe(filteredFlights => flights.AddRange(filteredFlights!));
+            }
+            else
+            {
+                flights.AddRange(flightVmDbProvider!.GetTopFlights(limitRows).Result);
+            }
+
+            IEnumerable<Aircraft> aircrafts = flightVmDbProvider!.GetAllAircrafts().Result;
+            IEnumerable<Airline> airlines = flightVmDbProvider!.GetAllAirlines().Result;
+            IEnumerable<Place> places = flightVmDbProvider!.GetAllPlaces().Result;
             
             flightUserViewModel.Aircrafts!.Clear();
             flightUserViewModel.Aircrafts!.AddRange(aircrafts);
@@ -44,6 +57,7 @@ public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
             flightUserViewModel.FlightItems!.Clear();
             flightUserViewModel.FlightItems!.AddRange(flights);
             
+            flightUserViewModel.SortFlightsCommand!.Execute();
         }
         catch (Exception e)
         {
@@ -51,19 +65,12 @@ public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
         }
         
         flightUserViewModel.IsLoading = false;
-
-        flightUserViewModel.SortFlightsCommand!.Execute();
     }
 
-    public LoadFlightsCommand(FlightUserViewModel flightUserViewModel, IFlightProvider flightProvider, IConnectionStateProvider connectionStateProvider) :
-        base(_ => Observable.Start(() => LoadDataAsync(flightUserViewModel, flightProvider, connectionStateProvider)),
+    public LoadFlightsCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider, IConnectionStateProvider connectionStateProvider) :
+        base(_ => Observable.Start(() => LoadDataAsync(flightUserViewModel, flightVmProvider, connectionStateProvider)),
             canExecute: Observable.Return(true))
     {
         
-    }
-
-    public override IObservable<Unit> Execute(Unit parameter)
-    {
-        return base.Execute();
     }
 }

@@ -7,7 +7,7 @@ using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Extensions;
 
-public static class ObservableCollectionOrderByRefModeExtensions
+public static class ObservableCollectionExtensions
 {
     private static bool CompareElements<TKey>(TKey a, TKey b, SortMode? sortMode = null) where TKey : IComparable
     {
@@ -24,7 +24,7 @@ public static class ObservableCollectionOrderByRefModeExtensions
         }
     }
     
-    private static void InsertionSortDesc<TSource, TKey>( ObservableCollection<TSource> source, 
+    private static void InsertionSort<TSource, TKey>( ObservableCollection<TSource> source, 
         Func<TSource, TKey> sortFunc, SortMode? sortMode = null) where TKey : IComparable
     {
         TSource x;
@@ -46,7 +46,7 @@ public static class ObservableCollectionOrderByRefModeExtensions
     public static void OrderByReferenceMode<TSource, TKey>(this ObservableCollection<TSource> source, 
         Func<TSource, TKey> sortFunc, SortMode? sortMode = null) where TKey : IComparable
     {
-        InsertionSortDesc(source, sortFunc, sortMode);
+        InsertionSort(source, sortFunc, sortMode);
     }
     
 }

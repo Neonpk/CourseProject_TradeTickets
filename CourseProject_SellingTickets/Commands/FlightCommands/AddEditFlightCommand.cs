@@ -27,9 +27,4 @@ public class AddEditFlightCommand : ReactiveCommand<bool, Unit>
     {
         
     }
-
-    public override IObservable<Unit> Execute(bool parameter)
-    {
-        return base.Execute(parameter);
-    }
 }

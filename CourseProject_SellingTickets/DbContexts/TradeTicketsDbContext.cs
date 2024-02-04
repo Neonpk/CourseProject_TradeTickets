@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using CourseProject_SellingTickets.Models;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,8 @@ public class TradeTicketsDbContext : DbContext
     public DbSet<PlaceDTO> Places { get; set; }
     public DbSet<TicketDTO> Tickets { get; set; }
     
-    
+    // Postgres DateTime (timestamp) Format 
+    [DbFunction("to_char", "")]
+    public static string DateTimeFormatToString(DateTime value, string format) => value.ToString(format);
     
 }

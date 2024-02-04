@@ -28,7 +28,6 @@ public class Ticket
     
     public override bool Equals(object? obj)
     {
-
         if (obj is Ticket o)
         {
             return Id.Equals(o.Id) && 

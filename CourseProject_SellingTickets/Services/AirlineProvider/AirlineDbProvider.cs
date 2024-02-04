@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject_SellingTickets.Services.AirlineProvider;
 
-public class DatabaseAirlineDbProvider : IAirlineDbProvider
+public class AirlineDbProvider : IAirlineDbProvider
 {
     private readonly ITradeTicketsDbContextFactory? _dbContextFactory;
     
-    public DatabaseAirlineDbProvider(ITradeTicketsDbContextFactory? dbContextFactory)
+    public AirlineDbProvider(ITradeTicketsDbContextFactory? dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }

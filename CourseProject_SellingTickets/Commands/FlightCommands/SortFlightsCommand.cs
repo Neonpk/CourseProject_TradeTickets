@@ -20,54 +20,54 @@ public class SortFlightsCommand : ReactiveCommand<Unit, Unit>
             return;
         
         SortMode sortMode = (SortMode)flightUserViewModel.SelectedSortMode;
-        FlightValue value = (FlightValue)flightUserViewModel.SelectedSortValue;
+        FlightSortModes sortModes = (FlightSortModes)flightUserViewModel.SelectedSortValue;
         
         var flightItems = flightUserViewModel.FlightItems;
         
-        switch (value)
+        switch (sortModes)
         {
-            case FlightValue.FlightNumber:
+            case FlightSortModes.FlightNumber:
                 flightItems!.OrderByReferenceMode(x => x.FlightNumber, sortMode);
                 break;
             
-            case FlightValue.DeparturePlace:
+            case FlightSortModes.DeparturePlace:
                 flightItems!.OrderByReferenceMode(x => x.DeparturePlace.Name, sortMode);
                 break;
-            case FlightValue.DestinationPlace:
+            case FlightSortModes.DestinationPlace:
                 flightItems!.OrderByReferenceMode(x => x.DestinationPlace.Name, sortMode);
                 break;
             
-            case FlightValue.DepartureTime:
+            case FlightSortModes.DepartureTime:
                 flightItems!.OrderByReferenceMode(x => x.DepartureTime, sortMode);
                 break;
-            case FlightValue.ArrivalTime:
+            case FlightSortModes.ArrivalTime:
                 flightItems!.OrderByReferenceMode(x => x.ArrivalTime, sortMode);
                 break;
 
-            case FlightValue.AircraftName:
+            case FlightSortModes.AircraftName:
                 flightItems!.OrderByReferenceMode(x => x.Aircraft.Model!, sortMode);
                 break;
 
-            case FlightValue.TotalPlace:
+            case FlightSortModes.TotalPlace:
                 flightItems!.OrderByReferenceMode(x => x.TotalPlace, sortMode);
                 break;
-            case FlightValue.FreePlace:
+            case FlightSortModes.FreePlace:
                 flightItems!.OrderByReferenceMode(x => x.FreePlace, sortMode);
                 break;
 
-            case FlightValue.CanceledFlights:
+            case FlightSortModes.CanceledFlights:
                 flightItems!.OrderByReferenceMode(x => x.IsCanceled, sortMode);
                 break;
             
-            case FlightValue.DurationTime:
+            case FlightSortModes.DurationTime:
                 flightItems!.OrderByReferenceMode(x => x.DurationTime, sortMode);
                 break;
             
-            case FlightValue.InProgress:
+            case FlightSortModes.InProgress:
                 flightItems!.OrderByReferenceMode(x => x.InProgress, sortMode);
                 break;
             
-            case FlightValue.IsCompleted:
+            case FlightSortModes.IsCompleted:
                 flightItems!.OrderByReferenceMode(x => x.IsCompleted, sortMode);
                 break;
         }
@@ -78,10 +78,5 @@ public class SortFlightsCommand : ReactiveCommand<Unit, Unit>
         base(_ => Observable.Start(() => SortFlights(flightUserViewModel)), canExecute: Observable.Return(true))
     {
         
-    }
-
-    public override IObservable<Unit> Execute()
-    {
-        return base.Execute();
     }
 }

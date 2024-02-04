@@ -26,7 +26,7 @@ public static class AddViewModelsHostBuilderExtensions
 
             IConnectionStateProvider? connectionStateProvider = service.GetService<IConnectionStateProvider>();
             
-            IFlightProvider? flightProvider = service.GetService<IFlightProvider>();
+            IFlightVmProvider? flightProvider = service.GetService<IFlightVmProvider>();
             
             //General ViewModels
                                 

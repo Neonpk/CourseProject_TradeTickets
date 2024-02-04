@@ -104,10 +104,8 @@ public class Flight
     
     public override bool Equals(object? obj)
     {
-
         if (obj is Flight o)
         {
-
             return Id.Equals(o.Id) &&
                    FlightNumber.Equals(o.FlightNumber) &&
                    DeparturePlace.Equals(o.DeparturePlace) &&
@@ -120,7 +118,6 @@ public class Flight
                    DurationTime.Equals(o.DurationTime) &&
                    Airline.Equals(o.Airline) &&
                    IsCanceled.Equals(o.IsCanceled);
-
         }
         
         return base.Equals(obj);

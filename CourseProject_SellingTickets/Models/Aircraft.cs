@@ -4,7 +4,7 @@ public class Aircraft
 {
     //Columns
     
-    public System.Int64 Id { get; set; }
+    public System.Int64 Id { get; init; }
     
     public string? Model { get; set; }
     

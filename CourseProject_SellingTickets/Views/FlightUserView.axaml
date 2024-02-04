@@ -69,7 +69,7 @@
                     
                     <Label FontSize="15" Content="Применить фильтр" DockPanel.Dock="Top"/>
 
-                    <ComboBox SelectedIndex="0" DockPanel.Dock="Right">
+                    <ComboBox SelectedIndex="{Binding SelectedSearchMode}" DockPanel.Dock="Right">
                         <ComboBoxItem>По рейсу</ComboBoxItem>
                         <ComboBoxItem>По пункту отправления</ComboBoxItem>
                         <ComboBoxItem>По пункту прибытия</ComboBoxItem>
@@ -78,15 +78,16 @@
                         <ComboBoxItem>По модели самолета</ComboBoxItem>
                         <ComboBoxItem>По количеству мест</ComboBoxItem>
                         <ComboBoxItem>По кол-ву свободных мест</ComboBoxItem>
-                        <ComboBoxItem>По отмененным рейсам</ComboBoxItem>
                         <ComboBoxItem>По длительности полета</ComboBoxItem>
-                        <ComboBoxItem>По полетам в процессе</ComboBoxItem>
-                        <ComboBoxItem>По выполненым полетам</ComboBoxItem>
                     </ComboBox>
 
                     <TextBox 
                         FontSize="15" Text="{Binding SearchTerm}"
                         DockPanel.Dock="Left" Watermark="Введите поисковый запрос.">
+                        
+                        <TextBox.KeyBindings>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchTermFlightCommand}"></KeyBinding>
+                        </TextBox.KeyBindings>
                         
                     </TextBox>
                 </DockPanel>
@@ -126,6 +127,22 @@
                         </ComboBox>
 
                     </StackPanel>
+                    
+                    <NumericUpDown Width="200"
+                                   Value="{Binding LimitRows}"
+                                   HorizontalAlignment="Right"
+                                   DockPanel.Dock="Right"
+                                   Watermark="Лимит записей"
+                                   Minimum="-1"
+                                   ParsingNumberStyle="Integer"
+                                   FormatString="N0"
+                                   >
+                        
+                        <NumericUpDown.KeyBindings>
+                            <KeyBinding Gesture="Enter" Command="{Binding LoadFlightsCommand}"/>
+                        </NumericUpDown.KeyBindings>
+                        
+                    </NumericUpDown>
 
                 </DockPanel>
                 

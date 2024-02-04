@@ -10,7 +10,7 @@ namespace CourseProject_SellingTickets.Commands;
 
 public class DeleteFlightDataCommand : ReactiveCommand<Unit, Unit>
 {
-    private static void DeleteFlight(FlightUserViewModel flightUserViewModel, IFlightProvider? flightProvider)
+    private static void DeleteFlight(FlightUserViewModel flightUserViewModel, IFlightVmProvider? flightProvider)
     {
         flightUserViewModel.ErrorMessage = string.Empty;
         flightUserViewModel.IsLoadingEditMode = true;
@@ -31,15 +31,10 @@ public class DeleteFlightDataCommand : ReactiveCommand<Unit, Unit>
         flightUserViewModel.IsLoadingEditMode = false;
     }
 
-    public DeleteFlightDataCommand( FlightUserViewModel flightUserViewModel, IFlightProvider? flightProvider ) : 
+    public DeleteFlightDataCommand( FlightUserViewModel flightUserViewModel, IFlightVmProvider? flightProvider ) : 
         base(_ => 
             Observable.Start(()=> DeleteFlight(flightUserViewModel, flightProvider)), canExecute: Observable.Return(true))
     {
         
-    }
-
-    public override IObservable<Unit> Execute()
-    {
-        return base.Execute();
     }
 }

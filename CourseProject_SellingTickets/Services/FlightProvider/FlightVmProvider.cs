@@ -10,22 +10,7 @@ using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 
 namespace CourseProject_SellingTickets.Services.FlightProvider;
 
-public interface IFlightProvider
-{
-    public Task<IEnumerable<Flight>> GetAllFlights();
-    public Task<IEnumerable<Flight>> GetTopFlights(int topRows = 50);
-    public Task<IEnumerable<Flight>> GetFlightsByFilter(Expression<Func<FlightDTO, bool>> sortFunc, int topRows = -1);
-    public Task<IEnumerable<Flight>> GetFlightsByFilterSort<TKeySelector>
-        (Expression<Func<FlightDTO, bool>> searchFunc, Expression<Func<FlightDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1);
-    
-    public Task<IEnumerable<Airline>> GetAllAirlines();
-    public Task<IEnumerable<Aircraft>> GetAllAircrafts();
-    public Task<IEnumerable<Place>> GetAllPlaces();
-
-    public Task<bool> CreateOrEditFlight(Flight? flight);
-    public Task<bool> DeleteFlight(Flight? flight);
-}
-public class FlightProvider : IFlightProvider
+public class FlightVmVmProvider : IFlightVmProvider
 {
 
     private IFlightDbProvider? _flightDbProvider;
@@ -33,7 +18,7 @@ public class FlightProvider : IFlightProvider
     private IAirlineDbProvider? _airlineDbProvider;
     private IPlaceDbProvider? _placeDbProvider;
     
-    public FlightProvider( IFlightDbProvider? flightDbProvider, IAircraftDbProvider? aircraftDbProvider, 
+    public FlightVmVmProvider( IFlightDbProvider? flightDbProvider, IAircraftDbProvider? aircraftDbProvider, 
         IAirlineDbProvider? airlineDbProvider, IPlaceDbProvider? placeDbProvider )
     {
         _flightDbProvider = flightDbProvider;
@@ -62,10 +47,10 @@ public class FlightProvider : IFlightProvider
         return await _flightDbProvider!.GetTopFlights(topRows);
     }
 
-    public async Task<IEnumerable<Flight>> GetFlightsByFilter(Expression<Func<FlightDTO, bool>> sortFunc,
+    public async Task<IEnumerable<Flight>> GetFlightsByFilter(Expression<Func<FlightDTO, bool>> searchFunc,
         int topRows = -1)
     {
-        return await _flightDbProvider!.GetFlightsByFilter(sortFunc, topRows);
+        return await _flightDbProvider!.GetFlightsByFilter(searchFunc, topRows);
     }
     
     public async Task<IEnumerable<Flight>> GetFlightsByFilterSort<TKeySelector>

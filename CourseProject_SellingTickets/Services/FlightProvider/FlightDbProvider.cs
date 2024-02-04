@@ -13,11 +13,11 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace CourseProject_SellingTickets.Services.TradeTicketsProvider;
 
-public class DatabaseFlightDbProvider : IFlightDbProvider
+public class FlightDbProvider : IFlightDbProvider
 {
     private readonly ITradeTicketsDbContextFactory? _dbContextFactory;
     
-    public DatabaseFlightDbProvider(ITradeTicketsDbContextFactory? dbContextFactory)
+    public FlightDbProvider(ITradeTicketsDbContextFactory? dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
@@ -53,7 +53,7 @@ public class DatabaseFlightDbProvider : IFlightDbProvider
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 OrderByDescending(x => x.Id).
-                Take(topRows).
+                TakeOrDefault(topRows).
                 AsNoTracking().
                 Include( x => x.Aircraft ).
                 Include( x => x.Airline ). 
@@ -75,6 +75,7 @@ public class DatabaseFlightDbProvider : IFlightDbProvider
 
         using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
         {
+            
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 Where(searchFunc).
                 OrderByDescending( x => x.Id ).

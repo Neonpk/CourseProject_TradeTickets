@@ -11,7 +11,7 @@ namespace CourseProject_SellingTickets.Commands;
 public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
 {
     
-    private static void SaveDataAsync( FlightUserViewModel flightUserViewModel, IFlightProvider flightProvider )
+    private static void SaveDataAsync( FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider )
     {
         flightUserViewModel.ErrorMessage = string.Empty;
         flightUserViewModel.IsLoadingEditMode = true;
@@ -19,7 +19,7 @@ public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
         try
         {
             Flight? selectedFlight = flightUserViewModel.SelectedFlight;
-            var isSaved = flightProvider.CreateOrEditFlight(selectedFlight).Result;
+            var isSaved = flightVmProvider.CreateOrEditFlight(selectedFlight).Result;
             
             flightUserViewModel.LoadFlightsCommand?.Execute();
         }
@@ -30,16 +30,11 @@ public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
 
         flightUserViewModel.IsLoadingEditMode = false;
     }
-    
-    public SaveFlightDataCommand( FlightUserViewModel flightUserViewModel, IFlightProvider flightProvider ) : 
-        base(_ => Observable.Start(() => 
-            SaveDataAsync( flightUserViewModel, flightProvider )), canExecute: Observable.Return(true) )
-    {
-        
-    }
 
-    public override IObservable<Unit> Execute()
+    public SaveFlightDataCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider) :
+        base(_ => Observable.Start(() =>
+            SaveDataAsync(flightUserViewModel, flightVmProvider)), canExecute: Observable.Return(true))
     {
-        return base.Execute();
+
     }
 }

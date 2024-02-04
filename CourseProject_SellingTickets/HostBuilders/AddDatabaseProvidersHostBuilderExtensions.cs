@@ -27,16 +27,16 @@ public static class AddDatabaseProvidersHostBuilderExtensions
                 new ConnectionStateProvider(tradeTicketsDbContext));
             
             resolver.RegisterLazySingleton<IFlightDbProvider>(() => 
-                new DatabaseFlightDbProvider( tradeTicketsDbContext ));
+                new FlightDbProvider( tradeTicketsDbContext ));
             
             resolver.RegisterLazySingleton<IAircraftDbProvider>(() => 
-                new DatabaseAircraftDbProvider( tradeTicketsDbContext ));
+                new AircraftDbProvider( tradeTicketsDbContext ));
             
             resolver.RegisterLazySingleton<IAirlineDbProvider>(() => 
-                new DatabaseAirlineDbProvider( tradeTicketsDbContext ));
+                new AirlineDbProvider( tradeTicketsDbContext ));
             
             resolver.RegisterLazySingleton<IPlaceDbProvider>(() => 
-                new DatabasePlaceDbProvider( tradeTicketsDbContext ));
+                new PlaceDbProvider( tradeTicketsDbContext ));
 
         });
 
