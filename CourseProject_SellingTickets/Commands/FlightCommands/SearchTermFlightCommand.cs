@@ -13,7 +13,7 @@ using Exception = System.Exception;
 
 namespace CourseProject_SellingTickets.Commands;
 
-public class SearchTermFlightCommand : ReactiveCommand<bool, IEnumerable<Flight>>
+public class SearchTermFlightCommand : ReactiveCommand<Unit, IEnumerable<Flight>?>
 {
     private static IEnumerable<Flight> GetFlightDataByFilter(IFlightVmProvider flightVmProvider, string searchTerm, FlightSearchModes searchMode, int limitRows = 50)
     {
@@ -94,34 +94,16 @@ public class SearchTermFlightCommand : ReactiveCommand<bool, IEnumerable<Flight>
         }
     }
     
-    private static IEnumerable<Flight>? SearchDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider, bool dependentExecute = false)
+    private static IEnumerable<Flight>? SearchDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider)
     {
         int limitRows = flightUserViewModel.LimitRows;
         string searchTerm = flightUserViewModel.SearchTerm!;
         FlightSearchModes selectedSearchMode = (FlightSearchModes)flightUserViewModel.SelectedSearchMode;
         
-        List<Flight> flights = new List<Flight>();
-        
         try
         {
             flightUserViewModel.IsLoading = true;
-            flights.AddRange(GetFlightDataByFilter(flightVmProvider, searchTerm, selectedSearchMode, limitRows));
-            
-            if (!dependentExecute)
-            {
-                if (!flightUserViewModel.HasSearching)
-                {
-                    flightUserViewModel.LoadFlightsCommand!.Execute();
-                    return null;
-                }
-            
-                flightUserViewModel.FlightItems!.Clear();
-                flightUserViewModel.FlightItems.AddRange(flights);
-            
-                flightUserViewModel.IsLoading = false;
-
-                return null;
-            }
+            IEnumerable<Flight> flights = GetFlightDataByFilter(flightVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return flights;
         }
@@ -129,14 +111,13 @@ public class SearchTermFlightCommand : ReactiveCommand<bool, IEnumerable<Flight>
         {
             flightUserViewModel.IsLoading = false;
             flightUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
-            
+
             return null;
         }
     }
 
     public SearchTermFlightCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider) : 
-        base(dependentExecute => Observable.Start(() => 
-            SearchDataAsync(flightUserViewModel, flightVmProvider, dependentExecute))!, canExecute: Observable.Return(true))
+        base(_ => Observable.Start(() => SearchDataAsync(flightUserViewModel, flightVmProvider)), canExecute: Observable.Return(true))
     {
         
     }

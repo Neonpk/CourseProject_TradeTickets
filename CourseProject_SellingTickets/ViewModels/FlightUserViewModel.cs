@@ -92,9 +92,8 @@ public class FlightUserViewModel : ViewModelBase
     private ICommand? _hideSideBarCommand;
     public ICommand HideSideBarCommand { get => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false); }
 
-    private ReactiveCommand<Unit, Unit>? _loadFlightsCommand;
-    public ReactiveCommand<Unit,Unit>? LoadFlightsCommand { get => 
-        _loadFlightsCommand ??= new LoadFlightsCommand(this, _flightProvider!, _connectionStateProvider!); }
+    private ReactiveCommand<IEnumerable<Flight>, Unit>? _loadFlightsCommand;
+    public ReactiveCommand<IEnumerable<Flight>,Unit>? LoadFlightsCommand { get => _loadFlightsCommand ??= new LoadFlightsCommand(this, _flightProvider!, _connectionStateProvider!); }
     
     private ReactiveCommand<bool,Unit>? _addEditDataCommand;
     public ReactiveCommand<bool,Unit>? AddEditDataCommand { get => _addEditDataCommand ??= new AddEditFlightCommand(this!); }
@@ -108,8 +107,8 @@ public class FlightUserViewModel : ViewModelBase
     private ReactiveCommand<Unit, Unit>? _sortFlightsCommand;
     public ReactiveCommand<Unit, Unit>? SortFlightsCommand { get => _sortFlightsCommand ??= new SortFlightsCommand(this); } 
     
-    private ReactiveCommand<bool, IEnumerable<Flight>?>? _searchTermFlightCommand;
-    public ReactiveCommand<bool, IEnumerable<Flight>?>? SearchTermFlightCommand { get => _searchTermFlightCommand ??= new SearchTermFlightCommand(this, _flightProvider!)!; } 
+    private ReactiveCommand<Unit, IEnumerable<Flight>?>? _searchTermFlightCommand;
+    public ReactiveCommand<Unit, IEnumerable<Flight>?>? SearchTermFlightCommand { get => _searchTermFlightCommand ??= new SearchTermFlightCommand(this, _flightProvider!)!; } 
     
     // Constructor 
     public FlightUserViewModel(IFlightVmProvider? flightProvider, IConnectionStateProvider? connectionStateProvider)
@@ -118,7 +117,8 @@ public class FlightUserViewModel : ViewModelBase
         _connectionStateProvider = connectionStateProvider;
         
         LoadFlightsCommand!.Execute();
-
+        SearchTermFlightCommand!.Subscribe(filteredFlights => LoadFlightsCommand.Execute(filteredFlights!));
+        
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortFlightsCommand!.Execute());
     }

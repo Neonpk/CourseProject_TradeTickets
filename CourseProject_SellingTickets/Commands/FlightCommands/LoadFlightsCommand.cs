@@ -14,10 +14,11 @@ using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Commands;
 
-public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
+public class LoadFlightsCommand : ReactiveCommand<IEnumerable<Flight>,Unit>
 {
     
-    private static void LoadDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmDbProvider, IConnectionStateProvider connectionStateProvider
+    private static void LoadDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmDbProvider, 
+        IConnectionStateProvider connectionStateProvider, IEnumerable<Flight> filteredFlights
         )
     {
         var limitRows = flightUserViewModel.LimitRows;
@@ -29,18 +30,10 @@ public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
         
         try
         {
-            List<Flight> flights = new List<Flight>();
-
-            if (flightUserViewModel.HasSearching) 
-            {
-                flightUserViewModel.SearchTermFlightCommand!.Execute(true)
-                    .Subscribe(filteredFlights => flights.AddRange(filteredFlights!));
-            }
-            else
-            {
-                flights.AddRange(flightVmDbProvider!.GetTopFlights(limitRows).Result);
-            }
-
+            bool hasSearching = flightUserViewModel.HasSearching && !filteredFlights.Equals(null);
+            
+            IEnumerable<Flight> flights = hasSearching ? filteredFlights! : flightVmDbProvider!.GetTopFlights(limitRows).Result;
+            
             IEnumerable<Aircraft> aircrafts = flightVmDbProvider!.GetAllAircrafts().Result;
             IEnumerable<Airline> airlines = flightVmDbProvider!.GetAllAirlines().Result;
             IEnumerable<Place> places = flightVmDbProvider!.GetAllPlaces().Result;
@@ -68,7 +61,7 @@ public class LoadFlightsCommand : ReactiveCommand<Unit,Unit>
     }
 
     public LoadFlightsCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider, IConnectionStateProvider connectionStateProvider) :
-        base(_ => Observable.Start(() => LoadDataAsync(flightUserViewModel, flightVmProvider, connectionStateProvider)),
+        base(filteredFlights => Observable.Start(() => LoadDataAsync(flightUserViewModel, flightVmProvider, connectionStateProvider, filteredFlights)),
             canExecute: Observable.Return(true))
     {
         
