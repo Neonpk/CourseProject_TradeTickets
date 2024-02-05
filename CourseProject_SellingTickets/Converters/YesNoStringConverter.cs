@@ -4,7 +4,7 @@ using Avalonia.Data.Converters;
 
 namespace CourseProject_SellingTickets.Converters;
 
-public class CancelFlightStringConverter : IValueConverter
+public class YesNoStringConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

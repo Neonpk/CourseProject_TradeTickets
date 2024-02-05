@@ -1,26 +1,17 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using Avalonia.Media;
-using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Converters;
 
-public class AuthConverterStateColor : IValueConverter
+public class CollectionHasItemsConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        switch ( (AuthStates)value! )
-        {
-            case AuthStates.Success:
-                return Brushes.Orange;
-            
-            case AuthStates.Failed:
-                return Brushes.Red;
-        }
-
-        return Brushes.White;
-
+        bool isNotEmpty = (bool)parameter!;
+        int count = (int)value!;
+        
+        return isNotEmpty ? count > 0 : count == 0;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

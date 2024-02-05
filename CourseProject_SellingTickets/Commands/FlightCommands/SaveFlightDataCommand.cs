@@ -4,12 +4,17 @@ using System.Reactive.Linq;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.ViewModels;
+using DynamicData.Binding;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Commands;
 
 public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
 {
+    private static IObservable<bool> CanExecuteCommand(Flight selectedFlight)
+    {
+        return Observable.Return(true);
+    }
     
     private static void SaveDataAsync( FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider )
     {
@@ -20,8 +25,8 @@ public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
         {
             Flight? selectedFlight = flightUserViewModel.SelectedFlight;
             var isSaved = flightVmProvider.CreateOrEditFlight(selectedFlight).Result;
-            
-            flightUserViewModel.LoadFlightsCommand?.Execute();
+
+            flightUserViewModel.SearchFlightDataCommand!.Execute().Subscribe();
         }
         catch (Exception e)
         {
@@ -32,8 +37,8 @@ public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
     }
 
     public SaveFlightDataCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider) :
-        base(_ => Observable.Start(() =>
-            SaveDataAsync(flightUserViewModel, flightVmProvider)), canExecute: Observable.Return(true))
+        base(_ => Observable.Start(() => SaveDataAsync(flightUserViewModel, flightVmProvider)), 
+            canExecute: CanExecuteCommand(flightUserViewModel.SelectedFlight))
     {
 
     }

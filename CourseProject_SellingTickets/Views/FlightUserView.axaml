@@ -12,12 +12,12 @@
     
     
     <UserControl.Resources>
-        <converter:CancelFlightStringConverter x:Key="CancelFlightStringConverter"/>
-        <converter:FlightStatusBackgroundConverter x:Key="FlightStatusColorConverter"/>
-        <converter:InvertBoolConverter x:Key="InvertBoolConverter"/>
-        <converter:CompletedFlightStringConverter x:Key="CompletedFlightStringConverter"/>
+        <converter:YesNoStringConverter x:Key="CancelFlightStringConverter"/>
+        <converter:InverseBooleanConverter x:Key="InvertBoolConverter"/>
+        <converter:FlightStatusConverter x:Key="FlightStatusConverter"/>
         <converter:InitializeDataErrorConverter x:Key="InitializeDataErrorConverter"/>
         <converter:BlockDataFieldConverter x:Key="BlockDataFieldConverter"/>
+        <converter:CollectionHasItemsConverter x:Key="CollectionHasItemsConverter"/>
         
         <s:Boolean x:Key="FalseValue">False</s:Boolean>
         <s:Boolean x:Key="TrueValue">True</s:Boolean>
@@ -36,7 +36,7 @@
                     <Button Content="Обновить" 
                             DockPanel.Dock="Right" HorizontalAlignment="Right"
                             Margin="5 0 0 0"
-                            Command="{Binding LoadFlightsCommand}"
+                            Command="{Binding SearchFlightDataCommand}"
                             />
                     
                     <Button Content="Добавить новый рейс" 
@@ -86,7 +86,7 @@
                         DockPanel.Dock="Left" Watermark="Введите поисковый запрос.">
                         
                         <TextBox.KeyBindings>
-                            <KeyBinding Gesture="Enter" Command="{Binding SearchTermFlightCommand}"></KeyBinding>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchFlightDataCommand}"></KeyBinding>
                         </TextBox.KeyBindings>
                         
                     </TextBox>
@@ -139,7 +139,7 @@
                                    >
                         
                         <NumericUpDown.KeyBindings>
-                            <KeyBinding Gesture="Enter" Command="{Binding LoadFlightsCommand}"/>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchFlightDataCommand}"/>
                         </NumericUpDown.KeyBindings>
                         
                     </NumericUpDown>
@@ -180,11 +180,15 @@
                                 VerticalAlignment="Center"
                                 Foreground="Orange"
                                 Text="Данные не найдены"
-                                IsVisible="{Binding HasFlights, Converter={StaticResource InvertBoolConverter}}"
+                                IsVisible="{Binding FlightItems.Count, 
+                                    Converter={StaticResource CollectionHasItemsConverter}, 
+                                    ConverterParameter={StaticResource FalseValue}}"
                                 TextWrapping="WrapWithOverflow"/>
                             
                             <ListBox 
-                                IsVisible="{Binding HasFlights}"
+                                IsVisible="{Binding FlightItems.Count, 
+                                    Converter={StaticResource CollectionHasItemsConverter}, 
+                                    ConverterParameter={StaticResource TrueValue}}"
                                 HorizontalAlignment="Stretch" 
                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                 ItemsSource="{Binding FlightItems, FallbackValue=1}"
@@ -201,7 +205,7 @@
                                            <Border CornerRadius="5">
                                                
                                                <Border.Background>
-                                                   <MultiBinding Converter="{StaticResource FlightStatusColorConverter}">
+                                                   <MultiBinding Converter="{StaticResource FlightStatusConverter}" ConverterParameter="Foreground">
                                                        <Binding Path="InProgress"/>
                                                        <Binding Path="IsCompleted"/>
                                                        <Binding Path="IsCanceled"/>
@@ -227,9 +231,10 @@
                                                           IsVisible="{Binding IsCanceled, Converter={StaticResource InvertBoolConverter}}"
                                                           >
                                                        <Label.Content>
-                                                           <MultiBinding Converter="{StaticResource CompletedFlightStringConverter}">
-                                                               <Binding Path="IsCompleted" />
+                                                           <MultiBinding Converter="{StaticResource FlightStatusConverter}" ConverterParameter="String">
                                                                <Binding Path="InProgress" />
+                                                               <Binding Path="IsCompleted" />
+                                                               <Binding Path="IsCanceled"/>
                                                            </MultiBinding>
                                                        </Label.Content>
                                                    </Label>

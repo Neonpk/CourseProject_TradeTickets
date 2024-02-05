@@ -13,7 +13,7 @@ using Exception = System.Exception;
 
 namespace CourseProject_SellingTickets.Commands;
 
-public class SearchTermFlightCommand : ReactiveCommand<Unit, IEnumerable<Flight>?>
+public class SearchFlightDataCommand : ReactiveCommand<Unit, IEnumerable<Flight>?>
 {
     private static IEnumerable<Flight> GetFlightDataByFilter(IFlightVmProvider flightVmProvider, string searchTerm, FlightSearchModes searchMode, int limitRows = 50)
     {
@@ -110,13 +110,13 @@ public class SearchTermFlightCommand : ReactiveCommand<Unit, IEnumerable<Flight>
         catch (Exception e)
         {
             flightUserViewModel.IsLoading = false;
-            flightUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
+            flightUserViewModel.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
 
             return null;
         }
     }
 
-    public SearchTermFlightCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider) : 
+    public SearchFlightDataCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider) : 
         base(_ => Observable.Start(() => SearchDataAsync(flightUserViewModel, flightVmProvider)), canExecute: Observable.Return(true))
     {
         

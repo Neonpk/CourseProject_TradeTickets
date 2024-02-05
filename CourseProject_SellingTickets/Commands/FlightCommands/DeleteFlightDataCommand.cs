@@ -21,7 +21,7 @@ public class DeleteFlightDataCommand : ReactiveCommand<Unit, Unit>
             
             bool isDeleted = flightProvider!.DeleteFlight(selectedFlight).Result;
 
-            flightUserViewModel.LoadFlightsCommand?.Execute();
+            flightUserViewModel.SearchFlightDataCommand?.Execute().Subscribe();
         }
         catch (Exception e)
         {

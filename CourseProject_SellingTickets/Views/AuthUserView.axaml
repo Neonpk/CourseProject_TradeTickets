@@ -9,8 +9,7 @@
              x:Class="CourseProject_SellingTickets.Views.AuthUserView">
     
     <UserControl.Resources>
-        <converters:AuthConverterStateColor x:Key="AuthConverterStateColor"/>
-        <converters:AuthConverterStateString x:Key="AuthConverterStateString"/>
+        <converters:AuthStateConverter x:Key="AuthStateConverter"/>
     </UserControl.Resources>
     
    <Grid>
@@ -66,10 +65,10 @@
                             Margin="0 10" FontSize="20">
                     </Button>
                     
-                    <Label Content="{Binding AuthState, Converter={StaticResource AuthConverterStateString}}" 
+                    <Label Content="{Binding AuthState, Converter={StaticResource AuthStateConverter}, ConverterParameter='String'}" 
                            FontSize="20" 
                            Margin="15 0 0 0"
-                           Foreground="{Binding AuthState, Converter={StaticResource AuthConverterStateColor}}"
+                           Foreground="{Binding AuthState, Converter={StaticResource AuthStateConverter}, ConverterParameter='Foreground'}"
                            VerticalAlignment="Center" />
                     
                 </StackPanel>

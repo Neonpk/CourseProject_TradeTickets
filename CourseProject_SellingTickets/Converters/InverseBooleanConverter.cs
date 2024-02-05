@@ -4,7 +4,7 @@ using Avalonia.Data.Converters;
 
 namespace CourseProject_SellingTickets.Converters;
 
-public class InvertBoolConverter : IValueConverter
+public class InverseBooleanConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

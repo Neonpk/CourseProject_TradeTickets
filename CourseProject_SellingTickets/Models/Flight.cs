@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using CourseProject_SellingTickets.Helpers;
+using CourseProject_SellingTickets.ViewModels;
 
 namespace CourseProject_SellingTickets.Models;
 
@@ -20,12 +22,10 @@ public class Flight
     public DateTime DepartureTime { get; set; }
     public Place DestinationPlace { get; set; }
     public DateTime ArrivalTime { get; set; }
-
     public Aircraft Aircraft { get; set;  }
     public int TotalPlace { get; }
     public int FreePlace { get; }
     public System.TimeSpan DurationTime { get; }
-
     public Airline Airline { get; set; }
     public bool IsCanceled { get; set; }
     
@@ -127,6 +127,4 @@ public class Flight
     {
         return base.GetHashCode();
     }
-    
-    
 }
