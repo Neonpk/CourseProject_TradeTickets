@@ -78,7 +78,7 @@ public class FlightUserViewModel : ViewModelBase
     public bool? IsLoadingEditMode { get => _isLoadingEditMode; set { _isLoadingEditMode = value; OnPropertyChanged(nameof(IsLoadingEditMode)); } }
     
     private string? _errorMessage;
-    public string? ErrorMessage { get => _errorMessage; set { _errorMessage = value; OnPropertyChanged(nameof(ErrorMessage)); OnPropertyChanged(nameof(HasErrorMessage)); } }
+    public string ErrorMessage { get => _errorMessage!; set { _errorMessage = value; OnPropertyChanged(nameof(ErrorMessage)); OnPropertyChanged(nameof(HasErrorMessage)); } }
     public bool HasErrorMessage => !string.IsNullOrEmpty(ErrorMessage);
     
     // => // ObservableCollection
@@ -92,22 +92,22 @@ public class FlightUserViewModel : ViewModelBase
     public ICommand HideSideBarCommand { get => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false); }
 
     private ReactiveCommand<IEnumerable<Flight>, Unit>? _loadFlightDataCommand;
-    public ReactiveCommand<IEnumerable<Flight>,Unit>? LoadFlightDataCommand { get => _loadFlightDataCommand ??= new LoadFlightDataCommand(this, _flightProvider!, _connectionStateProvider!); }
+    public ReactiveCommand<IEnumerable<Flight>,Unit> LoadFlightDataCommand { get => _loadFlightDataCommand ??= new LoadFlightDataCommand(this, _flightProvider!, _connectionStateProvider!); }
     
     private ReactiveCommand<bool,Unit>? _addEditDataCommand;
-    public ReactiveCommand<bool,Unit>? AddEditDataCommand { get => _addEditDataCommand ??= new AddEditFlightCommand(this!); }
+    public ReactiveCommand<bool,Unit> AddEditDataCommand { get => _addEditDataCommand ??= new AddEditFlightCommand(this!); }
 
     private ReactiveCommand<Unit, Unit>? _saveFlightDataCommand;
-    public ReactiveCommand<Unit, Unit>? SaveFlightDataCommand { get => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!); }
+    public ReactiveCommand<Unit, Unit> SaveFlightDataCommand { get => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!); }
 
     private ReactiveCommand<Unit, Unit>? _deleteFlightDataCommand;
     public ReactiveCommand<Unit, Unit>? DeleteFlightDataCommand { get => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider!); }
 
     private ReactiveCommand<Unit, Unit>? _sortFlightsCommand;
-    public ReactiveCommand<Unit, Unit>? SortFlightsCommand { get => _sortFlightsCommand ??= new SortFlightsCommand(this); } 
+    public ReactiveCommand<Unit, Unit> SortFlightsCommand { get => _sortFlightsCommand ??= new SortFlightsCommand(this); } 
     
     private ReactiveCommand<Unit, IEnumerable<Flight>?>? _searchFlightDataCommand;
-    public ReactiveCommand<Unit, IEnumerable<Flight>?>? SearchFlightDataCommand { get => _searchFlightDataCommand ??= new SearchFlightDataCommand(this, _flightProvider!)!; } 
+    public ReactiveCommand<Unit, IEnumerable<Flight>?> SearchFlightDataCommand { get => _searchFlightDataCommand ??= new SearchFlightDataCommand(this, _flightProvider!)!; } 
     
     // Constructor 
     public FlightUserViewModel(IFlightVmProvider? flightProvider, IConnectionStateProvider? connectionStateProvider)
@@ -117,7 +117,7 @@ public class FlightUserViewModel : ViewModelBase
         
         LoadFlightDataCommand!.Execute();
         SearchFlightDataCommand!.Subscribe(filteredFlights => LoadFlightDataCommand.Execute(filteredFlights!));
-            
+        
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortFlightsCommand!.Execute());
     }

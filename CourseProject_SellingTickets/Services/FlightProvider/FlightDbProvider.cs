@@ -163,12 +163,12 @@ public class FlightDbProvider : IFlightDbProvider
         {
             Id = flight!.Id,
             FlightNumber = flight.FlightNumber,
-            DeparturePlaceId = flight.DeparturePlace.Id,
+            DeparturePlaceId = flight.DeparturePlace.Id!.Value,
             DepartureTime = flight.DepartureTime,
-            DestinationPlaceId = flight.DestinationPlace.Id,
+            DestinationPlaceId = flight.DestinationPlace.Id!.Value,
             ArrivalTime = flight.ArrivalTime,
-            AircraftId = flight.Aircraft.Id,
-            AirlineId = flight.Airline.Id,
+            AircraftId = flight.Aircraft.Id!.Value,
+            AirlineId = flight.Airline.Id!.Value,
             IsCanceled = flight.IsCanceled
         };
     }

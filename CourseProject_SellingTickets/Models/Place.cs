@@ -2,13 +2,28 @@ using CourseProject_SellingTickets.ViewModels;
 
 namespace CourseProject_SellingTickets.Models;
 
-public class Place
+#pragma warning  disable
+public class Place : ObservableObject
 {
-    public System.Int64 Id { get; init; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public Photo Photo { get; set; }
+    //Columns 
 
+    private System.Int64? _id;
+    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+
+    private string _name;
+    public string Name { get => _name; set { _name = value; OnPropertyChanged(nameof(Name)); } }
+
+    private string _description;
+    public string Description { get => _description; set { _description = value; OnPropertyChanged(nameof(Description)); } }
+
+    private Photo _photo;
+    public Photo Photo { get => _photo; set { _photo = value; OnPropertyChanged(nameof(Photo)); } }
+
+    public Place()
+    {
+        Id = null;
+    }
+    
     public Place( System.Int64 id, string name, string description, Photo photo  )
     {
         Id = id;

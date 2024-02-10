@@ -15,5 +15,5 @@ public class AirlineDTO
     public System.Int64 Id { get; init; }
     
     [Column("name")]
-    public string? Name { get; init; }
+    public required string Name { get; init; }
 }

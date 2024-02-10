@@ -10,24 +10,41 @@ using CourseProject_SellingTickets.ViewModels;
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Flight
+public class Flight : ObservableObject
 {
-    // Private 
-
     // Main Model 
 
-    public System.Int64? Id { get; init; }
-    public System.Int64 FlightNumber { get; set; }
-    public Place DeparturePlace { get; set; }
-    public DateTime DepartureTime { get; set; }
-    public Place DestinationPlace { get; set; }
-    public DateTime ArrivalTime { get; set; }
-    public Aircraft Aircraft { get; set;  }
+    private System.Int64? _id;
+    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+    
+    private System.Int64 _flightNumber;
+    public System.Int64 FlightNumber { get => _flightNumber; set { _flightNumber = value; OnPropertyChanged(nameof(FlightNumber)); } }
+
+    private Place _departurePlace;
+    public Place DeparturePlace { get => _departurePlace; set { _departurePlace = value; OnPropertyChanged(nameof(DeparturePlace)); } }
+
+    private DateTime _departureTime;
+    public DateTime DepartureTime { get => _departureTime; set { _departureTime = value; OnPropertyChanged(nameof(DepartureTime)); } }
+
+    private Place _destinationPlace;
+    public Place DestinationPlace { get => _destinationPlace; set { _destinationPlace = value; OnPropertyChanged(nameof(DestinationPlace)); } }
+
+    private DateTime _arrivalTime;
+    public DateTime ArrivalTime { get => _arrivalTime; set { _arrivalTime = value; OnPropertyChanged(nameof(ArrivalTime)); } }
+
+    private Aircraft _aircraft;
+    public Aircraft Aircraft { get => _aircraft; set { _aircraft = value; OnPropertyChanged(nameof(Aircraft)); } }
+
+    private Airline _airline;
+    public Airline Airline { get => _airline; set { _airline = value; OnPropertyChanged(nameof(Airline)); } }
+
+    private bool _isCanceled;
+    public bool IsCanceled { get => _isCanceled; set { _isCanceled = value; OnPropertyChanged(nameof(IsCanceled)); } }
+
+    // Non Observable
     public int TotalPlace { get; }
     public int FreePlace { get; }
     public System.TimeSpan DurationTime { get; }
-    public Airline Airline { get; set; }
-    public bool IsCanceled { get; set; }
     
     // Custom Properties
 
@@ -45,8 +62,15 @@ public class Flight
     public bool InProgress { get => DateTime.Now > DepartureTime && DateTime.Now < ArrivalTime && !IsCanceled; }
 
     //Constructor
-    
-    public Flight() {}
+
+    public Flight()
+    {
+        Id = null;
+        DeparturePlace = new Place();
+        DestinationPlace = new Place();
+        Aircraft = new Aircraft();
+        Airline = new Airline();
+    }
     
     public Flight(FlightDTO flightDto)
     {

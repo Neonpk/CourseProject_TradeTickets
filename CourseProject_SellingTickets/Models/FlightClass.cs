@@ -1,16 +1,28 @@
+using CourseProject_SellingTickets.ViewModels;
+
 namespace CourseProject_SellingTickets.Models;
 
-public class FlightClass
+#pragma warning disable
+public class FlightClass : ObservableObject
 {
-    public System.Int64 Id { get; init; }
-    public string ClassName { get; set; }
+    // Main Model 
 
+    private System.Int64? _id;
+    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+
+    private string _className;
+    public string ClassName { get => _className; set { _className = value; OnPropertyChanged(nameof(ClassName)); } }
+
+    public FlightClass()
+    {
+        Id = null;
+    }
+    
     public FlightClass(System.Int64 id, string className)
     {
         Id = id;
         ClassName = className;
     }
-
     
     public override bool Equals(object? obj)
     {
@@ -27,5 +39,4 @@ public class FlightClass
     {
         return base.GetHashCode();
     }
-    
 }

@@ -27,8 +27,8 @@ public class LoadFlightDataCommand : ReactiveCommand<IEnumerable<Flight>, Unit>
         
         try
         {
-            bool hasSearching = flightUserViewModel.HasSearching && filteredFlights != null;
-            
+            bool hasSearching = flightUserViewModel.HasSearching;
+           
             IEnumerable<Flight> flights = hasSearching ? filteredFlights! : flightVmDbProvider.GetTopFlights(limitRows).Result;
             
             IEnumerable<Aircraft> aircrafts = flightVmDbProvider.GetAllAircrafts().Result;

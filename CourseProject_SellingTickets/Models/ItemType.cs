@@ -1,7 +1,15 @@
+using System.Runtime.Serialization;
+
 namespace CourseProject_SellingTickets.Models
 {
     // Types 
 
+    public enum PostgresStates
+    {
+        [EnumMember(Value = "23505")]
+        UniqueViolation
+    }
+    
     public enum FlightSortModes
     {
         FlightNumber = 0,

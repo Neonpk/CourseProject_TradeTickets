@@ -16,8 +16,8 @@ public class AddEditFlightCommand : ReactiveCommand<bool, Unit>
     private static void EditData(FlightUserViewModel flightUserViewModel, bool isNewInstance)
     {
         if (isNewInstance)
-            flightUserViewModel.SelectedFlight = new Flight { };
-        
+            flightUserViewModel.SelectedFlight = new Flight();
+
         flightUserViewModel.SideBarShowed = true;
     }
     

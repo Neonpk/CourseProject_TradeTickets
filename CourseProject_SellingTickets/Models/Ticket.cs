@@ -1,18 +1,41 @@
+using CourseProject_SellingTickets.ViewModels;
+
 namespace CourseProject_SellingTickets.Models;
 
-public class Ticket
+#pragma warning disable
+public class Ticket : ObservableObject
 {
     // Columns
-    
-    public System.Int64 Id { get; init;  }
-    public Flight Flight { get; set; }
-    public FlightClass FlightClass { get; set; }
-    public int PlaceNumber { get; set; }
-    public int Price { get; set; }
-    public Discount Discount { get; set; }
-    public bool IsSold { get; set; }
+
+    private System.Int64? _id;
+    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+
+    private Flight _flight;
+    public Flight Flight { get => _flight; set { _flight = value; OnPropertyChanged(nameof(Flight)); } }
+
+    private FlightClass _flightClass;
+    public FlightClass FlightClass { get => _flightClass; set { _flightClass = value; OnPropertyChanged(nameof(FlightClass)); } }
+
+    private int _placeNumber;
+    public int PlaceNumber { get => _placeNumber; set { _placeNumber = value; OnPropertyChanged(nameof(PlaceNumber)); } }
+
+    private int _price;
+    public int Price { get => _price; set { _price = value;  OnPropertyChanged(nameof(Price)); } }
+
+    private Discount _discount;
+    public Discount Discount { get => _discount; set { _discount = value; OnPropertyChanged(nameof(Discount)); } }
+
+    private bool _isSold;
+    public bool IsSold { get => _isSold; set { _isSold = value; OnPropertyChanged(nameof(IsSold)); } }
+
+    // Non Observable
     public float DiscountPrice { get; }
 
+    public Ticket()
+    {
+        Id = null;
+    }
+    
     public Ticket( System.Int64 id, Flight flight, FlightClass flightClass, 
         int placeNumber, int price, Discount discount, bool isSold, float discountPrice )
     {

@@ -92,18 +92,18 @@
                     </TextBox>
                 </DockPanel>
                  
-                <DockPanel Margin="10" DockPanel.Dock="Top">
+                <Grid Margin="10" DockPanel.Dock="Top" ColumnDefinitions="*,*" RowDefinitions="*,*">
                     
-                    <DockPanel.IsEnabled>
+                    <Grid.IsEnabled>
                         <MultiBinding Converter="{StaticResource BlockDataFieldConverter}">
                             <Binding Path="IsLoading"/>
                             <Binding Path="DatabaseHasConnected"/>
                         </MultiBinding>
-                    </DockPanel.IsEnabled>
+                    </Grid.IsEnabled>
                     
-                    <Label FontSize="15" Content="Применить сортировку" DockPanel.Dock="Top"/>
+                    <Label Grid.Column="0" Grid.Row="0" FontSize="15" Content="Применить сортировку" DockPanel.Dock="Top"/>
 
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
 
 
                         <ComboBox SelectedIndex="{Binding SelectedSortMode}">
@@ -128,10 +128,11 @@
 
                     </StackPanel>
                     
-                    <NumericUpDown Width="200"
+                    <Label Grid.Column="1" Grid.Row="0" Content="Лимит записей" HorizontalAlignment="Right" />
+                    
+                    <NumericUpDown Grid.Column="1" Grid.Row="1" Width="200"
                                    Value="{Binding LimitRows}"
                                    HorizontalAlignment="Right"
-                                   DockPanel.Dock="Right"
                                    Watermark="Лимит записей"
                                    Minimum="-1"
                                    ParsingNumberStyle="Integer"
@@ -144,7 +145,7 @@
                         
                     </NumericUpDown>
 
-                </DockPanel>
+                </Grid>
                 
                 <Grid>
                     
@@ -208,7 +209,7 @@
                                                    <MultiBinding Converter="{StaticResource FlightStatusConverter}" ConverterParameter="Foreground">
                                                        <Binding Path="InProgress"/>
                                                        <Binding Path="IsCompleted"/>
-                                                       <Binding Path="IsCanceled"/>
+                                                       <Binding Path="IsCanceled" Mode="OneTime"/>
                                                    </MultiBinding>
                                                </Border.Background>
                                                
@@ -216,31 +217,31 @@
                                                      ColumnDefinitions="Auto, Auto">
                                                    
                                                    <Label Grid.Row="0" Grid.ColumnSpan="2" 
-                                                          FontWeight="Bold" Content="{Binding Airline.Name}"/>
+                                                          FontWeight="Bold" Content="{Binding Airline.Name, Mode=OneTime}"/>
                                                    
                                                    <Label Grid.Row="1" Grid.Column="0" Content="Рейс №" FontSize="15" />
-                                                   <Label Grid.Row="1" Grid.Column="1" Content="{Binding FlightNumber}" FontWeight="Bold"/>
+                                                   <Label Grid.Row="1" Grid.Column="1" Content="{Binding FlightNumber, Mode=OneTime}" FontWeight="Bold"/>
                                                    
                                                    <Label Grid.Column="0" Grid.Row="2" Content="Отменен:"/>
-                                                   <Label Grid.Column="1" Grid.Row="2" FontWeight="Bold" Content="{Binding IsCanceled, Converter={StaticResource CancelFlightStringConverter}}" />
+                                                   <Label Grid.Column="1" Grid.Row="2" FontWeight="Bold" Content="{Binding IsCanceled, Mode=OneTime, Converter={StaticResource CancelFlightStringConverter}}" />
                                                    
                                                    <Label Grid.Column="0" Grid.Row="3" Content="Выполнен: " 
-                                                          IsVisible="{Binding IsCanceled, Converter={StaticResource InvertBoolConverter}}"/>
+                                                          IsVisible="{Binding IsCanceled, Mode=OneTime, Converter={StaticResource InvertBoolConverter}}"/>
                                                    <Label Grid.Column="1" Grid.Row="3" 
                                                           FontWeight="Bold"
-                                                          IsVisible="{Binding IsCanceled, Converter={StaticResource InvertBoolConverter}}"
+                                                          IsVisible="{Binding IsCanceled, Mode=OneTime, Converter={StaticResource InvertBoolConverter}}"
                                                           >
                                                        <Label.Content>
                                                            <MultiBinding Converter="{StaticResource FlightStatusConverter}" ConverterParameter="String">
-                                                               <Binding Path="InProgress" />
-                                                               <Binding Path="IsCompleted" />
-                                                               <Binding Path="IsCanceled"/>
+                                                               <Binding Path="InProgress" Mode="OneTime"  />
+                                                               <Binding Path="IsCompleted" Mode="OneTime" />
+                                                               <Binding Path="IsCanceled" Mode="OneTime"  />
                                                            </MultiBinding>
                                                        </Label.Content>
                                                    </Label>
                                                    
                                                    <Label Grid.Column="0" Grid.Row="4" Content="Время полета: "/>
-                                                   <Label Grid.Column="1" Grid.Row="4" FontWeight="Bold" Content="{Binding DurationTime, StringFormat={}{0:dd} дн. {0:hh} ч. {0:mm} м.}"/>
+                                                   <Label Grid.Column="1" Grid.Row="4" FontWeight="Bold" Content="{Binding DurationTime, Mode=OneTime, StringFormat={}{0:dd} дн. {0:hh} ч. {0:mm} м.}"/>
                                                   
                                                </Grid>
                                            </Border>
@@ -277,7 +278,7 @@
                                                        Margin="30"
                                                        >
                                                    <Border.Background>
-                                                       <ImageBrush Stretch="Fill" Source="{Binding AircraftImage^}"/>
+                                                       <ImageBrush Stretch="Fill" Source="{Binding AircraftImage^, Mode=OneTime}"/>
                                                    </Border.Background>
                                                </Border>
                                                
@@ -292,20 +293,20 @@
                                                    <Label Grid.Row="0" Grid.Column="0" Content="Самолет:" 
                                                           FontSize="15"/>
                                                    
-                                                   <Label Grid.Row="0" Grid.Column="1" Content="{Binding Aircraft.Model}" 
+                                                   <Label Grid.Row="0" Grid.Column="1" Content="{Binding Aircraft.Model, Mode=OneTime}" 
                                                           FontSize="15"
                                                           FontWeight="Bold"
                                                    />
                                                        
                                                    <Label Grid.Column="0" Grid.Row="1" Content="Всего мест:" 
                                                           FontSize="15"/>
-                                                   <Label Grid.Row="1" Grid.Column="1" Content="{Binding TotalPlace}" 
+                                                   <Label Grid.Row="1" Grid.Column="1" Content="{Binding TotalPlace, Mode=OneTime}" 
                                                           FontSize="15"
                                                           FontWeight="Bold"/>
                                                        
                                                    <Label Grid.Column="0" Grid.Row="2" Content="Мест свободно:" 
                                                           FontSize="15"/>
-                                                   <Label Grid.Row="2" Grid.Column="1" Content="{Binding FreePlace}"
+                                                   <Label Grid.Row="2" Grid.Column="1" Content="{Binding FreePlace, Mode=OneTime}"
                                                           FontSize="15"
                                                           FontWeight="Bold"/>
                                                        
@@ -330,7 +331,7 @@
                                                            Width="150" Height="100"
                                                            Margin="10">
                                                        <Border.Background>
-                                                           <ImageBrush Stretch="Fill" Source="{Binding DeparturePlaceImage^}"/>
+                                                           <ImageBrush Stretch="Fill" Source="{Binding DeparturePlaceImage^, Mode=OneTime}"/>
                                                        </Border.Background>
                                                    </Border>
                                                    
@@ -343,9 +344,9 @@
                                                            <Label Content="Пункт отправления:" HorizontalAlignment="Left"/>
                                                            
                                                            <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Left">
-                                                               <Run Text="{Binding DeparturePlace.Name}"/>
+                                                               <Run Text="{Binding DeparturePlace.Name, Mode=OneTime}"/>
                                                                <Run Text=" - "/>
-                                                               <Run Text="{Binding DeparturePlace.Description}"/>
+                                                               <Run Text="{Binding DeparturePlace.Description, Mode=OneTime}"/>
                                                            </TextBlock>
                                                            
                                                        </Grid>
@@ -353,7 +354,7 @@
                                                        <Grid ColumnDefinitions="*, *">
                                                            
                                                            <Label Content="Дата отправления:"/>
-                                                           <Label Grid.Column="1" Content="{Binding DepartureTime}"
+                                                           <Label Grid.Column="1" Content="{Binding DepartureTime, Mode=OneTime}"
                                                                   FontWeight="Bold"
                                                                   />
                                                        </Grid>
@@ -374,7 +375,7 @@
                                                            Width="150" Height="100"
                                                            Margin="10">
                                                        <Border.Background>
-                                                           <ImageBrush Stretch="Fill" Source="{Binding DestinationPlaceImage^}"/>
+                                                           <ImageBrush Stretch="Fill" Source="{Binding DestinationPlaceImage^, Mode=OneTime}"/>
                                                        </Border.Background>
                                                    </Border>
                                                    
@@ -387,16 +388,16 @@
                                                            <Label Content="Пункт прибытия:" HorizontalAlignment="Left"/>
                                                            
                                                            <TextBlock Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Left">
-                                                               <Run Text="{Binding DestinationPlace.Name}"/>
+                                                               <Run Text="{Binding DestinationPlace.Name, Mode=OneTime}"/>
                                                                <Run Text=" - "/>
-                                                               <Run Text="{Binding DestinationPlace.Description}"/>
+                                                               <Run Text="{Binding DestinationPlace.Description, Mode=OneTime}"/>
                                                            </TextBlock>
                                                        </Grid>
                                                        
                                                        <Grid ColumnDefinitions="*, *">
                                                            
                                                            <Label Content="Дата прибытия:"/>
-                                                           <Label Grid.Column="1" Content="{Binding ArrivalTime}"
+                                                           <Label Grid.Column="1" Content="{Binding ArrivalTime, Mode=OneTime}"
                                                                   FontWeight="Bold"
                                                                   />
                                                        </Grid>

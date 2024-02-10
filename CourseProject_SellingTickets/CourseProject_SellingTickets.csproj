@@ -39,9 +39,4 @@
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
-
-
-    <ItemGroup>
-      <Folder Include="Exceptions\FlightExceptions\" />
-    </ItemGroup>
 </Project>
