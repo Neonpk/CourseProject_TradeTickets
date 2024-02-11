@@ -13,6 +13,7 @@ using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using DynamicData;
 using DynamicData.Binding;
 using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
 
 namespace CourseProject_SellingTickets.ViewModels;
 
@@ -28,87 +29,88 @@ public class FlightUserViewModel : ViewModelBase
     // => // Combobox Collections
     
     private ObservableCollection<Aircraft>? _aircrafts;
-    public ObservableCollection<Aircraft> Aircrafts { get => _aircrafts ??= new ObservableCollection<Aircraft>(); }
-    
+    public ObservableCollection<Aircraft> Aircrafts => _aircrafts ??= new ObservableCollection<Aircraft>();
+
     private ObservableCollection<Airline>? _airlines;
-    public ObservableCollection<Airline> Airlines { get => _airlines ??= new ObservableCollection<Airline>(); }
-    
+    public ObservableCollection<Airline> Airlines => _airlines ??= new ObservableCollection<Airline>();
+
     private ObservableCollection<Place>? _places;
-    public ObservableCollection<Place> Places { get => _places ??= new ObservableCollection<Place>(); }
-    
+    public ObservableCollection<Place> Places => _places ??= new ObservableCollection<Place>();
+
     // => // Filters
         
     private bool _sideBarShowed;
-    public bool SideBarShowed { get => _sideBarShowed; set { _sideBarShowed = value; OnPropertyChanged(nameof(SideBarShowed)); } }
+    public bool SideBarShowed { get => _sideBarShowed; set => this.RaiseAndSetIfChanged(ref _sideBarShowed, value); }
 
     private string? _searchTerm;
-    public string? SearchTerm { get => _searchTerm; set { _searchTerm = value; OnPropertyChanged(nameof(SearchTerm)); OnPropertyChanged(nameof(HasSearching)); } }
+    public string? SearchTerm { get => _searchTerm; set { this.RaiseAndSetIfChanged(ref _searchTerm, value); this.RaisePropertyChanged(nameof(HasSearching)); } }
     public bool HasSearching => !string.IsNullOrEmpty(SearchTerm);
 
     private int _limitRows = 50;
-    public int LimitRows { get => _limitRows; set { _limitRows = value; OnPropertyChanged(nameof(LimitRows)); } }
+    public int LimitRows { get => _limitRows; set => this.RaiseAndSetIfChanged(ref _limitRows, value); }
     
     // => // Filters // => // Sort Modes
 
     private int _selectedSortValue;
-    public int SelectedSortValue { get => _selectedSortValue; set { _selectedSortValue = value; OnPropertyChanged(nameof(SelectedSortValue)); } }
+    public int SelectedSortValue { get => _selectedSortValue; set => this.RaiseAndSetIfChanged(ref _selectedSortValue, value); }
 
     private int _selectedSortMode;
-    public int SelectedSortMode { get => _selectedSortMode; set { _selectedSortMode = value; OnPropertyChanged(nameof(SelectedSortMode)); } }
+    public int SelectedSortMode { get => _selectedSortMode; set => this.RaiseAndSetIfChanged(ref _selectedSortMode, value); }
     
     // => // Filters => // Search Terms
 
     private int _selectedSearchMode;
-    public int SelectedSearchMode { get => _selectedSearchMode; set { _selectedSearchMode = value; OnPropertyChanged(nameof(SelectedSearchMode)); } }
+    public int SelectedSearchMode { get => _selectedSearchMode; set => this.RaiseAndSetIfChanged(ref _selectedSearchMode, value); }
 
     // Selected Model from the list
     
     private Flight? _selectedFlight;
-    public Flight SelectedFlight { get => _selectedFlight!; set { _selectedFlight = value; OnPropertyChanged(nameof(SelectedFlight)); } }
-    
+    public Flight SelectedFlight { get => _selectedFlight!; set => this.RaiseAndSetIfChanged(ref _selectedFlight, value); }
+
     // => // Loading page properties 
 
     private bool? _databaseHasConnected;
-    public bool? DatabaseHasConnected { get => _databaseHasConnected; set { _databaseHasConnected = value; OnPropertyChanged(nameof(DatabaseHasConnected)); } }
-    
+    public bool? DatabaseHasConnected { get => _databaseHasConnected; set => this.RaiseAndSetIfChanged(ref _databaseHasConnected, value); }
+
     private bool? _isLoading;
-    public bool? IsLoading { get => _isLoading; set { _isLoading = value; OnPropertyChanged(nameof(IsLoading)); } }
+    public bool? IsLoading { get => _isLoading; set => this.RaiseAndSetIfChanged(ref _isLoading, value); }
 
     private bool? _isLoadingEditMode;
-    public bool? IsLoadingEditMode { get => _isLoadingEditMode; set { _isLoadingEditMode = value; OnPropertyChanged(nameof(IsLoadingEditMode)); } }
-    
+    public bool? IsLoadingEditMode { get => _isLoadingEditMode; set => this.RaiseAndSetIfChanged(ref _isLoadingEditMode, value); }
+
     private string? _errorMessage;
-    public string ErrorMessage { get => _errorMessage!; set { _errorMessage = value; OnPropertyChanged(nameof(ErrorMessage)); OnPropertyChanged(nameof(HasErrorMessage)); } }
+    public string ErrorMessage { get => _errorMessage!; set { this.RaiseAndSetIfChanged(ref _errorMessage, value); this.RaisePropertyChanged(nameof(HasErrorMessage)); } }
+
     public bool HasErrorMessage => !string.IsNullOrEmpty(ErrorMessage);
     
     // => // ObservableCollection
     
     private ObservableCollection<Flight>? _flightsItems;
-    public ObservableCollection<Flight> FlightItems { get => _flightsItems ??= new ObservableCollection<Flight>(); }
-    
+    public ObservableCollection<Flight> FlightItems => _flightsItems ??= new ObservableCollection<Flight>();
+
     // Commands 
 
     private ICommand? _hideSideBarCommand;
-    public ICommand HideSideBarCommand { get => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false); }
+    public ICommand HideSideBarCommand => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false);
 
     private ReactiveCommand<IEnumerable<Flight>, Unit>? _loadFlightDataCommand;
-    public ReactiveCommand<IEnumerable<Flight>,Unit> LoadFlightDataCommand { get => _loadFlightDataCommand ??= new LoadFlightDataCommand(this, _flightProvider!, _connectionStateProvider!); }
-    
+    public ReactiveCommand<IEnumerable<Flight>,Unit> LoadFlightDataCommand => _loadFlightDataCommand ??= new LoadFlightDataCommand(this, _flightProvider!, _connectionStateProvider!);
+
     private ReactiveCommand<bool,Unit>? _addEditDataCommand;
-    public ReactiveCommand<bool,Unit> AddEditDataCommand { get => _addEditDataCommand ??= new AddEditFlightCommand(this!); }
+    public ReactiveCommand<bool,Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditFlightCommand(this!);
 
     private ReactiveCommand<Unit, Unit>? _saveFlightDataCommand;
-    public ReactiveCommand<Unit, Unit> SaveFlightDataCommand { get => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!); }
+    public ReactiveCommand<Unit, Unit> SaveFlightDataCommand => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!);
 
     private ReactiveCommand<Unit, Unit>? _deleteFlightDataCommand;
-    public ReactiveCommand<Unit, Unit>? DeleteFlightDataCommand { get => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider!); }
+    public ReactiveCommand<Unit, Unit>? DeleteFlightDataCommand => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider!);
 
     private ReactiveCommand<Unit, Unit>? _sortFlightsCommand;
-    public ReactiveCommand<Unit, Unit> SortFlightsCommand { get => _sortFlightsCommand ??= new SortFlightsCommand(this); } 
-    
+    public ReactiveCommand<Unit, Unit> SortFlightsCommand => _sortFlightsCommand ??= new SortFlightsCommand(this);
+
     private ReactiveCommand<Unit, IEnumerable<Flight>?>? _searchFlightDataCommand;
-    public ReactiveCommand<Unit, IEnumerable<Flight>?> SearchFlightDataCommand { get => _searchFlightDataCommand ??= new SearchFlightDataCommand(this, _flightProvider!)!; } 
-    
+    public ReactiveCommand<Unit, IEnumerable<Flight>?> SearchFlightDataCommand => _searchFlightDataCommand ??= new SearchFlightDataCommand(this, _flightProvider!)!;
+
     // Constructor 
     public FlightUserViewModel(IFlightVmProvider? flightProvider, IConnectionStateProvider? connectionStateProvider)
     {
@@ -120,5 +122,7 @@ public class FlightUserViewModel : ViewModelBase
         
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortFlightsCommand!.Execute());
+        
+        
     }
 }

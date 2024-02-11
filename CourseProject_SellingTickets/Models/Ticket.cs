@@ -1,32 +1,33 @@
 using CourseProject_SellingTickets.ViewModels;
+using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Ticket : ObservableObject
+public class Ticket : ViewModelBase
 {
     // Columns
 
     private System.Int64? _id;
-    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private Flight _flight;
-    public Flight Flight { get => _flight; set { _flight = value; OnPropertyChanged(nameof(Flight)); } }
+    public Flight Flight { get => _flight; set => this.RaiseAndSetIfChanged(ref _flight, value); }
 
     private FlightClass _flightClass;
-    public FlightClass FlightClass { get => _flightClass; set { _flightClass = value; OnPropertyChanged(nameof(FlightClass)); } }
+    public FlightClass FlightClass { get => _flightClass; set => this.RaiseAndSetIfChanged(ref _flightClass, value); }
 
     private int _placeNumber;
-    public int PlaceNumber { get => _placeNumber; set { _placeNumber = value; OnPropertyChanged(nameof(PlaceNumber)); } }
+    public int PlaceNumber { get => _placeNumber; set => this.RaiseAndSetIfChanged(ref _placeNumber, value); }
 
     private int _price;
-    public int Price { get => _price; set { _price = value;  OnPropertyChanged(nameof(Price)); } }
+    public int Price { get => _price; set => this.RaiseAndSetIfChanged(ref _price, value); }
 
     private Discount _discount;
-    public Discount Discount { get => _discount; set { _discount = value; OnPropertyChanged(nameof(Discount)); } }
+    public Discount Discount { get => _discount; set => this.RaiseAndSetIfChanged(ref _discount, value); }
 
     private bool _isSold;
-    public bool IsSold { get => _isSold; set { _isSold = value; OnPropertyChanged(nameof(IsSold)); } }
+    public bool IsSold { get => _isSold; set => this.RaiseAndSetIfChanged(ref _isSold, value); }
 
     // Non Observable
     public float DiscountPrice { get; }

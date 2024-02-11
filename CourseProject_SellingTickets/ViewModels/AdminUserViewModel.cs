@@ -10,12 +10,12 @@ public class AdminUserViewModel : ViewModelBase
     // Observable properties 
     
     private bool _showedSideBar = true;
-    public bool ShowedSideBar { get => _showedSideBar; set { _showedSideBar = value; OnPropertyChanged(nameof(ShowedSideBar)); } }
+    public bool ShowedSideBar { get => _showedSideBar; set => this.RaiseAndSetIfChanged(ref _showedSideBar, value); }
     
     // Services 
     
     private INavigationService? _navigationService;
-    public INavigationService? NavigationService { get =>  _navigationService; set { _navigationService = value; OnPropertyChanged(nameof(NavigationService)); } }
+    public INavigationService? NavigationService { get =>  _navigationService; set => this.RaiseAndSetIfChanged(ref _navigationService, value); }
     
     // Commands (Event handlers)
     
@@ -34,7 +34,7 @@ public class AdminUserViewModel : ViewModelBase
     }
     
     #pragma  warning disable
-    private ICommand _exitCommand;
+    private ICommand? _exitCommand;
     public ICommand ExitCommand
     {
         get

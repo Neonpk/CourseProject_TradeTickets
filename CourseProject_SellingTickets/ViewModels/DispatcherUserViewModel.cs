@@ -13,16 +13,25 @@ public class DispatcherUserViewModel : ViewModelBase
     // Observable properties 
     
     private bool _showedSideBar = true;
-    public bool ShowedSideBar { get => _showedSideBar; set { _showedSideBar = value; OnPropertyChanged(nameof(ShowedSideBar)); } }
+    public bool ShowedSideBar { get => _showedSideBar;
+        set { this.RaiseAndSetIfChanged(ref _showedSideBar, value); }
+    }
     
     // Services 
     
     private INavigationService? _navigationMainService;
-    public INavigationService? NavigationMainService { get => _navigationMainService; set { _navigationMainService = value; OnPropertyChanged(nameof(NavigationMainService)); } }
+    public INavigationService? NavigationMainService { get => _navigationMainService;
+        set { this.RaiseAndSetIfChanged(ref _navigationMainService, value); }
+    }
 
     private INavigationService? _navigationDispatcherService;
-    public INavigationService? NavigationDispatcherService { get => _navigationDispatcherService; set { _navigationDispatcherService = value; OnPropertyChanged(nameof(NavigationDispatcherService)); } }
-    
+
+    public INavigationService? NavigationDispatcherService
+    {
+        get => _navigationDispatcherService;
+        set { this.RaiseAndSetIfChanged(ref _navigationDispatcherService, value); }
+    }
+
     // Commands (Event handlers)
     
     #pragma warning disable

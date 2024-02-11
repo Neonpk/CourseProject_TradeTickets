@@ -23,12 +23,13 @@ public class MainWindowViewModel : ViewModelBase
     // Services
 
     private INavigationService? _navigationService;
-    public INavigationService? NavigationService { get { return _navigationService; } set { _navigationService = value; OnPropertyChanged(nameof(NavigationService)); } }
-    
+
+    public INavigationService? NavigationService { get => _navigationService; set => this.RaiseAndSetIfChanged(ref _navigationService, value); }
+
     // Observable properties 
 
     private bool _databaseHasConnected;
-    public bool DatabaseHasConnected { get => _databaseHasConnected; set { _databaseHasConnected = value; OnPropertyChanged(nameof(DatabaseHasConnected)); } }
+    public bool DatabaseHasConnected { get => _databaseHasConnected; set => this.RaiseAndSetIfChanged(ref _databaseHasConnected, value); }
     
     // Commands 
     

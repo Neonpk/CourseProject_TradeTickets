@@ -1,23 +1,24 @@
 using CourseProject_SellingTickets.ViewModels;
+using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Discount : ObservableObject
+public class Discount : ViewModelBase
 {
     //Columns
 
     private System.Int64? _id;
-    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private string _name;
-    public string Name { get => _name; set { _name = value; OnPropertyChanged(nameof(Name)); } }
+    public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
 
     private int _discountSize;
-    public int DiscountSize { get => _discountSize; set { _discountSize = value; OnPropertyChanged(nameof(DiscountSize)); } }
+    public int DiscountSize { get => _discountSize; set => this.RaiseAndSetIfChanged(ref _discountSize, value); }
 
     private string _description;
-    public string Description { get => _description; set { _description = value; OnPropertyChanged(nameof(Description)); } }
+    public string Description { get => _description; set => this.RaiseAndSetIfChanged(ref _description, value); }
 
     public Discount()
     {

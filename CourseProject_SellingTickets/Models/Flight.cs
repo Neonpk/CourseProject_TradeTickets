@@ -1,45 +1,47 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using CourseProject_SellingTickets.Helpers;
-using CourseProject_SellingTickets.ViewModels;
+using CourseProject_SellingTickets.ValidationRules;
+using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Contexts;
+using ReactiveUI.Validation.Helpers;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Flight : ObservableObject
+public class Flight : ReactiveObject, IValidatableViewModel
 {
     // Main Model 
 
     private System.Int64? _id;
-    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+    public System.Int64? Id { get => _id; set { _id = value; this.RaiseAndSetIfChanged(ref _id, value); } }
     
     private System.Int64 _flightNumber;
-    public System.Int64 FlightNumber { get => _flightNumber; set { _flightNumber = value; OnPropertyChanged(nameof(FlightNumber)); } }
+    public System.Int64 FlightNumber { get => _flightNumber; set => this.RaiseAndSetIfChanged(ref _flightNumber, value); }
 
     private Place _departurePlace;
-    public Place DeparturePlace { get => _departurePlace; set { _departurePlace = value; OnPropertyChanged(nameof(DeparturePlace)); } }
+    public Place DeparturePlace { get => _departurePlace; set => this.RaiseAndSetIfChanged(ref _departurePlace, value); }
 
     private DateTime _departureTime;
-    public DateTime DepartureTime { get => _departureTime; set { _departureTime = value; OnPropertyChanged(nameof(DepartureTime)); } }
+    public DateTime DepartureTime { get => _departureTime; set => this.RaiseAndSetIfChanged(ref _departureTime, value); }
 
     private Place _destinationPlace;
-    public Place DestinationPlace { get => _destinationPlace; set { _destinationPlace = value; OnPropertyChanged(nameof(DestinationPlace)); } }
+    public Place DestinationPlace { get => _destinationPlace; set => this.RaiseAndSetIfChanged(ref _destinationPlace, value); }
 
     private DateTime _arrivalTime;
-    public DateTime ArrivalTime { get => _arrivalTime; set { _arrivalTime = value; OnPropertyChanged(nameof(ArrivalTime)); } }
+    public DateTime ArrivalTime { get => _arrivalTime; set => this.RaiseAndSetIfChanged(ref _arrivalTime, value); }
 
     private Aircraft _aircraft;
-    public Aircraft Aircraft { get => _aircraft; set { _aircraft = value; OnPropertyChanged(nameof(Aircraft)); } }
+    public Aircraft Aircraft { get => _aircraft; set => this.RaiseAndSetIfChanged(ref _aircraft, value); }
 
     private Airline _airline;
-    public Airline Airline { get => _airline; set { _airline = value; OnPropertyChanged(nameof(Airline)); } }
+    public Airline Airline { get => _airline; set => this.RaiseAndSetIfChanged(ref _airline, value); }
 
     private bool _isCanceled;
-    public bool IsCanceled { get => _isCanceled; set { _isCanceled = value; OnPropertyChanged(nameof(IsCanceled)); } }
+    public bool IsCanceled { get => _isCanceled; set => this.RaiseAndSetIfChanged(ref _isCanceled, value); }
 
     // Non Observable
     public int TotalPlace { get; }
@@ -61,8 +63,14 @@ public class Flight : ObservableObject
     public bool IsCompleted { get => DateTime.Now > ArrivalTime && !IsCanceled; }
     public bool InProgress { get => DateTime.Now > DepartureTime && DateTime.Now < ArrivalTime && !IsCanceled; }
 
+    // Validations 
+    
+    private string _errorValidations;
+    public string ErrorValidations { get => _errorValidations; set => this.RaiseAndSetIfChanged(ref _errorValidations, value); }
+    public ValidationContext ValidationContext { get; } = new ValidationContext();
+    
     //Constructor
-
+    
     public Flight()
     {
         Id = null;
@@ -70,6 +78,9 @@ public class Flight : ObservableObject
         DestinationPlace = new Place();
         Aircraft = new Aircraft();
         Airline = new Airline();
+
+        // Validations 
+        this.InitializeValidationRules();
     }
     
     public Flight(FlightDTO flightDto)
@@ -123,6 +134,8 @@ public class Flight : ObservableObject
         FreePlace = flightDto.FreePlace;
         DurationTime = flightDto.DurationTime;
         IsCanceled = flightDto.IsCanceled;
+        
+        this.InitializeValidationRules();
     }
     
     

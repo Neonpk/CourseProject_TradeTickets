@@ -1,18 +1,19 @@
 using CourseProject_SellingTickets.ViewModels;
+using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Airline : ObservableObject
+public class Airline : ViewModelBase
 {
 
     // Main Model 
     
     private System.Int64? _id;
-    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
     
     private string _name;
-    public string Name { get => _name; set { _name = value; OnPropertyChanged(nameof(Name)); } }
+    public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
 
     public Airline()
     {

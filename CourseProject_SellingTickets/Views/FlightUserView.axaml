@@ -558,19 +558,24 @@
                                       />
                         </StackPanel>
                         
+                        <TextBlock Margin="0 0 0 10"
+                                   Foreground="OrangeRed" 
+                                   Text="{Binding SelectedFlight.ErrorValidations}" 
+                                   FontSize="12"
+                                   TextWrapping="WrapWithOverflow"
+                                   IsVisible="{Binding SelectedFlight.ValidationContext.IsValid, Converter={StaticResource InvertBoolConverter}}"/>
+                        
                         <Button Content="Сохранить" 
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
                                 IsEnabled="{Binding IsLoadingEditMode, Converter={StaticResource InvertBoolConverter}}"
                                 Command="{Binding SaveFlightDataCommand}"
-                                Margin="0 0 0 10"
-                                />
+                                Margin="0 0 0 10"/>
                         
-                        <TextBlock 
-                            Foreground="Red"
-                            Text="{Binding ErrorMessage}"
-                            TextWrapping="WrapWithOverflow"
-                            IsVisible="{Binding HasErrorMessage}"/>
+                        <TextBlock Foreground="Red"
+                                   Text="{Binding ErrorMessage}"
+                                   TextWrapping="WrapWithOverflow"
+                                   IsVisible="{Binding HasErrorMessage}"/>
                         
                     </StackPanel>
                 </ScrollViewer>

@@ -9,10 +9,10 @@ namespace CourseProject_SellingTickets.Extensions;
 public static class NpgsqlExceptionExtensions
 {
 
-    private static readonly Dictionary<Type, Dictionary<PostgresStates, string>> _vmsConstraintStates =
-        new Dictionary<Type, Dictionary<PostgresStates, string>>
+    private static readonly Dictionary<string, Dictionary<PostgresStates, string>> _vmsConstraintStates =
+        new()
         {
-            [typeof(FlightUserViewModel)] = new Dictionary<PostgresStates, string>
+            [nameof(FlightUserViewModel)] = new()
             {
                 [PostgresStates.UniqueViolation] = "Не удалось сохранить данные: (Рейс с таким номером уже существует.)"
             }
@@ -20,18 +20,18 @@ public static class NpgsqlExceptionExtensions
 
     // Postgres String States by Enums 
     
-    private static readonly string uniqueViolation = PostgresStates.UniqueViolation.ToStringByAttributes();
+    private static readonly string _uniqueViolation = PostgresStates.UniqueViolation.ToStringByAttributes();
     
-    public static string ErrorMessageFromCode(this NpgsqlException pgException, Type viewModel)
+    public static string ErrorMessageFromCode(this NpgsqlException pgException, string viewModelName)
     {
         switch (pgException.SqlState)
         {
-            case var value when value!.Equals(uniqueViolation):
+            case var value when value!.Equals(_uniqueViolation):
                 
-                if (!_vmsConstraintStates.ContainsKey(viewModel))
+                if (!_vmsConstraintStates.ContainsKey(viewModelName))
                     throw new Exception("Exception: viewModel not found");
                 
-                return _vmsConstraintStates[viewModel][PostgresStates.UniqueViolation];
+                return _vmsConstraintStates[viewModelName][PostgresStates.UniqueViolation];
             
             default:
                 return pgException.Message;

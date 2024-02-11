@@ -9,43 +9,16 @@ using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.ViewModels;
 using Npgsql;
 using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
 using AggregateException = System.AggregateException;
 
 namespace CourseProject_SellingTickets.Commands;
 
 public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
 {
-    private static bool ValidationRules(
-        DateTime departureTime, DateTime arrivalTime, 
-        long? departurePlaceId, long? destinationPlaceId, 
-        long? aircraftId, long? airlineId
-        )
-    {
-        if (!aircraftId.HasValue || !airlineId.HasValue)
-            return false;
-        
-        if (!departurePlaceId.HasValue || !destinationPlaceId.HasValue)
-            return false;
-        
-        if (departureTime.CompareTo(arrivalTime) >= 0)
-            return false;
-
-        if (departurePlaceId.Value.CompareTo(destinationPlaceId.Value) == 0)
-            return false;
-
-        return true;
-    }
-    
     private static IObservable<bool> CanExecuteCommand(FlightUserViewModel flightVm)
     {
-        return flightVm.WhenAnyValue(
-            x => x.SelectedFlight.DepartureTime,
-            x => x.SelectedFlight.ArrivalTime,
-            x => x.SelectedFlight.DeparturePlace.Id,
-            x => x.SelectedFlight.DestinationPlace.Id,
-            x => x.SelectedFlight.Aircraft.Id,
-            x => x.SelectedFlight.Airline.Id,
-            ValidationRules).DistinctUntilChanged();
+        return flightVm.WhenAnyValue(x => x.SelectedFlight.ValidationContext.IsValid);
     }
     
     private static void SaveDataAsync( FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider )
@@ -62,7 +35,7 @@ public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
         }
         catch (AggregateException e) when ( e.InnerException?.InnerException is NpgsqlException pgException )
         {
-            flightUserViewModel.ErrorMessage = pgException.ErrorMessageFromCode(typeof(FlightUserViewModel));
+            flightUserViewModel.ErrorMessage = pgException.ErrorMessageFromCode(nameof(FlightUserViewModel));
         }
         catch (Exception e)
         {
@@ -74,8 +47,7 @@ public class SaveFlightDataCommand : ReactiveCommand<Unit, Unit>
 
     public SaveFlightDataCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider) :
         base(_ => Observable.Start(() => SaveDataAsync(flightUserViewModel, flightVmProvider)), 
-            canExecute: CanExecuteCommand(flightUserViewModel).ObserveOn(AvaloniaScheduler.Instance))
+            canExecute: CanExecuteCommand(flightUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
     {
-
     }
 }

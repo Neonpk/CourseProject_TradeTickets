@@ -14,31 +14,21 @@ namespace CourseProject_SellingTickets.ViewModels;
 
 public class AuthUserViewModel : ViewModelBase
 {
-     // Static Properties;
-    public Bitmap? ImageSource { get; } = ImageHelper.LoadFromResource(new Uri("avares://CourseProject_SellingTickets/Assets/aircraft-logo.png"));
-
-    // Dynamic Properties
+    // Dynamic variables
 
     private OperatingModes _operatingMode = OperatingModes.DispatcherMode;
     
     // Dynamic binding properties
 
     private AuthStates _authState;
-    public AuthStates AuthState { get => _authState; set { _authState = value; OnPropertyChanged(nameof(AuthState)); } }
+    public AuthStates AuthState { get => _authState; set => this.RaiseAndSetIfChanged(ref _authState, value); }
+
     public string Password { get; set; } = "";
     
     // Services 
     
     private INavigationService? _navigationService;
-    public INavigationService? NavigationService
-    {
-        get { return _navigationService; }
-        set
-        {
-            _navigationService = value;
-            OnPropertyChanged(nameof(NavigationService));
-        }
-    }
+    public INavigationService? NavigationService { get => _navigationService; set => this.RaiseAndSetIfChanged(ref _navigationService, value); }
     
     // Constructor
 

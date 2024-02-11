@@ -1,17 +1,18 @@
 using CourseProject_SellingTickets.ViewModels;
+using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class FlightClass : ObservableObject
+public class FlightClass : ViewModelBase
 {
     // Main Model 
 
     private System.Int64? _id;
-    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private string _className;
-    public string ClassName { get => _className; set { _className = value; OnPropertyChanged(nameof(ClassName)); } }
+    public string ClassName { get => _className; set => this.RaiseAndSetIfChanged(ref _className, value); }
 
     public FlightClass()
     {

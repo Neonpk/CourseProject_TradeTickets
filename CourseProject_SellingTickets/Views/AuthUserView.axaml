@@ -78,7 +78,7 @@
             
         </HeaderedContentControl>
        
-        <Image  Source="{Binding ImageSource}"
+        <Image  Source="/Assets/aircraft-logo.png"
                Margin="30" Height="250" Width="250"/>
         
    </Grid>

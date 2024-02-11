@@ -1,27 +1,27 @@
 using System;
 using CourseProject_SellingTickets.ViewModels;
+using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Services;
 
 public interface INavigationService
 {
-    ObservableObject? CurrentView { get; }
-    void NavigateTo<T>() where T : ObservableObject;
+    ViewModelBase? CurrentView { get; }
+    void NavigateTo<T>() where T : ViewModelBase;
 
 }
 
-public class NavigationService : ObservableObject, INavigationService
+public class NavigationService : ViewModelBase, INavigationService
 {
     private readonly Func<Type, ViewModelBase?>? _viewModelFactory;
     
-    private ObservableObject? _currentView;
-    public ObservableObject? CurrentView
+    private ViewModelBase? _currentView;
+    public ViewModelBase? CurrentView
     {
         get => _currentView;
         private set
         {
-            _currentView = value;
-            OnPropertyChanged(nameof(CurrentView));
+            this.RaiseAndSetIfChanged(ref _currentView, value);
         }
     }
 
@@ -30,9 +30,9 @@ public class NavigationService : ObservableObject, INavigationService
         _viewModelFactory = viewModelFactory;
     }
 
-    public void NavigateTo<TViewModel>() where TViewModel : ObservableObject
+    public void NavigateTo<TViewModel>() where TViewModel : ViewModelBase
     {
-        ObservableObject? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
+        ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
         CurrentView = viewModel;
     }
 }

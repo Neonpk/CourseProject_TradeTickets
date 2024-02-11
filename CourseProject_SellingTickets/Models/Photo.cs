@@ -1,23 +1,24 @@
 using CourseProject_SellingTickets.ViewModels;
+using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Photo : ObservableObject
+public class Photo : ViewModelBase
 {
     // Main Model
 
     private System.Int64? _id;
-    public System.Int64? Id { get => _id; set { _id = value; OnPropertyChanged(nameof(Id)); } }
+    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private string _name;
-    public string Name { get => _name; set { _name = value; OnPropertyChanged(nameof(Name)); } }
+    public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
 
     private string _urlPath;
-    public string UrlPath { get => _urlPath; set { _urlPath = value; OnPropertyChanged(nameof(UrlPath)); } }
+    public string UrlPath { get => _urlPath; set => this.RaiseAndSetIfChanged(ref _urlPath, value); }
 
     private bool _isDeleted;
-    public bool IsDeleted { get => _isDeleted; set { _isDeleted = value; OnPropertyChanged(nameof(IsDeleted)); } }
+    public bool IsDeleted { get => _isDeleted; set => this.RaiseAndSetIfChanged(ref _isDeleted, value); }
 
     public Photo()
     {
