@@ -10,16 +10,16 @@ public interface IConnectionStateProvider
 
 public class ConnectionStateProvider : IConnectionStateProvider
 {
-    private ITradeTicketsDbContextFactory? _dbContextFactory;
+    private ITradeTicketsDbContextFactory _dbContextFactory;
     
-    public ConnectionStateProvider(ITradeTicketsDbContextFactory? dbContextFactory)
+    public ConnectionStateProvider(ITradeTicketsDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
 
     public async Task<bool> IsConnected()
     {
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             return await context.Database.CanConnectAsync();
         }

@@ -1,3 +1,4 @@
+using System;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 
@@ -8,8 +9,8 @@ public class Place : ViewModelBase
 {
     //Columns 
 
-    private System.Int64? _id;
-    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
+    private System.Int64 _id;
+    public System.Int64 Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private string _name;
     public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
@@ -22,10 +23,13 @@ public class Place : ViewModelBase
 
     public Place()
     {
-        Id = null;
+        Id = -1;
+        Name = string.Empty;
+        Description = string.Empty;
+        Photo = new Photo();
     }
     
-    public Place( System.Int64 id, string name, string description, Photo photo  )
+    public Place( long id, string name, string description, Photo photo  )
     {
         Id = id;
         Name = name;

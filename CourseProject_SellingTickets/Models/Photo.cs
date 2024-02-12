@@ -1,3 +1,4 @@
+using System;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 
@@ -8,8 +9,8 @@ public class Photo : ViewModelBase
 {
     // Main Model
 
-    private System.Int64? _id;
-    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
+    private System.Int64 _id;
+    public System.Int64 Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private string _name;
     public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
@@ -22,11 +23,13 @@ public class Photo : ViewModelBase
 
     public Photo()
     {
-        Id = null;
+        Name = String.Empty;
+        UrlPath = String.Empty;
     }
     
-    public Photo(string name, string urlPath, bool isDeleted)
+    public Photo(long id, string name, string urlPath, bool isDeleted)
     {
+        Id = id;
         Name = name;
         UrlPath = urlPath;
         IsDeleted = isDeleted;

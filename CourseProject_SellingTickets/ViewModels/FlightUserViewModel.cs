@@ -122,7 +122,5 @@ public class FlightUserViewModel : ViewModelBase
         
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortFlightsCommand!.Execute());
-        
-        
     }
 }

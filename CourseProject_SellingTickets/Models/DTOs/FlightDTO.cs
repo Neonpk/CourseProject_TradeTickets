@@ -9,11 +9,11 @@ public class FlightDTO
 {
 
     // Columns 
-    
+
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("id")]
-    public System.Int64? Id { get; init; }
+    public System.Int64 Id { get; init; }
     
     [Column("flight_number")]
     public System.Int64 FlightNumber { get; init; }
@@ -28,7 +28,7 @@ public class FlightDTO
     [Column("destination_place")]
     [ForeignKey("DestinationPlace")]
     public System.Int64 DestinationPlaceId { get; init; }
-    
+        
     [Column("arrival_time")]
     public System.DateTime ArrivalTime { get; init; }
     

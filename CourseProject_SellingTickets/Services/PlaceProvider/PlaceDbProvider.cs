@@ -10,19 +10,16 @@ namespace CourseProject_SellingTickets.Services.PlaceProvider;
 
 public class PlaceDbProvider : IPlaceDbProvider
 {
-    private readonly ITradeTicketsDbContextFactory? _dbContextFactory;
+    private readonly ITradeTicketsDbContextFactory _dbContextFactory;
 
-    public PlaceDbProvider(ITradeTicketsDbContextFactory? dbContextFactory)
+    public PlaceDbProvider(ITradeTicketsDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
     
     public async Task<IEnumerable<Place>> GetAllPlaces()
     {
-        if (_dbContextFactory!.Equals(null))
-            new Exception("DbContext not existing.");
-        
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<PlaceDTO> placeDtos = await context.Places.
                 AsNoTracking().
@@ -36,7 +33,7 @@ public class PlaceDbProvider : IPlaceDbProvider
     private static Place ToPlace(PlaceDTO dto)
     {
         return new Place( dto.Id, dto.Name, dto.Description, 
-            new Photo( dto.Photo.Name, dto.Photo.UrlPath, dto.Photo.IsDeleted ));
+            new Photo( dto.Photo.Id, dto.Photo.Name, dto.Photo.UrlPath, dto.Photo.IsDeleted ));
     } 
     
 }

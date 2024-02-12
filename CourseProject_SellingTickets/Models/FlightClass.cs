@@ -1,3 +1,4 @@
+using System;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 
@@ -8,15 +9,15 @@ public class FlightClass : ViewModelBase
 {
     // Main Model 
 
-    private System.Int64? _id;
-    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
+    private System.Int64 _id;
+    public System.Int64 Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private string _className;
     public string ClassName { get => _className; set => this.RaiseAndSetIfChanged(ref _className, value); }
 
     public FlightClass()
     {
-        Id = null;
+        ClassName = String.Empty;
     }
     
     public FlightClass(System.Int64 id, string className)

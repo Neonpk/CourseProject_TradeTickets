@@ -8,8 +8,8 @@ public class Ticket : ViewModelBase
 {
     // Columns
 
-    private System.Int64? _id;
-    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
+    private System.Int64 _id;
+    public System.Int64 Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private Flight _flight;
     public Flight Flight { get => _flight; set => this.RaiseAndSetIfChanged(ref _flight, value); }
@@ -34,10 +34,12 @@ public class Ticket : ViewModelBase
 
     public Ticket()
     {
-        Id = null;
+        Flight = new Flight();
+        FlightClass = new FlightClass();
+        Discount = new Discount();
     }
     
-    public Ticket( System.Int64 id, Flight flight, FlightClass flightClass, 
+    public Ticket( long id, Flight flight, FlightClass flightClass, 
         int placeNumber, int price, Discount discount, bool isSold, float discountPrice )
     {
         Id = id;

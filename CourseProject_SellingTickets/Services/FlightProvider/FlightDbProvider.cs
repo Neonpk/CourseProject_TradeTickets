@@ -9,25 +9,23 @@ using CourseProject_SellingTickets.Extensions;
 using CourseProject_SellingTickets.Models;
 using DynamicData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace CourseProject_SellingTickets.Services.TradeTicketsProvider;
 
 public class FlightDbProvider : IFlightDbProvider
 {
-    private readonly ITradeTicketsDbContextFactory? _dbContextFactory;
+    private readonly ITradeTicketsDbContextFactory _dbContextFactory;
     
-    public FlightDbProvider(ITradeTicketsDbContextFactory? dbContextFactory)
+    public FlightDbProvider(ITradeTicketsDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
     
     public async Task<IEnumerable<Flight>> GetAllFlights()
     {
-        if (_dbContextFactory!.Equals(null))
-            new Exception("DbContext not existing.");
-        
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 AsNoTracking().
@@ -46,10 +44,7 @@ public class FlightDbProvider : IFlightDbProvider
 
     public async Task<IEnumerable<Flight>> GetTopFlights(int topRows = 50)
     {
-        if (_dbContextFactory!.Equals(null))
-            new Exception("DbContext not existing.");
-
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 OrderByDescending(x => x.Id).
@@ -70,12 +65,8 @@ public class FlightDbProvider : IFlightDbProvider
     
     public async Task<IEnumerable<Flight>> GetFlightsByFilter( Expression<Func<FlightDTO, bool>> searchFunc, int topRows = -1)
     {
-        if (_dbContextFactory!.Equals(null))
-            new Exception("DbContext not existing.");
-
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
-            
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 Where(searchFunc).
                 OrderByDescending( x => x.Id ).
@@ -97,10 +88,7 @@ public class FlightDbProvider : IFlightDbProvider
     public async Task<IEnumerable<Flight>> GetFlightsByFilterSort<TKeySelector>
         ( Expression<Func<FlightDTO, bool>> searchFunc, Expression<Func<FlightDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1)
     {
-        if (_dbContextFactory!.Equals(null))
-            new Exception("DbContext not existing.");
-
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 Where(searchFunc).
@@ -120,18 +108,13 @@ public class FlightDbProvider : IFlightDbProvider
         }
     }
     
-    public async Task<bool> CreateOrEditFlight(Flight? flight)
+    public async Task<bool> CreateOrEditFlight(Flight flight)
     {
-        
-        if (_dbContextFactory!.Equals(null))
-            new Exception("DbContext not existing.");
-        
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
-            
-            FlightDTO flightDto = ToFlightDTO(flight);
-            
-            if (flightDto.Id.Equals(null))
+            FlightDTO flightDto = ToFlightDto(flight);
+
+            if (flightDto.Id.Equals(default))
                 context.Flights.Add(flightDto);
             else
                 context.Flights.Attach(flightDto).State = EntityState.Modified;
@@ -140,12 +123,11 @@ public class FlightDbProvider : IFlightDbProvider
         }
     }
 
-    public async Task<bool> DeleteFlight(Flight? flight)
+    public async Task<bool> DeleteFlight(Flight flight)
     {
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
-            
-            FlightDTO flightDto = ToFlightDTO(flight);
+            FlightDTO flightDto = ToFlightDto(flight);
             
             context.Flights.Remove(flightDto);
             return await context.SaveChangesAsync() > 0;
@@ -157,18 +139,18 @@ public class FlightDbProvider : IFlightDbProvider
         return new Flight( dto );
     }
     
-    private static FlightDTO ToFlightDTO(Flight? flight)
+    private static FlightDTO ToFlightDto(Flight flight)
     {
         return new FlightDTO
         {
-            Id = flight!.Id,
+            Id = flight.Id,
             FlightNumber = flight.FlightNumber,
-            DeparturePlaceId = flight.DeparturePlace.Id!.Value,
+            DeparturePlaceId = flight.DeparturePlace.Id,
             DepartureTime = flight.DepartureTime,
-            DestinationPlaceId = flight.DestinationPlace.Id!.Value,
+            DestinationPlaceId = flight.DestinationPlace.Id,
             ArrivalTime = flight.ArrivalTime,
-            AircraftId = flight.Aircraft.Id!.Value,
-            AirlineId = flight.Airline.Id!.Value,
+            AircraftId = flight.Aircraft.Id,
+            AirlineId = flight.Airline.Id,
             IsCanceled = flight.IsCanceled
         };
     }

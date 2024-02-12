@@ -10,19 +10,16 @@ namespace CourseProject_SellingTickets.Services.AircraftProvider;
 
 public class AircraftDbProvider : IAircraftDbProvider
 {
-    private readonly ITradeTicketsDbContextFactory? _dbContextFactory;
+    private readonly ITradeTicketsDbContextFactory _dbContextFactory;
 
-    public AircraftDbProvider(ITradeTicketsDbContextFactory? dbContextFactory)
+    public AircraftDbProvider(ITradeTicketsDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
     
     public async Task<IEnumerable<Aircraft>> GetAllAircrafts()
     {
-        if (_dbContextFactory!.Equals(null))
-            new Exception("DbContext not existing.");
-        
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<AircraftDTO> aircraftDtos = await context.Aircrafts.
                 AsNoTracking().
@@ -36,7 +33,7 @@ public class AircraftDbProvider : IAircraftDbProvider
     private static Aircraft ToAircraft(AircraftDTO dto)
     {
         return new Aircraft( dto.Id, dto.Model, dto.Type, dto.TotalPlace,
-            new Photo(dto!.Photo!.Name, dto.Photo.UrlPath, dto.Photo.IsDeleted) );
+            new Photo(dto!.Photo!.Id, dto!.Photo!.Name, dto.Photo.UrlPath, dto.Photo.IsDeleted) );
     }
     
 }

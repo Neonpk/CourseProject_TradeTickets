@@ -18,6 +18,6 @@ public interface IFlightVmProvider
     public Task<IEnumerable<Aircraft>> GetAllAircrafts();
     public Task<IEnumerable<Place>> GetAllPlaces();
 
-    public Task<bool> CreateOrEditFlight(Flight? flight);
-    public Task<bool> DeleteFlight(Flight? flight);
+    public Task<bool> CreateOrEditFlight(Flight flight);
+    public Task<bool> DeleteFlight(Flight flight);
 }

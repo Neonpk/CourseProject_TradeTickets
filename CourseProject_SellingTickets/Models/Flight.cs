@@ -16,8 +16,8 @@ public class Flight : ReactiveObject, IValidatableViewModel
 {
     // Main Model 
 
-    private System.Int64? _id;
-    public System.Int64? Id { get => _id; set { _id = value; this.RaiseAndSetIfChanged(ref _id, value); } }
+    private System.Int64 _id;
+    public System.Int64 Id { get => _id; set { _id = value; this.RaiseAndSetIfChanged(ref _id, value); } }
     
     private System.Int64 _flightNumber;
     public System.Int64 FlightNumber { get => _flightNumber; set => this.RaiseAndSetIfChanged(ref _flightNumber, value); }
@@ -73,7 +73,6 @@ public class Flight : ReactiveObject, IValidatableViewModel
     
     public Flight()
     {
-        Id = null;
         DeparturePlace = new Place();
         DestinationPlace = new Place();
         Aircraft = new Aircraft();
@@ -100,7 +99,7 @@ public class Flight : ReactiveObject, IValidatableViewModel
             flightDto.DeparturePlaceId,
             flightDto.DeparturePlace.Name, 
             flightDto.DeparturePlace.Description, 
-            new Photo(flightDto.DeparturePlace.Photo.Name, flightDto.DeparturePlace.Photo.UrlPath, flightDto.DeparturePlace.Photo.IsDeleted)
+            new Photo(flightDto.DeparturePlace.Photo.Id, flightDto.DeparturePlace.Photo.Name, flightDto.DeparturePlace.Photo.UrlPath, flightDto.DeparturePlace.Photo.IsDeleted)
         );
 
         DepartureTime = flightDto.DepartureTime;
@@ -110,7 +109,7 @@ public class Flight : ReactiveObject, IValidatableViewModel
             flightDto.DestinationPlaceId,
             flightDto.DestinationPlace.Name, 
             flightDto.DestinationPlace.Description, 
-            new Photo(flightDto.DestinationPlace.Photo.Name, flightDto.DestinationPlace.Photo.UrlPath, flightDto.DestinationPlace.Photo.IsDeleted)
+            new Photo(flightDto.DestinationPlace.Photo.Id, flightDto.DestinationPlace.Photo.Name, flightDto.DestinationPlace.Photo.UrlPath, flightDto.DestinationPlace.Photo.IsDeleted)
         );
 
         ArrivalTime = flightDto.ArrivalTime;
@@ -121,7 +120,7 @@ public class Flight : ReactiveObject, IValidatableViewModel
             flightDto.Aircraft.Model,
             flightDto.Aircraft.Type,
             flightDto.Aircraft.TotalPlace,
-            new Photo( flightDto.Aircraft.Photo.Name, flightDto.Aircraft.Photo.UrlPath, flightDto.Aircraft.Photo.IsDeleted )
+            new Photo(flightDto.Aircraft.Photo.Id, flightDto.Aircraft.Photo.Name, flightDto.Aircraft.Photo.UrlPath, flightDto.Aircraft.Photo.IsDeleted )
         );
         
         // reference 
@@ -151,7 +150,7 @@ public class Flight : ReactiveObject, IValidatableViewModel
                    ArrivalTime.Equals(o.ArrivalTime) &&
                    Aircraft.Equals(o.Aircraft) &&
                    TotalPlace.Equals(o.TotalPlace) &&
-                   o.FreePlace.Equals(o.FreePlace) &&
+                   FreePlace.Equals(o.FreePlace) &&
                    DurationTime.Equals(o.DurationTime) &&
                    Airline.Equals(o.Airline) &&
                    IsCanceled.Equals(o.IsCanceled);

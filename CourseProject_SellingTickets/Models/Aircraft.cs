@@ -10,8 +10,8 @@ public class Aircraft : ViewModelBase
 {
     // Main Model
 
-    private System.Int64? _id;
-    public System.Int64? Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
+    private System.Int64 _id;
+    public System.Int64 Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
     
     private string _model;
     public string Model { get => _model; set => this.RaiseAndSetIfChanged(ref _model, value); }
@@ -27,7 +27,9 @@ public class Aircraft : ViewModelBase
 
     public Aircraft()
     {
-        Id = null;
+        Model = String.Empty;
+        Type = String.Empty;
+        Photo = new Photo();
     }
     
     public Aircraft(System.Int64 id, string model, string type, int totalPlace, Photo photo)

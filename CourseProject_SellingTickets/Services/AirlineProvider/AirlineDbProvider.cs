@@ -10,19 +10,16 @@ namespace CourseProject_SellingTickets.Services.AirlineProvider;
 
 public class AirlineDbProvider : IAirlineDbProvider
 {
-    private readonly ITradeTicketsDbContextFactory? _dbContextFactory;
+    private readonly ITradeTicketsDbContextFactory _dbContextFactory;
     
-    public AirlineDbProvider(ITradeTicketsDbContextFactory? dbContextFactory)
+    public AirlineDbProvider(ITradeTicketsDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
     }
     
     public async Task<IEnumerable<Airline>> GetAllAirlines()
     {
-        if (_dbContextFactory!.Equals(null))
-            new Exception("DbContext not existing.");
-        
-        using (TradeTicketsDbContext context = _dbContextFactory!.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<AirlineDTO> airlineDtos = await context.Airlines.ToListAsync();
 

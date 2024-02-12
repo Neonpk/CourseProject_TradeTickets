@@ -21,5 +21,4 @@ public class TradeTicketsDbContext : DbContext
     // Postgres DateTime (timestamp) Format 
     [DbFunction("to_char", "")]
     public static string DateTimeFormatToString(DateTime value, string format) => value.ToString(format);
-    
 }
