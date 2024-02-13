@@ -20,15 +20,15 @@ public static class FlightRulesExtensions
             self.WhenAnyValue(
                 x => x.DeparturePlace.Id,
                 x => x.DestinationPlace.Id,
-                (departurePlaceId, destinationPlaceId) => !departurePlaceId.Equals(-1) && !destinationPlaceId.Equals(-1) 
-                    && departurePlaceId.CompareTo(destinationPlaceId) != 0 );
+                (departurePlaceId, destinationPlaceId) => !departurePlaceId.Equals(default) && !destinationPlaceId.Equals(default)
+            && departurePlaceId.CompareTo(destinationPlaceId) != 0 );
         
         self.ValidationRule(timeDatesObservable, "[=>] Время прибытия не может быть раньше времени отправления.");
         self.ValidationRule(placesObservable, "[=>] Места не должны совпадать.");
-        self.ValidationRule(x => x.Aircraft.Id, x => x.CompareTo(-1) != 0, "[=>] Самолет не был выбран.");
-        self.ValidationRule(x => x.Airline.Id, x => x.CompareTo(-1) != 0, "[=>] Авиакомпания не была выбрана.");
+        self.ValidationRule(x => x.Aircraft.Id, x => x.CompareTo(default) != 0, "[=>] Самолет не был выбран.");
+        self.ValidationRule(x => x.Airline.Id, x => x.CompareTo(default) != 0, "[=>] Авиакомпания не была выбрана.");
 
-        self.ValidationContext.ValidationStatusChange.
+        self.ValidationContext.Changed.
             Do(_ => self.ErrorValidations = $"[Валидация]:\n--\n\n{self.ValidationContext.Text.ToSingleLine("\n\n")}" ).
             Subscribe();
     }

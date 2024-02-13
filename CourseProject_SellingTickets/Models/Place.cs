@@ -23,7 +23,6 @@ public class Place : ViewModelBase
 
     public Place()
     {
-        Id = -1;
         Name = string.Empty;
         Description = string.Empty;
         Photo = new Photo();
