@@ -13,6 +13,7 @@ using CourseProject_SellingTickets.Helpers;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.FlightProvider;
+using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using ReactiveUI;
 
@@ -32,12 +33,23 @@ public class MainWindowViewModel : ViewModelBase
     public bool DatabaseHasConnected { get => _databaseHasConnected; set => this.RaiseAndSetIfChanged(ref _databaseHasConnected, value); }
     
     // Commands 
-    
-    public MainWindowViewModel(INavigationService? navService)
+
+    public MainWindowViewModel(INavigationService? navService, ITicketVmProvider ticketDbProvider)
     {
-        
+
+        /*
+        ReactiveCommand.CreateFromObservable(() => Observable.Start(async () =>
+        {
+            return await ticketDbProvider.GetTopTickets(50);
+        })).Execute().Subscribe(x =>
+        {
+            var item = x.Result;
+
+        });
+        */
+
         NavigationService = navService;
         NavigationService?.NavigateTo<AuthUserViewModel>();
-
+        
     }
 }

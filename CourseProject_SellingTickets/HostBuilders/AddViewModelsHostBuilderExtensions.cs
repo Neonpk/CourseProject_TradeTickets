@@ -1,5 +1,6 @@
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.FlightProvider;
+using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,9 +28,12 @@ public static class AddViewModelsHostBuilderExtensions
             IConnectionStateProvider? connectionStateProvider = service.GetService<IConnectionStateProvider>();
             
             IFlightVmProvider? flightProvider = service.GetService<IFlightVmProvider>();
+            ITicketVmProvider? ticketProvider = service.GetService<ITicketVmProvider>();
             
             //General ViewModels
-                                
+            
+            resolver.RegisterLazySingleton<TicketUserViewModel>( () => new TicketUserViewModel( ticketProvider, connectionStateProvider ) );
+            
             resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( flightProvider, connectionStateProvider ) );
             
             resolver.RegisterLazySingleton<AdminUserViewModel>( () => new AdminUserViewModel( mainNavigation ));
@@ -38,7 +42,7 @@ public static class AddViewModelsHostBuilderExtensions
             
             resolver.RegisterLazySingleton<AuthUserViewModel>(() => new AuthUserViewModel( mainNavigation ));
         
-            resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel( mainNavigation ));
+            resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel( mainNavigation, service.GetService<ITicketVmProvider>() ));
             
         });
 

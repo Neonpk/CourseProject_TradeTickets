@@ -1,10 +1,12 @@
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Contexts;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Ticket : ViewModelBase
+public class Ticket : ReactiveObject, IValidatableViewModel
 {
     // Columns
 
@@ -28,10 +30,16 @@ public class Ticket : ViewModelBase
 
     private bool _isSold;
     public bool IsSold { get => _isSold; set => this.RaiseAndSetIfChanged(ref _isSold, value); }
-
+    
     // Non Observable
     public float DiscountPrice { get; }
 
+    // Validations 
+        
+    private string _errorValidations;
+    public string ErrorValidations { get => _errorValidations; set => this.RaiseAndSetIfChanged(ref _errorValidations, value); }
+    public ValidationContext ValidationContext { get; }
+    
     public Ticket()
     {
         Flight = new Flight();
@@ -52,6 +60,7 @@ public class Ticket : ViewModelBase
         DiscountPrice = discountPrice;
     }
     
+    
     public override bool Equals(object? obj)
     {
         if (obj is Ticket o)
@@ -69,8 +78,10 @@ public class Ticket : ViewModelBase
         return base.Equals(obj);
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode() 
     {
         return base.GetHashCode();
     }
+    
+    
 }

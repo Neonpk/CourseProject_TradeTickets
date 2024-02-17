@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.FlightProvider;
@@ -11,10 +12,9 @@ using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Commands;
 
-public class LoadFlightDataCommand : ReactiveCommand<IEnumerable<Flight>, Unit>
+public class LoadFlightDataCommand : ReactiveCommand<IEnumerable<Flight>, Task>
 {
-    
-    private static void LoadDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmDbProvider, 
+    private static async Task LoadDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmDbProvider, 
         IConnectionStateProvider connectionStateProvider, IEnumerable<Flight> filteredFlights
         )
     {
@@ -23,17 +23,17 @@ public class LoadFlightDataCommand : ReactiveCommand<IEnumerable<Flight>, Unit>
         flightUserViewModel.ErrorMessage = string.Empty;
         flightUserViewModel.IsLoading = true;
 
-        flightUserViewModel.DatabaseHasConnected = connectionStateProvider.IsConnected().Result;
+        flightUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
         
         try
         {
             bool hasSearching = flightUserViewModel.HasSearching;
            
-            IEnumerable<Flight> flights = hasSearching ? filteredFlights! : flightVmDbProvider.GetTopFlights(limitRows).Result;
+            IEnumerable<Flight> flights = hasSearching ? filteredFlights! : await flightVmDbProvider.GetTopFlights(limitRows);
             
-            IEnumerable<Aircraft> aircrafts = flightVmDbProvider.GetAllAircrafts().Result;
-            IEnumerable<Airline> airlines = flightVmDbProvider.GetAllAirlines().Result;
-            IEnumerable<Place> places = flightVmDbProvider.GetAllPlaces().Result;
+            IEnumerable<Aircraft> aircrafts = await flightVmDbProvider.GetAllAircrafts();
+            IEnumerable<Airline> airlines = await flightVmDbProvider.GetAllAirlines();
+            IEnumerable<Place> places = await flightVmDbProvider.GetAllPlaces();
             
             flightUserViewModel.Aircrafts.Clear();
             flightUserViewModel.Aircrafts.AddRange(aircrafts);
@@ -58,7 +58,8 @@ public class LoadFlightDataCommand : ReactiveCommand<IEnumerable<Flight>, Unit>
     }
 
     public LoadFlightDataCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider, IConnectionStateProvider connectionStateProvider) :
-        base(filteredFlights => Observable.Start(() => LoadDataAsync(flightUserViewModel, flightVmProvider, connectionStateProvider, filteredFlights)),
+        base(filteredFlights => 
+                Observable.Start( async () => await LoadDataAsync(flightUserViewModel, flightVmProvider, connectionStateProvider, filteredFlights)),
             canExecute: Observable.Return(true))
     {
         

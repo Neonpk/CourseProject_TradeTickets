@@ -1,19 +1,16 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reactive;
-using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CourseProject_SellingTickets.Commands;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.FlightProvider;
-using CourseProject_SellingTickets.Services.TradeTicketsProvider;
-using DynamicData;
 using DynamicData.Binding;
 using ReactiveUI;
-using ReactiveUI.Validation.Extensions;
 
 namespace CourseProject_SellingTickets.ViewModels;
 
@@ -69,8 +66,8 @@ public class FlightUserViewModel : ViewModelBase
 
     // => // Loading page properties 
 
-    private bool? _databaseHasConnected;
-    public bool? DatabaseHasConnected { get => _databaseHasConnected; set => this.RaiseAndSetIfChanged(ref _databaseHasConnected, value); }
+    private bool _databaseHasConnected;
+    public bool DatabaseHasConnected { get => _databaseHasConnected; set => this.RaiseAndSetIfChanged(ref _databaseHasConnected, value); }
 
     private bool? _isLoading;
     public bool? IsLoading { get => _isLoading; set => this.RaiseAndSetIfChanged(ref _isLoading, value); }
@@ -93,32 +90,32 @@ public class FlightUserViewModel : ViewModelBase
     private ICommand? _hideSideBarCommand;
     public ICommand HideSideBarCommand => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false);
 
-    private ReactiveCommand<IEnumerable<Flight>, Unit>? _loadFlightDataCommand;
-    public ReactiveCommand<IEnumerable<Flight>,Unit> LoadFlightDataCommand => _loadFlightDataCommand ??= new LoadFlightDataCommand(this, _flightProvider!, _connectionStateProvider!);
+    private ReactiveCommand<IEnumerable<Flight>, Task>? _loadFlightDataCommand;
+    public ReactiveCommand<IEnumerable<Flight>, Task> LoadFlightDataCommand => _loadFlightDataCommand ??= new LoadFlightDataCommand(this, _flightProvider!, _connectionStateProvider!);
 
     private ReactiveCommand<bool,Unit>? _addEditDataCommand;
     public ReactiveCommand<bool,Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditFlightCommand(this!);
 
-    private ReactiveCommand<Unit, Unit>? _saveFlightDataCommand;
-    public ReactiveCommand<Unit, Unit> SaveFlightDataCommand => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!);
+    private ReactiveCommand<Unit, Task>? _saveFlightDataCommand;
+    public ReactiveCommand<Unit, Task> SaveFlightDataCommand => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!, _connectionStateProvider!);
 
-    private ReactiveCommand<Unit, Unit>? _deleteFlightDataCommand;
-    public ReactiveCommand<Unit, Unit>? DeleteFlightDataCommand => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider!);
+    private ReactiveCommand<Unit, Task>? _deleteFlightDataCommand;
+    public ReactiveCommand<Unit, Task>? DeleteFlightDataCommand => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider!, _connectionStateProvider!);
 
     private ReactiveCommand<Unit, Unit>? _sortFlightsCommand;
     public ReactiveCommand<Unit, Unit> SortFlightsCommand => _sortFlightsCommand ??= new SortFlightsCommand(this);
 
-    private ReactiveCommand<Unit, IEnumerable<Flight>?>? _searchFlightDataCommand;
-    public ReactiveCommand<Unit, IEnumerable<Flight>?> SearchFlightDataCommand => _searchFlightDataCommand ??= new SearchFlightDataCommand(this, _flightProvider!)!;
+    private ReactiveCommand<Unit, Task<IEnumerable<Flight>?>>? _searchFlightDataCommand;
+    public ReactiveCommand<Unit, Task<IEnumerable<Flight>?>> SearchFlightDataCommand => _searchFlightDataCommand ??= new SearchFlightDataCommand(this, _flightProvider!)!;
 
     // Constructor 
     public FlightUserViewModel(IFlightVmProvider? flightProvider, IConnectionStateProvider? connectionStateProvider)
     {
         _flightProvider = flightProvider;
         _connectionStateProvider = connectionStateProvider;
-        
+
         LoadFlightDataCommand!.Execute();
-        SearchFlightDataCommand!.Subscribe(filteredFlights => LoadFlightDataCommand.Execute(filteredFlights!));
+        SearchFlightDataCommand!.Subscribe(filteredFlights => LoadFlightDataCommand.Execute(filteredFlights.Result!));
         
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortFlightsCommand!.Execute());

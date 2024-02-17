@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
 using CourseProject_SellingTickets.Models;
@@ -13,88 +14,88 @@ using Exception = System.Exception;
 
 namespace CourseProject_SellingTickets.Commands;
 
-public class SearchFlightDataCommand : ReactiveCommand<Unit, IEnumerable<Flight>?>
+public class SearchFlightDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Flight>?>>
 {
-    private static IEnumerable<Flight> GetFlightDataByFilter(IFlightVmProvider flightVmProvider, string searchTerm, FlightSearchModes searchMode, int limitRows = 50)
+    private static async Task<IEnumerable<Flight>> GetFlightDataByFilter(IFlightVmProvider flightVmProvider, string searchTerm, FlightSearchModes searchMode, int limitRows = 50)
     {
          switch (searchMode)
          {
              // By Flight Number
              case FlightSearchModes.FlightNumber:
-                 return flightVmProvider.GetFlightsByFilter(
+                 return await flightVmProvider.GetFlightsByFilter(
                      x => x.FlightNumber.ToString().StartsWith(searchTerm), 
-                     limitRows).Result;
+                     limitRows);
                 
              // By Departure Place
              case FlightSearchModes.DeparturePlace:
-                 return flightVmProvider.GetFlightsByFilter(
+                 return await flightVmProvider.GetFlightsByFilter(
                      x => 
                                  x.DeparturePlace!.Description.ToLower().StartsWith(searchTerm.ToLower()) 
                                  || 
                                  x.DeparturePlace.Name.ToLower().StartsWith(searchTerm.ToLower()), 
-                     limitRows).Result;
+                     limitRows);
              
              // By Destination Place
              case FlightSearchModes.DestinationPlace:
-                 return flightVmProvider.GetFlightsByFilter(
+                 return await flightVmProvider.GetFlightsByFilter(
                      x => 
                          x.DestinationPlace!.Description.ToLower().StartsWith(searchTerm.ToLower()) 
                          || 
                          x.DestinationPlace.Name.ToLower().StartsWith(searchTerm.ToLower()), 
-                     limitRows).Result;
+                     limitRows);
 
              // By Departure Time
              case FlightSearchModes.DepartureTime:
                  // Getting from Postgres Timestamp Format as a string
-                 return flightVmProvider.GetFlightsByFilter(
+                 return await flightVmProvider.GetFlightsByFilter(
                      x => 
                          TradeTicketsDbContext.DateTimeFormatToString(x.DepartureTime,"DD.MM.YYYY HH24:MI:SS").StartsWith(searchTerm), 
-                     limitRows).Result;
+                     limitRows);
 
              // By Arrival Time
              case FlightSearchModes.ArrivalTime:
                  // Getting from Postgres Timestamp Format as a string
-                 return flightVmProvider.GetFlightsByFilter(
+                 return await flightVmProvider.GetFlightsByFilter(
                      x => 
                          TradeTicketsDbContext.DateTimeFormatToString(x.ArrivalTime, "DD.MM.YYYY HH24:MI:SS").StartsWith(searchTerm), 
-                     limitRows).Result;
+                     limitRows);
 
              // By Aircraft Name or Aircraft Type
              case FlightSearchModes.AircraftName:
-                 return flightVmProvider.GetFlightsByFilter(
+                 return await flightVmProvider.GetFlightsByFilter(
                      x => 
                          x.Aircraft!.Model!.ToLower().StartsWith(searchTerm.ToLower()) 
                          || 
                          x.Aircraft.Type!.ToLower().StartsWith(searchTerm.ToLower()), 
-                     limitRows).Result;
+                     limitRows);
 
              // By Total Place
              case FlightSearchModes.TotalPlace:
-                 return flightVmProvider.GetFlightsByFilter(
+                 return await flightVmProvider.GetFlightsByFilter(
                      x => 
                          x.TotalPlace.ToString().StartsWith(searchTerm), 
-                     limitRows).Result;
+                     limitRows);
 
              // By FreePlace
              case FlightSearchModes.FreePlace:
-                 return flightVmProvider.GetFlightsByFilter(
+                 return await flightVmProvider.GetFlightsByFilter(
                      x => 
                          x.FreePlace.ToString().StartsWith(searchTerm), 
-                     limitRows).Result;
+                     limitRows);
 
              // By Duration Time
              case FlightSearchModes.DurationTime:
-                 return flightVmProvider.GetFlightsByFilter(
+                 return await flightVmProvider.GetFlightsByFilter(
                      x => 
                          x.DurationTime.ToString().StartsWith(searchTerm), 
-                     limitRows).Result;
+                     limitRows);
              // Empty 
              default:
                  return new List<Flight>();
         }
     }
     
-    private static IEnumerable<Flight>? SearchDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider)
+    private static async Task<IEnumerable<Flight>?> SearchDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider)
     {
         int limitRows = flightUserViewModel.LimitRows;
         string searchTerm = flightUserViewModel.SearchTerm!;
@@ -103,7 +104,7 @@ public class SearchFlightDataCommand : ReactiveCommand<Unit, IEnumerable<Flight>
         try
         {
             flightUserViewModel.IsLoading = true;
-            IEnumerable<Flight> flights = GetFlightDataByFilter(flightVmProvider, searchTerm, selectedSearchMode, limitRows);
+            IEnumerable<Flight> flights = await GetFlightDataByFilter(flightVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return flights;
         }
@@ -117,7 +118,7 @@ public class SearchFlightDataCommand : ReactiveCommand<Unit, IEnumerable<Flight>
     }
 
     public SearchFlightDataCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider) : 
-        base(_ => Observable.Start(() => SearchDataAsync(flightUserViewModel, flightVmProvider)), canExecute: Observable.Return(true))
+        base(_ => Observable.Start(async () => await SearchDataAsync(flightUserViewModel, flightVmProvider)), canExecute: Observable.Return(true))
     {
         
     }

@@ -57,7 +57,7 @@ public class DispatcherUserViewModel : ViewModelBase
                         break;
                     
                     case "tickets":
-                        NavigationDispatcherService?.NavigateTo<ViewModelBase>();
+                        NavigationDispatcherService?.NavigateTo<TicketUserViewModel>();
                         break;
                 }
             });

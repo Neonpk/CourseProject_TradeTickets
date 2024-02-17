@@ -11,23 +11,43 @@
         
         <local:ViewLocator />
 
+        <!-- Auth View -->
+        
         <DataTemplate DataType="{x:Type vm:AuthUserViewModel}">
             <view:AuthUserView />
         </DataTemplate>
 
+        <!-- DispatcherView --> 
+        
         <DataTemplate DataType="{x:Type vm:DispatcherUserViewModel}">
             <view:DispatcherUserView />
         </DataTemplate>
 
+        <!-- SubViews of DispatcherMode --> 
+        
+        <DataTemplate DataType="{x:Type vm:FlightUserViewModel}">
+            <view:FlightUserView />
+        </DataTemplate>
+            
+        <DataTemplate DataType="{x:Type vm:TicketUserViewModel}">
+            <view:TicketUserView />
+        </DataTemplate>
+        
+        <!-- AdminView --> 
+        
         <DataTemplate DataType="{x:Type vm:AdminUserViewModel}">
             <view:AdminUserView />
         </DataTemplate>
+        
+        <!-- SubViews of AdminMode -->
 
     </Application.DataTemplates>
 
     <Application.Styles>
         
         <FluentTheme />
+        
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
         
         <StyleInclude Source="/Controls/Styles/GroupBox_HeaderedContentControl.axaml" />
         <StyleInclude Source="/Controls/DateTimePicker.axaml"/>

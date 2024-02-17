@@ -16,8 +16,7 @@
     
     <SplitView DisplayMode="CompactInline" PaneBackground="#252525" 
                IsPaneOpen="{Binding ShowedSideBar}" 
-               OpenPaneLength="200" CompactPaneLength="30" 
-               Content="{Binding NavigationDispatcherService.CurrentView}">
+               OpenPaneLength="200" CompactPaneLength="30" >
         <SplitView.Pane>
             <DockPanel>
                 
@@ -66,11 +65,9 @@
                 </DockPanel>
         </SplitView.Pane>
             
-        <SplitView.ContentTemplate>
-            <DataTemplate DataType="{x:Type vm:FlightUserViewModel}">
-                <view:FlightUserView />
-            </DataTemplate>
-        </SplitView.ContentTemplate>
+        <SplitView.Content>
+            <ContentPresenter Content="{Binding $parent[SplitView].((vm:DispatcherUserViewModel)DataContext).NavigationDispatcherService.CurrentView}"/>
+        </SplitView.Content>
         
     </SplitView>
     

@@ -3,6 +3,7 @@ using System.ComponentModel.Design;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.HostBuilders;
 using CourseProject_SellingTickets.ViewModels;

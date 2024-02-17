@@ -1,8 +1,11 @@
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.AircraftProvider;
 using CourseProject_SellingTickets.Services.AirlineProvider;
+using CourseProject_SellingTickets.Services.DiscountProvider;
+using CourseProject_SellingTickets.Services.FlightClassProvider;
 using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.Services.PlaceProvider;
+using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using CourseProject_SellingTickets.ViewModels;
 using Microsoft.Extensions.Hosting;
@@ -24,11 +27,17 @@ public static class AddViewModelsProvidersHostBuilderExtensions
             var iAircraftDbProvider = service.GetService<IAircraftDbProvider>();
             var iAirlineDbProvider = service.GetService<IAirlineDbProvider>();
             var iPlaceDbProvider = service.GetService<IPlaceDbProvider>();
+            var iTicketDbProvider = service.GetService<ITicketDbProvider>();
+            var iDiscountDbProvider = service.GetService<IDiscountDbProvider>();
+            var iFlightClassDbProvider = service.GetService<IFlightClassDbProvider>();
             
             //ViewModels
             
             resolver.RegisterLazySingleton<IFlightVmProvider>(() => 
                 new FlightVmVmProvider(iFlightDbProvider, iAircraftDbProvider, iAirlineDbProvider, iPlaceDbProvider));
+            
+            resolver.RegisterLazySingleton<ITicketVmProvider>( () =>
+                new TicketVmProvider(iTicketDbProvider, iDiscountDbProvider, iFlightClassDbProvider, iFlightDbProvider) );
             
         });
 
