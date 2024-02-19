@@ -5,7 +5,7 @@ using ReactiveUI;
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class FlightClass : ViewModelBase
+public class FlightClass : ReactiveObject
 {
     // Main Model 
 

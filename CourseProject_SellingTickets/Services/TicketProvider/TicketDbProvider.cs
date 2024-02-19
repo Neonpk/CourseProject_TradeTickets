@@ -163,10 +163,12 @@ public class TicketDbProvider : ITicketDbProvider
         return new TicketDTO
         {
             Id = ticket.Id,
-            DiscountId = ticket.Discount.Id,
+            FlightId = ticket.Flight.Id,
             ClassId = ticket.FlightClass.Id,
             PlaceNumber = ticket.PlaceNumber,
-            Price = ticket.Price
+            Price = ticket.Price,
+            DiscountId = ticket.Discount.Id,
+            IsSold = ticket.IsSold
         };
     }
     

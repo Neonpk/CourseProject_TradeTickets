@@ -40,19 +40,21 @@ public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
             IEnumerable<Discount> discounts = await ticketVmProvider.GetAllDiscounts();
             IEnumerable<Flight> flights = await ticketVmProvider.GetAllFlights();
 
-            ticketUserViewModel.Discounts.Clear();
-            ticketUserViewModel.Discounts.AddRange(discounts);
+            Dispatcher.UIThread.Post(() =>
+            {
+                ticketUserViewModel.Discounts.Clear();
+                ticketUserViewModel.Discounts.AddRange(discounts);
 
-            ticketUserViewModel.FlightClasses.Clear();
-            ticketUserViewModel.FlightClasses.AddRange(flightClasses);
+                ticketUserViewModel.FlightClasses.Clear();
+                ticketUserViewModel.FlightClasses.AddRange(flightClasses);
 
-            ticketUserViewModel.Flights.Clear();
-            ticketUserViewModel.Flights.AddRange(flights);
+                ticketUserViewModel.Flights.Clear();
+                ticketUserViewModel.Flights.AddRange(flights);
 
-            ticketUserViewModel.TicketItems.Clear();
-            ticketUserViewModel.TicketItems.AddRange(tickets);
-
-
+                ticketUserViewModel.TicketItems.Clear();
+                ticketUserViewModel.TicketItems.AddRange(tickets);
+            });
+            
         }
         catch (Exception e)
         {
@@ -64,9 +66,8 @@ public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
     
     public LoadTicketDataCommand(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketProvider, IConnectionStateProvider connectionStateProvider) :
         base(filteredTickets => Observable.Start(async () => 
-                await LoadDataAsync(ticketUserViewModel, ticketProvider, connectionStateProvider, filteredTickets)),
-            canExecute: Observable.Return(true), outputScheduler: RxApp.MainThreadScheduler)
+                await LoadDataAsync(ticketUserViewModel, ticketProvider, connectionStateProvider, filteredTickets) ),
+            canExecute: Observable.Return(true))
     {
-        
     }
 }

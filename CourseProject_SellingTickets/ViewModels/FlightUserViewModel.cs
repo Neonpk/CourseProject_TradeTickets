@@ -114,8 +114,8 @@ public class FlightUserViewModel : ViewModelBase
         _flightProvider = flightProvider;
         _connectionStateProvider = connectionStateProvider;
 
-        LoadFlightDataCommand!.Execute();
-        SearchFlightDataCommand!.Subscribe(filteredFlights => LoadFlightDataCommand.Execute(filteredFlights.Result!));
+        LoadFlightDataCommand.Execute();
+        SearchFlightDataCommand.Subscribe(filteredFlights => LoadFlightDataCommand.Execute(filteredFlights.Result!));
         
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortFlightsCommand!.Execute());

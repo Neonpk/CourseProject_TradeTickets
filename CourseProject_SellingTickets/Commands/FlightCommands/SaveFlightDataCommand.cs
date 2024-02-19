@@ -57,7 +57,7 @@ public class SaveFlightDataCommand : ReactiveCommand<Unit, Task>
     }
 
     public SaveFlightDataCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider, IConnectionStateProvider connectionStateProvider) :
-        base(_ => Observable.Start(() => SaveDataAsync(flightUserViewModel, flightVmProvider, connectionStateProvider)), 
+        base(_ => Observable.Start(async () => await SaveDataAsync(flightUserViewModel, flightVmProvider, connectionStateProvider)), 
             canExecute: CanExecuteCommand(flightUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }

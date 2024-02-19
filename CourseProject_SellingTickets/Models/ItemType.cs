@@ -13,36 +13,51 @@ namespace CourseProject_SellingTickets.Models
     public enum FlightSortModes
     {
         FlightNumber = 0,
-        DeparturePlace = 1,
-        DestinationPlace = 2,
-        DepartureTime = 3,
-        ArrivalTime = 4,
-        AircraftName = 5,
-        TotalPlace = 6,
-        FreePlace = 7,
-        CanceledFlights = 8,
-        DurationTime = 9,
-        IsCompleted = 10,
-        InProgress = 11
+        DeparturePlace,
+        DestinationPlace,
+        DepartureTime,
+        ArrivalTime,
+        AircraftName,
+        TotalPlace,
+        FreePlace,
+        CanceledFlights,
+        DurationTime,
+        IsCompleted,
+        InProgress
     }
     
     public enum FlightSearchModes
     {
         FlightNumber = 0,
-        DeparturePlace = 1,
-        DestinationPlace = 2,
-        DepartureTime = 3,
-        ArrivalTime = 4,
-        AircraftName = 5,
-        TotalPlace = 6,
-        FreePlace = 7,
-        DurationTime = 8,
+        DeparturePlace,
+        DestinationPlace,
+        DepartureTime,
+        ArrivalTime,
+        AircraftName,
+        TotalPlace,
+        FreePlace,
+        DurationTime,
+    }
+
+    public enum TicketSearchModes
+    {
+        TicketNumber = 0,
+        FlightNumber,
+        DeparturePlace,
+        DestinationPlace,
+        FlightClass,
+        PlaceNumber,
+        DiscountType,
+        Price,
+        DiscountPrice,
+        DepartureTime,
+        ArrivalTime
     }
     
     public enum SortMode
     {
         Asc = 0,
-        Desc = 1
+        Desc
     }
     
     public enum OperatingModes

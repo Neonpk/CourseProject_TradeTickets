@@ -15,6 +15,8 @@
         <converter:BlockDataFieldConverter x:Key="BlockDataFieldConverter" />
         <converter:InitializeDataErrorConverter x:Key="InitializeDataErrorConverter"/>
         <converter:CollectionHasItemsConverter x:Key="CollectionHasItemsConverter"/>
+        <converter:HideDefaultIdConverter x:Key="HideDefaultIdConverter"/>
+        <converter:FlightStatusConverter x:Key="FlightStatusConverter"/>
         
         <s:Boolean x:Key="FalseValue">False</s:Boolean>
         <s:Boolean x:Key="TrueValue">True</s:Boolean>
@@ -33,14 +35,14 @@
                     <Button Content="Обновить" 
                             DockPanel.Dock="Right" HorizontalAlignment="Right"
                             Margin="5 0 0 0"
-                            
+                            Command="{Binding SearchTicketDataCommand}"
                     />
                     
                     <Button Content="Добавить новый билет" 
                             HorizontalAlignment="Right" 
                             HorizontalContentAlignment="Center"
                             Width="200" DockPanel.Dock="Right"
-                            Command="{Binding AddEditTicketCommand}"
+                            Command="{Binding AddEditDataCommand}"
                             CommandParameter="{StaticResource TrueValue}">
                         
                         <Button.IsEnabled>
@@ -65,12 +67,18 @@
                     
                     <Label FontSize="15" Content="Применить фильтр" DockPanel.Dock="Top"/>
 
-                    <ComboBox DockPanel.Dock="Right">
+                    <ComboBox DockPanel.Dock="Right" SelectedIndex="{Binding SelectedSearchMode}">
+                        <ComboBoxItem>По билету</ComboBoxItem>
                         <ComboBoxItem>По рейсу</ComboBoxItem>
+                        <ComboBoxItem>По месту отправки</ComboBoxItem>
+                        <ComboBoxItem>По месту назначения</ComboBoxItem>
                         <ComboBoxItem>По классу полета</ComboBoxItem>
+                        <ComboBoxItem>По месту</ComboBoxItem>
                         <ComboBoxItem>По по виду скидки</ComboBoxItem>
                         <ComboBoxItem>По цене</ComboBoxItem>
                         <ComboBoxItem>По цене со скидкой</ComboBoxItem>
+                        <ComboBoxItem>По времени отправки</ComboBoxItem>
+                        <ComboBoxItem>По времени прибытия</ComboBoxItem>
                     </ComboBox>
 
                     <TextBox 
@@ -78,7 +86,7 @@
                         DockPanel.Dock="Left" Watermark="Введите поисковый запрос.">
                         
                         <TextBox.KeyBindings>
-                            <KeyBinding Gesture="Enter"></KeyBinding>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchTicketDataCommand}"></KeyBinding>
                         </TextBox.KeyBindings>
                         
                     </TextBox>
@@ -105,7 +113,7 @@
                                    FormatString="N0">
                             
                         <NumericUpDown.KeyBindings>
-                            <KeyBinding Gesture="Enter"/>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchTicketDataCommand}"/>
                         </NumericUpDown.KeyBindings>
                             
                     </NumericUpDown>
@@ -159,30 +167,123 @@
                                     HorizontalAlignment="Stretch" 
                                     VerticalAlignment="Stretch"
                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                    ItemsSource="{Binding TicketItems, Mode=TwoWay}"
+                                    ItemsSource="{Binding TicketItems}"
+                                    SelectedItem="{Binding SelectedTicket}"
                                 >
                                 
                                 <DataGrid.Columns>
                                     
-                                    <DataGridTemplateColumn Header="Рейс" MinWidth="200">
+                                    <DataGridTemplateColumn Header="Действие">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBlock>
-                                                    <Run Text="{Binding Flight.FlightNumber}" />
-                                                    <Run Text="("/>
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    
+                                                    <Button Content="Править" Margin="0 0 0 5"
+                                                            IsEnabled="{Binding  Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).IsLoadingEditMode, Converter={StaticResource InverseBooleanConverter}}"
+                                                            Command="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).AddEditDataCommand}"
+                                                            CommandParameter="{StaticResource FalseValue}"/>
+                                                    
+                                                    <Button Content="Удалить"
+                                                            IsEnabled="{Binding  Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).IsLoadingEditMode, Converter={StaticResource InverseBooleanConverter}}"
+                                                            Command="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).DeleteTicketDataCommand}"/>
+                                                    
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    
+                                    <DataGridTextColumn Header="Билет" Binding="{Binding Id, StringFormat=№ {0}}" IsReadOnly="True"/>
+                                    
+                                    <DataGridTemplateColumn Header="Рейс" IsReadOnly="True">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Border CornerRadius="5">
+                                                    
+                                                    <Border.Background>
+                                                        <MultiBinding Converter="{StaticResource FlightStatusConverter}" ConverterParameter="Foreground">
+                                                            <Binding Path="Flight.InProgress"/>
+                                                            <Binding Path="Flight.IsCompleted"/>
+                                                            <Binding Path="Flight.IsCanceled" Mode="OneTime"/>
+                                                        </MultiBinding>
+                                                    </Border.Background>
+                                                    
+                                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                        <Label Content="{Binding Flight.FlightNumber, StringFormat={}№ {0}}"/>
+                                                        
+                                                        <Label>
+                                                            <Label.IsVisible>
+                                                                <MultiBinding Converter="{StaticResource FlightStatusConverter}">
+                                                                    <Binding Path="Flight.InProgress"/>
+                                                                    <Binding Path="Flight.IsCompleted"/>
+                                                                    <Binding Path="Flight.IsCanceled" Mode="OneTime"/>
+                                                                </MultiBinding>
+                                                            </Label.IsVisible>
+                                                            
+                                                            <Label.Content>
+                                                                <MultiBinding Converter="{StaticResource FlightStatusConverter}" ConverterParameter="String">
+                                                                    <Binding Path="Flight.InProgress"/>
+                                                                    <Binding Path="Flight.IsCompleted"/>
+                                                                    <Binding Path="Flight.IsCanceled" Mode="OneTime"/>
+                                                                </MultiBinding>
+                                                            </Label.Content>
+                                                        </Label>
+                                                        
+                                                    </StackPanel>
+                                                    
+                                                </Border>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    
+                                    <DataGridTemplateColumn Header="Место отправки" IsReadOnly="True" SortMemberPath="Flight.DeparturePlace.Description">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock VerticalAlignment="Center" Margin="10">
+                                                    <Run Text="{Binding Flight.DeparturePlace.Name}"/>
+                                                    <Run Text=","/>
                                                     <Run Text="{Binding Flight.DeparturePlace.Description}"/>
-                                                    <Run Text="-"/>
-                                                    <Run Text="{Binding Flight.DestinationPlace.Description}"/>
-                                                    <Run Text=")"/>
+                                                    <LineBreak/>
+                                                    <Run Text="{Binding Flight.DepartureTime}"/>
                                                 </TextBlock>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
                                         
-                                    <DataGridTextColumn Header="Класс полета"/>
-                                    <DataGridTextColumn Header="Место"/>
-                                    <DataGridTextColumn Header="Цена"/>
-                                    <DataGridTextColumn Header="Продан"/>
+                                    <DataGridTemplateColumn Header="Место назначения" IsReadOnly="True" SortMemberPath="Flight.DestinationPlace.Description">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock VerticalAlignment="Center" Margin="10">
+                                                    <Run Text="{Binding Flight.DestinationPlace.Name}"/>
+                                                    <Run Text=","/>
+                                                    <Run Text="{Binding Flight.DestinationPlace.Description}"/>
+                                                    <LineBreak/>
+                                                    <Run Text="{Binding Flight.ArrivalTime}"/>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                        
+                                    <DataGridTextColumn Header="Класс полета" Binding="{Binding FlightClass.ClassName}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="Место" Binding="{Binding PlaceNumber, StringFormat=№ {0}}" IsReadOnly="True" />
+                                    
+                                    <DataGridTemplateColumn Header="Скидка" IsReadOnly="True" SortMemberPath="Discount.DiscountSize">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock VerticalAlignment="Center" Margin="10">
+                                                    <Run Text="{Binding Discount.Name}"/>
+                                                    <LineBreak/>
+                                                    <Run Text="{Binding Discount.Description}"/>
+                                                    <LineBreak/>
+                                                    <Run Text="{Binding Discount.DiscountSize, StringFormat=Скидка: {0} %}"/>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    
+                                    <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0} руб.}" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Итоговая цена" Foreground="Gold" Binding="{Binding DiscountPrice, StringFormat={}{0} руб.}" IsReadOnly="True"/>
+                                    <DataGridCheckBoxColumn Header="Продан" Binding="{Binding IsSold}" IsReadOnly="True"/>
+                                    
                                 </DataGrid.Columns>
                                 
                             </DataGrid>   
@@ -220,7 +321,12 @@
                         
                         <Label Content="Цена" 
                                Margin="0 10 0 10"/>
-                        <TextBox Text="{Binding SelectedTicket.Price}" />
+                        
+                        <NumericUpDown Watermark="Укажите цену"
+                                       Value="{Binding SelectedTicket.Price}" 
+                                       Minimum="0"
+                                       ParsingNumberStyle="Integer"
+                                       FormatString="N0"/>
                         
                         <Label Content="Рейс" Margin="0 10 0 0"/>
                         
@@ -252,7 +358,7 @@
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding DiscountSize}" />
+                                        <TextBlock Text="{Binding DiscountSize,StringFormat={}{0}%}" />
                                         <TextBlock Text="{Binding Description, StringFormat={} (Вид: {0})}"/>
                                     </StackPanel>
                                 </DataTemplate>
@@ -276,6 +382,17 @@
                             </ComboBox.ItemTemplate>
                             
                         </ComboBox>
+                        
+                        <Label Content="Место" Margin="0 0 0 10"/>
+                        
+                        <NumericUpDown Watermark="{Binding SelectedTicket.Flight.Aircraft.TotalPlace, StringFormat={}Выберите место от 1 до {0}}" 
+                                       Value="{Binding SelectedTicket.PlaceNumber}"
+                                       IsEnabled="{Binding SelectedTicket.Flight.Id, Converter={StaticResource HideDefaultIdConverter}}"
+                                       Minimum="1"
+                                       Maximum="{Binding SelectedTicket.Flight.Aircraft.TotalPlace}"
+                                       ParsingNumberStyle="Integer"
+                                       FormatString="N0"
+                                       />
                         
                         <StackPanel Orientation="Horizontal" 
                                     Margin="0 10 0 10">
@@ -301,7 +418,9 @@
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
                                 IsEnabled="{Binding IsLoadingEditMode, Converter={StaticResource InverseBooleanConverter}}"
-                                Margin="0 0 0 10"/>
+                                Margin="0 0 0 10"
+                                Command="{Binding SaveTicketDataCommand}"
+                                />
                         
                         <TextBlock Foreground="Red"
                                    Text="{Binding ErrorMessage}"

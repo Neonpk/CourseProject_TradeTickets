@@ -134,6 +134,7 @@ public class Flight : ReactiveObject, IValidatableViewModel
         DurationTime = flightDto.DurationTime;
         IsCanceled = flightDto.IsCanceled;
         
+        // Validations 
         this.InitializeValidationRules();
     }
     

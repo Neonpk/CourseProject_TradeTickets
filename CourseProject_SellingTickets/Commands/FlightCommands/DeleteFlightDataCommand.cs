@@ -13,7 +13,7 @@ namespace CourseProject_SellingTickets.Commands;
 
 public class DeleteFlightDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task DeleteFlight(FlightUserViewModel flightUserViewModel, IFlightVmProvider? flightProvider, IConnectionStateProvider connectionStateProvider)
+    private static async Task DeleteDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider? flightProvider, IConnectionStateProvider connectionStateProvider)
     {
         flightUserViewModel.ErrorMessage = string.Empty;
         flightUserViewModel.IsLoadingEditMode = true;
@@ -45,7 +45,7 @@ public class DeleteFlightDataCommand : ReactiveCommand<Unit, Task>
 
     public DeleteFlightDataCommand( FlightUserViewModel flightUserViewModel, IFlightVmProvider? flightProvider, IConnectionStateProvider connectionStateProvider ) : 
         base(_ => 
-            Observable.Start(async () => await DeleteFlight(flightUserViewModel, flightProvider, connectionStateProvider)), canExecute: Observable.Return(true))
+            Observable.Start(async () => await DeleteDataAsync(flightUserViewModel, flightProvider, connectionStateProvider)), canExecute: Observable.Return(true))
     {
         
     }

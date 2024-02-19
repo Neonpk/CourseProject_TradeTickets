@@ -34,20 +34,8 @@ public class MainWindowViewModel : ViewModelBase
     
     // Commands 
 
-    public MainWindowViewModel(INavigationService? navService, ITicketVmProvider ticketDbProvider)
+    public MainWindowViewModel(INavigationService? navService)
     {
-
-        /*
-        ReactiveCommand.CreateFromObservable(() => Observable.Start(async () =>
-        {
-            return await ticketDbProvider.GetTopTickets(50);
-        })).Execute().Subscribe(x =>
-        {
-            var item = x.Result;
-
-        });
-        */
-
         NavigationService = navService;
         NavigationService?.NavigateTo<AuthUserViewModel>();
         

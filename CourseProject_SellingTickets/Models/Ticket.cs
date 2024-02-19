@@ -1,3 +1,4 @@
+using CourseProject_SellingTickets.ValidationRules;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
@@ -38,13 +39,16 @@ public class Ticket : ReactiveObject, IValidatableViewModel
         
     private string _errorValidations;
     public string ErrorValidations { get => _errorValidations; set => this.RaiseAndSetIfChanged(ref _errorValidations, value); }
-    public ValidationContext ValidationContext { get; }
+    public ValidationContext ValidationContext { get; } = new ValidationContext();
     
     public Ticket()
     {
         Flight = new Flight();
         FlightClass = new FlightClass();
         Discount = new Discount();
+        
+        // Validations 
+        this.InitializeValidationRules();
     }
     
     public Ticket( long id, Flight flight, FlightClass flightClass, 
@@ -58,8 +62,10 @@ public class Ticket : ReactiveObject, IValidatableViewModel
         Discount = discount;
         IsSold = isSold;
         DiscountPrice = discountPrice;
+        
+        // Validations 
+        this.InitializeValidationRules();
     }
-    
     
     public override bool Equals(object? obj)
     {
@@ -82,6 +88,4 @@ public class Ticket : ReactiveObject, IValidatableViewModel
     {
         return base.GetHashCode();
     }
-    
-    
 }

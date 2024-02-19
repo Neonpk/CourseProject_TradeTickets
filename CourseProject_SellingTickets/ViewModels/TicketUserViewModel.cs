@@ -35,7 +35,7 @@ public class TicketUserViewModel : ViewModelBase
     
     // => // Filters
     
-    private bool _sideBarShowed = true;
+    private bool _sideBarShowed;
     public bool SideBarShowed { get => _sideBarShowed; set => this.RaiseAndSetIfChanged(ref _sideBarShowed, value); }
     
     // => // Filters => // Search Terms
@@ -46,6 +46,9 @@ public class TicketUserViewModel : ViewModelBase
     
     private int _limitRows = 50;
     public int LimitRows { get => _limitRows; set => this.RaiseAndSetIfChanged(ref _limitRows, value); }
+
+    private int _selectedSearchMode;
+    public int SelectedSearchMode { get => _selectedSearchMode; set => this.RaiseAndSetIfChanged(ref _selectedSearchMode, value); }
     
     // Selected Model from the list
     
@@ -78,11 +81,20 @@ public class TicketUserViewModel : ViewModelBase
     private ICommand? _hideSideBarCommand;
     public ICommand HideSideBarCommand => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>(_ => SideBarShowed = false);
 
-    private ReactiveCommand<bool, Unit>? _addEditTicketCommand;
-    public ReactiveCommand<bool, Unit> AddEditTicketCommand => _addEditTicketCommand ??= new AddEditTicketCommand(this);
+    private ReactiveCommand<bool, Unit>? _addEditDataCommand;
+    public ReactiveCommand<bool, Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditTicketCommand(this);
     
     private ReactiveCommand<IEnumerable<Ticket>, Task>? _loadTicketDataCommand;
     public ReactiveCommand<IEnumerable<Ticket>, Task> LoadTicketDataCommand => _loadTicketDataCommand ??= new LoadTicketDataCommand(this, _ticketProvider!, _connectionStateProvider!);
+
+    private ReactiveCommand<Unit, Task<IEnumerable<Ticket>?>>? _searchTicketDataCommand;
+    public ReactiveCommand<Unit, Task<IEnumerable<Ticket>?>> SearchTicketDataCommand => _searchTicketDataCommand ??= new SearchTicketDataCommand(this, _ticketProvider!);
+
+    private ReactiveCommand<Unit, Task>? _saveTicketDataCommand;
+    public ReactiveCommand<Unit, Task> SaveTicketDataCommand => _saveTicketDataCommand ??= new SaveTicketDataCommand(this, _ticketProvider!, _connectionStateProvider!);
+
+    private ReactiveCommand<Unit, Task>? _deleteTicketDataCommand;
+    public ReactiveCommand<Unit, Task> DeleteTicketDataCommand => _deleteTicketDataCommand ??= new DeleteTicketDataCommand(this, _ticketProvider!, _connectionStateProvider!);
     
     // Constructor
     
@@ -91,7 +103,8 @@ public class TicketUserViewModel : ViewModelBase
         _ticketProvider = ticketVmProvider;
         _connectionStateProvider = connectionStateProvider;
         
-        LoadTicketDataCommand!.Execute();
+        LoadTicketDataCommand.Execute();
+        SearchTicketDataCommand.Subscribe(filteredTickets => LoadTicketDataCommand!.Execute(filteredTickets.Result!));
     }
     
 }

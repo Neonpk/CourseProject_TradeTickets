@@ -42,7 +42,7 @@ public static class AddViewModelsHostBuilderExtensions
             
             resolver.RegisterLazySingleton<AuthUserViewModel>(() => new AuthUserViewModel( mainNavigation ));
         
-            resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel( mainNavigation, service.GetService<ITicketVmProvider>() ));
+            resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel( mainNavigation ));
             
         });
 

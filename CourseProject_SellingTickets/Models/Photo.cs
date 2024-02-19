@@ -5,7 +5,7 @@ using ReactiveUI;
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Photo : ViewModelBase
+public class Photo : ReactiveObject
 {
     // Main Model
 

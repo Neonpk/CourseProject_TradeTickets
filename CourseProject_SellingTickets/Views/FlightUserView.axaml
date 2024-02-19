@@ -452,7 +452,12 @@
                         
                         <Label Content="Номер рейса" 
                                Margin="0 10 0 10"/>
-                        <TextBox Text="{Binding SelectedFlight.FlightNumber}" />
+                        <NumericUpDown 
+                            Watermark="Укажите номер рейса"
+                            Value="{Binding SelectedFlight.FlightNumber}" 
+                            Minimum="1"
+                            ParsingNumberStyle="Integer"
+                            FormatString="N0"/>
                         
                         <Label Content="Авиакомпания" 
                                Margin="0 10 0 0"/>
