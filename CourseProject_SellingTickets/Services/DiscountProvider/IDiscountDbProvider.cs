@@ -16,6 +16,6 @@ public interface IDiscountDbProvider
     Task<IEnumerable<Discount>> GetDiscountsByFilterSort<TKeySelector>
         ( Expression<Func<DiscountDTO, bool>> searchFunc, Expression<Func<DiscountDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1);
     
-    Task<bool> CreateOrEditDiscount(Discount discount);
-    Task<bool> DeleteDiscount(Discount discount);
+    Task<int> CreateOrEditDiscount(Discount discount);
+    Task<int> DeleteDiscount(Discount discount);
 }

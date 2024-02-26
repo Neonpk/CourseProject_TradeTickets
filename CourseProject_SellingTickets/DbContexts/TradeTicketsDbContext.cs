@@ -1,5 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 using CourseProject_SellingTickets.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +11,7 @@ namespace CourseProject_SellingTickets.DbContexts;
 public class TradeTicketsDbContext : DbContext
 {
     public TradeTicketsDbContext(DbContextOptions options) : base(options) { }
-    
+
     public DbSet<FlightDTO> Flights { get; set; }
     public DbSet<AircraftDTO> Aircrafts { get; set; }
     public DbSet<AirlineDTO> Airlines { get; set; }

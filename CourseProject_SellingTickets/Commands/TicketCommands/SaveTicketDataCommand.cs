@@ -1,13 +1,16 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
+using Avalonia.Threading;
 using CourseProject_SellingTickets.Extensions;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using ReactiveUI;
 
@@ -33,21 +36,25 @@ public class SaveTicketDataCommand : ReactiveCommand<Unit, Task>
             ticketUserViewModel.IsLoadingEditMode = false;
             return;
         }
-        
+
         try
         {
             Ticket selectedTicket = ticketUserViewModel.SelectedTicket;
-            var isSaved = await ticketVmProvider.CreateOrEditTicket(selectedTicket);
-            
+            var dbState = await ticketVmProvider.CreateOrEditTicket(selectedTicket);
+
             ticketUserViewModel.SearchTicketDataCommand.Execute().Subscribe();
         }
-        catch (AggregateException e) when ( e.InnerException?.InnerException is NpgsqlException pgException )
+        catch(DbUpdateException e) when (e.InnerException is NpgsqlException pgException)
         {
             ticketUserViewModel.ErrorMessage = pgException.ErrorMessageFromCode(nameof(TicketUserViewModel));
         }
+        catch (DbUpdateException e)
+        {
+            ticketUserViewModel.ErrorMessage = e.InnerException!.Message;
+        }
         catch (Exception e)
         {
-            ticketUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.InnerException!.Message})";
+            ticketUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
         }
         
         ticketUserViewModel.IsLoadingEditMode = false;

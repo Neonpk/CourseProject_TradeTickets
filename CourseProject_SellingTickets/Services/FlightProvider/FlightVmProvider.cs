@@ -27,12 +27,12 @@ public class FlightVmVmProvider : IFlightVmProvider
         _placeDbProvider = placeDbProvider;
     }
     
-    public async Task<bool> CreateOrEditFlight(Flight flight)
+    public async Task<int> CreateOrEditFlight(Flight flight)
     {
         return await _flightDbProvider!.CreateOrEditFlight(flight);
     }
 
-    public async Task<bool> DeleteFlight(Flight flight)
+    public async Task<int> DeleteFlight(Flight flight)
     {
         return await _flightDbProvider!.DeleteFlight(flight);
     }

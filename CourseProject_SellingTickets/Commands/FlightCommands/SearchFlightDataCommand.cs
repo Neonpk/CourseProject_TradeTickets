@@ -89,6 +89,13 @@ public class SearchFlightDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Fl
                      x => 
                          x.DurationTime.ToString().StartsWith(searchTerm), 
                      limitRows);
+             
+             // By Price
+             case FlightSearchModes.Price:
+                 return await flightVmProvider.GetFlightsByFilter(
+                     x => x.Price.ToString().StartsWith(searchTerm),
+                 limitRows);
+             
              // Empty 
              default:
                  return new List<Flight>();

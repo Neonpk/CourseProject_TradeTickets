@@ -9,6 +9,7 @@ using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
@@ -40,17 +41,21 @@ public class SaveFlightDataCommand : ReactiveCommand<Unit, Task>
         try
         {
             Flight selectedFlight = flightUserViewModel.SelectedFlight;
-            var isSaved = await flightVmProvider.CreateOrEditFlight(selectedFlight);
+            var dbState = await flightVmProvider.CreateOrEditFlight(selectedFlight);
 
             flightUserViewModel.SearchFlightDataCommand!.Execute().Subscribe();
         }
-        catch (AggregateException e) when ( e.InnerException?.InnerException is NpgsqlException pgException )
+        catch (DbUpdateException e) when ( e.InnerException is NpgsqlException pgException )
         {
             flightUserViewModel.ErrorMessage = pgException.ErrorMessageFromCode(nameof(FlightUserViewModel));
         }
+        catch (DbUpdateException e)
+        {
+            flightUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
+        }
         catch (Exception e)
         {
-            flightUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.InnerException!.Message})";
+            flightUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
         }
         
         flightUserViewModel.IsLoadingEditMode = false;

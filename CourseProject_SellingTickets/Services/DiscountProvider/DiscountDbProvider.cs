@@ -76,7 +76,7 @@ public class DiscountDbProvider : IDiscountDbProvider
         }
     }
 
-    public async Task<bool> CreateOrEditDiscount(Discount discount)
+    public async Task<int> CreateOrEditDiscount(Discount discount)
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
@@ -87,18 +87,18 @@ public class DiscountDbProvider : IDiscountDbProvider
             else
                 context.Discounts.Attach(discountDto).State = EntityState.Modified;
 
-            return await context.SaveChangesAsync() > 0;
+            return await context.SaveChangesAsync();
         }
     }
 
-    public async Task<bool> DeleteDiscount(Discount discount)
+    public async Task<int> DeleteDiscount(Discount discount)
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             DiscountDTO ticketDto = ToDiscountDto(discount);
             
             context.Discounts.Remove(ticketDto);
-            return await context.SaveChangesAsync() > 0;
+            return await context.SaveChangesAsync();
         }
     }
     

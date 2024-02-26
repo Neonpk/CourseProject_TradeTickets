@@ -23,18 +23,18 @@ public class Ticket : ReactiveObject, IValidatableViewModel
     private int _placeNumber;
     public int PlaceNumber { get => _placeNumber; set => this.RaiseAndSetIfChanged(ref _placeNumber, value); }
 
-    private int _price;
-    public int Price { get => _price; set => this.RaiseAndSetIfChanged(ref _price, value); }
-
     private Discount _discount;
     public Discount Discount { get => _discount; set => this.RaiseAndSetIfChanged(ref _discount, value); }
 
     private bool _isSold;
     public bool IsSold { get => _isSold; set => this.RaiseAndSetIfChanged(ref _isSold, value); }
-    
-    // Non Observable
-    public float DiscountPrice { get; }
+        
+    private int _price;
 
+    // Non observable 
+    public int Price => Flight.Price;
+    public double DiscountPrice => Price - Price * (Discount.DiscountSize * 0.01);
+    
     // Validations 
         
     private string _errorValidations;
@@ -52,16 +52,14 @@ public class Ticket : ReactiveObject, IValidatableViewModel
     }
     
     public Ticket( long id, Flight flight, FlightClass flightClass, 
-        int placeNumber, int price, Discount discount, bool isSold, float discountPrice )
+        int placeNumber, Discount discount, bool isSold )
     {
         Id = id;
         Flight = flight;
         FlightClass = flightClass;
         PlaceNumber = placeNumber;
-        Price = price;
         Discount = discount;
         IsSold = isSold;
-        DiscountPrice = discountPrice;
         
         // Validations 
         this.InitializeValidationRules();

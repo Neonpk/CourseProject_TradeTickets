@@ -15,6 +15,10 @@ public static class NpgsqlExceptionExtensions
             [nameof(FlightUserViewModel)] = new()
             {
                 [PostgresStates.UniqueViolation] = "Не удалось сохранить данные: (Рейс с таким номером уже существует.)"
+            },
+            [nameof(TicketUserViewModel)] = new()
+            {
+                [PostgresStates.UniqueViolation] = "Не удалось сохранить данные: (Билет с такими данными уже существует.)"
             }
         };
 

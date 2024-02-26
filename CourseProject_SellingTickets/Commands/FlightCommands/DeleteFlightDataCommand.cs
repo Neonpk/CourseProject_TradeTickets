@@ -31,13 +31,13 @@ public class DeleteFlightDataCommand : ReactiveCommand<Unit, Task>
         {
             Flight? selectedFlight = flightUserViewModel.SelectedFlight;
             
-            bool isDeleted = await flightProvider!.DeleteFlight(selectedFlight);
+            var dbState = await flightProvider!.DeleteFlight(selectedFlight);
 
             flightUserViewModel.SearchFlightDataCommand?.Execute().Subscribe();
         }
         catch (Exception e)
         {
-            flightUserViewModel.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.InnerException!.Message})";
+            flightUserViewModel.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
         }
 
         flightUserViewModel.IsLoadingEditMode = false;

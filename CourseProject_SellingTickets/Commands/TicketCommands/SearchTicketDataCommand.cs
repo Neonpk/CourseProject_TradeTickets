@@ -74,13 +74,13 @@ public class SearchTicketDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Ti
              // By Price
              case TicketSearchModes.Price:
                  return await ticketVmProvider.GetTicketsByFilter(
-                     x => x.Price.ToString().StartsWith(searchTerm), 
+                     x => x.Flight.Price.ToString().StartsWith(searchTerm), 
                      limitRows);
 
              // By Discount Price
              case TicketSearchModes.DiscountPrice:
                  return await ticketVmProvider.GetTicketsByFilter(
-                     x => x.DiscountPrice.ToString().StartsWith(searchTerm), 
+                     x => (x.Flight.Price - x.Flight.Price * (x.Discount.DiscountSize * 0.01)).ToString().StartsWith(searchTerm), 
                      limitRows);
              
              // By Departure Time

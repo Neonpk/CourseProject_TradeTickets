@@ -55,6 +55,8 @@ public class FlightDTO
     [Column("is_canceled")]
     public bool IsCanceled { get; init; }
     
+    [Column("price")]
+    public int Price { get; init; }
     
     // Foreign keys (Navigation)
     

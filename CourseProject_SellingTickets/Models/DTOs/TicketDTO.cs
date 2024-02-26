@@ -25,19 +25,12 @@ public class TicketDTO
     [Column("place_number")]
     public int PlaceNumber { get; init; }
     
-    [Column("price")]
-    public int Price { get; init; }
-    
     [Column("discount_id")]
     [ForeignKey("Discount")]
     public System.Int64 DiscountId { get; init; }
     
     [Column("is_sold")]
     public bool IsSold { get; init; }
-
-    [Column("discount_price")] 
-    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-    public float DiscountPrice { get; init; }
     
     // Foreign keys (Navigation)
     

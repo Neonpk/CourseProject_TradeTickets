@@ -43,6 +43,9 @@ public class Flight : ReactiveObject, IValidatableViewModel
     private bool _isCanceled;
     public bool IsCanceled { get => _isCanceled; set => this.RaiseAndSetIfChanged(ref _isCanceled, value); }
 
+    private int _price;
+    public int Price { get => _price; set => this.RaiseAndSetIfChanged(ref _price, value); }
+
     // Non Observable
     public int TotalPlace { get; }
     public int FreePlace { get; }
@@ -51,17 +54,17 @@ public class Flight : ReactiveObject, IValidatableViewModel
     // Custom Properties
 
     private Task<Bitmap?>? _departurePlaceImage;
-    public Task<Bitmap?> DeparturePlaceImage { get => _departurePlaceImage ??= ImageHelper.LoadFromWeb(new Uri(DeparturePlace.Photo.UrlPath)); }
+    public Task<Bitmap?> DeparturePlaceImage => _departurePlaceImage ??= ImageHelper.LoadFromWeb(new Uri(DeparturePlace.Photo.UrlPath));
 
     private Task<Bitmap?>? _destinationPlaceImage;
-    public Task<Bitmap?> DestinationPlaceImage { get => _destinationPlaceImage ??= ImageHelper.LoadFromWeb(new Uri(DestinationPlace.Photo.UrlPath)); }
+    public Task<Bitmap?> DestinationPlaceImage => _destinationPlaceImage ??= ImageHelper.LoadFromWeb(new Uri(DestinationPlace.Photo.UrlPath));
 
     private Task<Bitmap?>? _aircraftImage;
-    public Task<Bitmap?> AircraftImage { get => _aircraftImage ??= ImageHelper.LoadFromWeb(new Uri(Aircraft.Photo.UrlPath)); }
+    public Task<Bitmap?> AircraftImage => _aircraftImage ??= ImageHelper.LoadFromWeb(new Uri(Aircraft.Photo.UrlPath));
 
     // Flight Status
-    public bool IsCompleted { get => DateTime.Now > ArrivalTime && !IsCanceled; }
-    public bool InProgress { get => DateTime.Now > DepartureTime && DateTime.Now < ArrivalTime && !IsCanceled; }
+    public bool IsCompleted => DateTime.Now > ArrivalTime && !IsCanceled;
+    public bool InProgress => DateTime.Now > DepartureTime && DateTime.Now < ArrivalTime && !IsCanceled;
 
     // Validations 
     
@@ -133,6 +136,7 @@ public class Flight : ReactiveObject, IValidatableViewModel
         FreePlace = flightDto.FreePlace;
         DurationTime = flightDto.DurationTime;
         IsCanceled = flightDto.IsCanceled;
+        Price = flightDto.Price;
         
         // Validations 
         this.InitializeValidationRules();

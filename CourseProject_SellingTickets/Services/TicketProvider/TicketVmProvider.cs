@@ -62,15 +62,13 @@ public class TicketVmProvider : ITicketVmProvider
     {
         return await _flightDbProvider!.GetAllFlights();
     }
-
-    //
     
-    public async Task<bool> CreateOrEditTicket(Ticket ticket)
+    public async Task<int> CreateOrEditTicket(Ticket ticket)
     {
         return await _ticketDbProvider!.CreateOrEditTicket(ticket);
     }
 
-    public async Task<bool> DeleteTicket(Ticket ticket)
+    public async Task<int> DeleteTicket(Ticket ticket)
     {
         return await _ticketDbProvider!.DeleteTicket(ticket);
     }

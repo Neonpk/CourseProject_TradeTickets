@@ -79,6 +79,7 @@
                         <ComboBoxItem>По количеству мест</ComboBoxItem>
                         <ComboBoxItem>По кол-ву свободных мест</ComboBoxItem>
                         <ComboBoxItem>По длительности полета</ComboBoxItem>
+                        <ComboBoxItem>По цене</ComboBoxItem>
                     </ComboBox>
 
                     <TextBox 
@@ -124,6 +125,7 @@
                             <ComboBoxItem>По длительности полета</ComboBoxItem>
                             <ComboBoxItem>По полетам в процессе</ComboBoxItem>
                             <ComboBoxItem>По выполненым полетам</ComboBoxItem>
+                            <ComboBoxItem>По цене</ComboBoxItem>
                         </ComboBox>
 
                     </StackPanel>
@@ -207,13 +209,13 @@
                                                
                                                <Border.Background>
                                                    <MultiBinding Converter="{StaticResource FlightStatusConverter}" ConverterParameter="Foreground">
+                                                       <Binding Path="IsCanceled"/>
                                                        <Binding Path="InProgress"/>
                                                        <Binding Path="IsCompleted"/>
-                                                       <Binding Path="IsCanceled" Mode="OneTime"/>
                                                    </MultiBinding>
                                                </Border.Background>
                                                
-                                               <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" 
+                                               <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" 
                                                      ColumnDefinitions="Auto, Auto">
                                                    
                                                    <Label Grid.Row="0" Grid.ColumnSpan="2" 
@@ -222,26 +224,29 @@
                                                    <Label Grid.Row="1" Grid.Column="0" Content="Рейс №" FontSize="15" />
                                                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding FlightNumber, Mode=OneTime}" FontWeight="Bold"/>
                                                    
-                                                   <Label Grid.Column="0" Grid.Row="2" Content="Отменен:"/>
-                                                   <Label Grid.Column="1" Grid.Row="2" FontWeight="Bold" Content="{Binding IsCanceled, Mode=OneTime, Converter={StaticResource CancelFlightStringConverter}}" />
+                                                   <Label Grid.Row="2" Grid.Column="0" Content="Цена: " FontSize="15" />
+                                                   <Label Grid.Row="2" Grid.Column="1" Content="{Binding Price, StringFormat={}{0} руб., Mode=OneTime}" FontWeight="Bold" />
                                                    
-                                                   <Label Grid.Column="0" Grid.Row="3" Content="Выполнен: " 
+                                                   <Label Grid.Column="0" Grid.Row="3" Content="Отменен: "/>
+                                                   <Label Grid.Column="1" Grid.Row="3" FontWeight="Bold" Content="{Binding IsCanceled, Mode=OneTime, Converter={StaticResource CancelFlightStringConverter}}" />
+                                                   
+                                                   <Label Grid.Column="0" Grid.Row="4" Content="Выполнен: " 
                                                           IsVisible="{Binding IsCanceled, Mode=OneTime, Converter={StaticResource InvertBoolConverter}}"/>
-                                                   <Label Grid.Column="1" Grid.Row="3" 
+                                                   <Label Grid.Column="1" Grid.Row="4" 
                                                           FontWeight="Bold"
                                                           IsVisible="{Binding IsCanceled, Mode=OneTime, Converter={StaticResource InvertBoolConverter}}"
                                                           >
                                                        <Label.Content>
                                                            <MultiBinding Converter="{StaticResource FlightStatusConverter}" ConverterParameter="String">
-                                                               <Binding Path="InProgress" Mode="OneTime"  />
-                                                               <Binding Path="IsCompleted" Mode="OneTime" />
-                                                               <Binding Path="IsCanceled" Mode="OneTime"  />
+                                                               <Binding Path="IsCanceled"/>
+                                                               <Binding Path="InProgress" />
+                                                               <Binding Path="IsCompleted" />
                                                            </MultiBinding>
                                                        </Label.Content>
                                                    </Label>
                                                    
-                                                   <Label Grid.Column="0" Grid.Row="4" Content="Время полета: "/>
-                                                   <Label Grid.Column="1" Grid.Row="4" FontWeight="Bold" Content="{Binding DurationTime, Mode=OneTime, StringFormat={}{0:dd} дн. {0:hh} ч. {0:mm} м.}"/>
+                                                   <Label Grid.Column="0" Grid.Row="5" Content="Время полета: "/>
+                                                   <Label Grid.Column="1" Grid.Row="5" FontWeight="Bold" Content="{Binding DurationTime, Mode=OneTime, StringFormat={}{0:dd} дн. {0:hh} ч. {0:mm} м.}"/>
                                                   
                                                </Grid>
                                            </Border>
@@ -445,8 +450,7 @@
                         </DockPanel>
                         
                         <Label Content="Id записи (не подлежит изменению)"
-                               Margin="0 10 0 10"
-                               />
+                               Margin="0 10 0 10"/>
                         <TextBox IsEnabled="False" 
                                  Text="{Binding SelectedFlight.Id}" />
                         
@@ -458,6 +462,15 @@
                             Minimum="1"
                             ParsingNumberStyle="Integer"
                             FormatString="N0"/>
+                        
+                        <Label Content="Цена" 
+                               Margin="0 10 0 10"/>
+                        
+                        <NumericUpDown Watermark="Укажите цену"
+                                       Value="{Binding SelectedFlight.Price}" 
+                                       Minimum="0"
+                                       ParsingNumberStyle="Integer"
+                                       FormatString="N0"/>
                         
                         <Label Content="Авиакомпания" 
                                Margin="0 10 0 0"/>

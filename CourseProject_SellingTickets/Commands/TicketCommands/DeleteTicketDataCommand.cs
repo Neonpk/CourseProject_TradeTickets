@@ -30,13 +30,13 @@ public class DeleteTicketDataCommand : ReactiveCommand<Unit, Task>
         {
             Ticket selectedTicket = ticketUserViewModel.SelectedTicket;
             
-            bool isDeleted = await flightProvider!.DeleteTicket(selectedTicket);
+            var dbState = await flightProvider!.DeleteTicket(selectedTicket);
 
             ticketUserViewModel.SearchTicketDataCommand?.Execute().Subscribe();
         }
         catch (Exception e)
         {
-            ticketUserViewModel.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.InnerException!.Message})";
+            ticketUserViewModel.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
         }
 
         ticketUserViewModel.IsLoadingEditMode = false;

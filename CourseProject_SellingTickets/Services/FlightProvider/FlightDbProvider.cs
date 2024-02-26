@@ -25,7 +25,7 @@ public class FlightDbProvider : IFlightDbProvider
     
     public async Task<IEnumerable<Flight>> GetAllFlights()
     {
-        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 AsNoTracking().
@@ -44,7 +44,7 @@ public class FlightDbProvider : IFlightDbProvider
 
     public async Task<IEnumerable<Flight>> GetTopFlights(int topRows = 50)
     {
-        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 OrderByDescending(x => x.Id).
@@ -65,7 +65,7 @@ public class FlightDbProvider : IFlightDbProvider
     
     public async Task<IEnumerable<Flight>> GetFlightsByFilter( Expression<Func<FlightDTO, bool>> searchFunc, int topRows = -1)
     {
-        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 Where(searchFunc).
@@ -88,7 +88,7 @@ public class FlightDbProvider : IFlightDbProvider
     public async Task<IEnumerable<Flight>> GetFlightsByFilterSort<TKeySelector>
         ( Expression<Func<FlightDTO, bool>> searchFunc, Expression<Func<FlightDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1)
     {
-        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 Where(searchFunc).
@@ -108,29 +108,29 @@ public class FlightDbProvider : IFlightDbProvider
         }
     }
     
-    public async Task<bool> CreateOrEditFlight(Flight flight)
+    public async Task<int> CreateOrEditFlight(Flight flight)
     {
-        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             FlightDTO flightDto = ToFlightDto(flight);
 
             if (flightDto.Id.Equals(default))
-                context.Flights.Add(flightDto);
+                await context.Flights.AddAsync(flightDto);
             else
                 context.Flights.Attach(flightDto).State = EntityState.Modified;
 
-            return await context.SaveChangesAsync() > 0;
+            return await context.SaveChangesAsync();
         }
     }
 
-    public async Task<bool> DeleteFlight(Flight flight)
+    public async Task<int> DeleteFlight(Flight flight)
     {
-        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             FlightDTO flightDto = ToFlightDto(flight);
             
             context.Flights.Remove(flightDto);
-            return await context.SaveChangesAsync() > 0;
+            return await context.SaveChangesAsync();
         }
     }
     
@@ -151,7 +151,8 @@ public class FlightDbProvider : IFlightDbProvider
             ArrivalTime = flight.ArrivalTime,
             AircraftId = flight.Aircraft.Id,
             AirlineId = flight.Airline.Id,
-            IsCanceled = flight.IsCanceled
+            IsCanceled = flight.IsCanceled,
+            Price = flight.Price
         };
     }
     

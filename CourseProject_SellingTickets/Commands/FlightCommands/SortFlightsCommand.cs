@@ -74,6 +74,10 @@ public class SortFlightsCommand : ReactiveCommand<Unit, Unit>
                 case FlightSortModes.IsCompleted:
                     flightItems!.OrderByReferenceMode(x => x.IsCompleted, sortMode);
                     break;
+                
+                case FlightSortModes.Price: 
+                    flightItems!.OrderByReferenceMode(x => x.Price, sortMode);
+                    break;
             }
         });
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
@@ -23,7 +24,7 @@ public class TicketDbProvider : ITicketDbProvider
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
-            IEnumerable<TicketDTO> ticketDtos = await context.Tickets.
+             IEnumerable<TicketDTO> ticketDtos = await context.Tickets.
                 AsNoTracking().
                 Include( x => x.Flight ).
                 Include( x => x.FlightClass ). 
@@ -118,29 +119,29 @@ public class TicketDbProvider : ITicketDbProvider
         }
     }
 
-    public async Task<bool> CreateOrEditTicket(Ticket ticket)
+    public async Task<int> CreateOrEditTicket(Ticket ticket)
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             TicketDTO ticketDto = ToTicketDto(ticket);
 
             if (ticketDto.Id.Equals(default))
-                context.Tickets.Add(ticketDto);
+                await context.Tickets.AddAsync(ticketDto);
             else
                 context.Tickets.Attach(ticketDto).State = EntityState.Modified;
 
-            return await context.SaveChangesAsync() > 0;
+            return await context.SaveChangesAsync();
         }
     }
 
-    public async Task<bool> DeleteTicket(Ticket ticket)
+    public async Task<int> DeleteTicket(Ticket ticket)
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             TicketDTO ticketDto = ToTicketDto(ticket);
             
             context.Tickets.Remove(ticketDto);
-            return await context.SaveChangesAsync() > 0;
+            return await context.SaveChangesAsync();
         }
     }
     
@@ -151,10 +152,8 @@ public class TicketDbProvider : ITicketDbProvider
             new Flight ( ticketDto.Flight ),
             new FlightClass( ticketDto.FlightClass.Id, ticketDto.FlightClass.ClassName ),
             ticketDto.PlaceNumber, 
-            ticketDto.Price, 
             new Discount( ticketDto.Discount.Id, ticketDto.Discount.Name, ticketDto.Discount.DiscountSize, ticketDto.Discount.Description ),
-            ticketDto.IsSold, 
-            ticketDto.DiscountPrice
+            ticketDto.IsSold
         );
     }
     
@@ -166,7 +165,6 @@ public class TicketDbProvider : ITicketDbProvider
             FlightId = ticket.Flight.Id,
             ClassId = ticket.FlightClass.Id,
             PlaceNumber = ticket.PlaceNumber,
-            Price = ticket.Price,
             DiscountId = ticket.Discount.Id,
             IsSold = ticket.IsSold
         };

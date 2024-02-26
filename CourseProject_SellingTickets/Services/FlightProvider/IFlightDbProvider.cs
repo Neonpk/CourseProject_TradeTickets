@@ -16,6 +16,6 @@ public interface IFlightDbProvider
     Task<IEnumerable<Flight>> GetFlightsByFilterSort<TKeySelector>
         ( Expression<Func<FlightDTO, bool>> searchFunc, Expression<Func<FlightDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1);
     
-    Task<bool> CreateOrEditFlight(Flight flight);
-    Task<bool> DeleteFlight(Flight flight);
+    Task<int> CreateOrEditFlight(Flight flight);
+    Task<int> DeleteFlight(Flight flight);
 }

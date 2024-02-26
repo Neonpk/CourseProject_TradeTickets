@@ -23,7 +23,8 @@ namespace CourseProject_SellingTickets.Models
         CanceledFlights,
         DurationTime,
         IsCompleted,
-        InProgress
+        InProgress,
+        Price
     }
     
     public enum FlightSearchModes
@@ -37,6 +38,7 @@ namespace CourseProject_SellingTickets.Models
         TotalPlace,
         FreePlace,
         DurationTime,
+        Price,
     }
 
     public enum TicketSearchModes
