@@ -52,6 +52,8 @@
                     DockPanel.Dock="Top"
                     Content="Самолеты" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="aircraft"
                     />
                 
                                 
@@ -100,11 +102,7 @@
         </SplitView.Pane>
         
         <SplitView.Content>
-        
-            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                <Label Content="Панель администратора"/>
-            </StackPanel>
-            
+            <ContentPresenter Content="{Binding $parent[SplitView].((vm:AdminUserViewModel)DataContext).NavigationAdminService.CurrentView}"/>
         </SplitView.Content>
         
         

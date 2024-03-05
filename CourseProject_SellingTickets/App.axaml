@@ -41,13 +41,17 @@
         
         <!-- SubViews of AdminMode -->
 
+        <DataTemplate DataType="{x:Type vm:AircraftUserViewModel}">
+            <view:AircraftUserView />
+        </DataTemplate>
+        
     </Application.DataTemplates>
 
     <Application.Styles>
         
         <FluentTheme />
         
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
         
         <StyleInclude Source="/Controls/Styles/GroupBox_HeaderedContentControl.axaml" />
         <StyleInclude Source="/Controls/DateTimePicker.axaml"/>

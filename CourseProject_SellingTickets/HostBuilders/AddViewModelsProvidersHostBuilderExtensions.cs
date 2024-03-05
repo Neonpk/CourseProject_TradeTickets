@@ -4,6 +4,7 @@ using CourseProject_SellingTickets.Services.AirlineProvider;
 using CourseProject_SellingTickets.Services.DiscountProvider;
 using CourseProject_SellingTickets.Services.FlightClassProvider;
 using CourseProject_SellingTickets.Services.FlightProvider;
+using CourseProject_SellingTickets.Services.PhotoProvider;
 using CourseProject_SellingTickets.Services.PlaceProvider;
 using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
@@ -30,8 +31,14 @@ public static class AddViewModelsProvidersHostBuilderExtensions
             var iTicketDbProvider = service.GetService<ITicketDbProvider>();
             var iDiscountDbProvider = service.GetService<IDiscountDbProvider>();
             var iFlightClassDbProvider = service.GetService<IFlightClassDbProvider>();
+            var iPhotoDbProvider = service.GetService<IPhotoDbProvider>();
             
             //ViewModels
+            
+            resolver.RegisterLazySingleton<IAircraftVmProvider>( () => 
+                new AircraftVmProvider( iAircraftDbProvider, iPhotoDbProvider ) );
+            
+            //
             
             resolver.RegisterLazySingleton<IFlightVmProvider>(() => 
                 new FlightVmVmProvider(iFlightDbProvider, iAircraftDbProvider, iAirlineDbProvider, iPlaceDbProvider));

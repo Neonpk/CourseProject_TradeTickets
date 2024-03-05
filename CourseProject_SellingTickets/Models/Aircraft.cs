@@ -1,12 +1,18 @@
 using System;
+using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using CourseProject_SellingTickets.Helpers;
+using CourseProject_SellingTickets.ValidationRules;
 using CourseProject_SellingTickets.ViewModels;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Contexts;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Aircraft : ReactiveObject
+public class Aircraft : ReactiveObject, IValidatableViewModel
 {
     // Main Model
 
@@ -25,11 +31,22 @@ public class Aircraft : ReactiveObject
     private Photo _photo;
     public Photo Photo { get => _photo; set => this.RaiseAndSetIfChanged(ref _photo, value); }
 
+    // Custom Properties
+    
+    // Validations
+    
+    private string _errorValidations;
+    public string ErrorValidations { get => _errorValidations; set => this.RaiseAndSetIfChanged(ref _errorValidations, value); }
+    
+    public ValidationContext ValidationContext { get; } = new ValidationContext();
+    
     public Aircraft()
     {
         Model = String.Empty;
         Type = String.Empty;
         Photo = new Photo();
+        
+        this.InitializeValidationRules();
     }
     
     public Aircraft(System.Int64 id, string model, string type, int totalPlace, Photo photo)
@@ -39,6 +56,8 @@ public class Aircraft : ReactiveObject
         Type = type;
         TotalPlace = totalPlace;
         Photo = photo;
+        
+        this.InitializeValidationRules();
     }
     
     public override bool Equals(object? obj)

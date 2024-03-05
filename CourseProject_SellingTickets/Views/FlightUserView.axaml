@@ -87,7 +87,7 @@
                         DockPanel.Dock="Left" Watermark="Введите поисковый запрос.">
                         
                         <TextBox.KeyBindings>
-                            <KeyBinding Gesture="Enter" Command="{Binding SearchFlightDataCommand}"></KeyBinding>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchFlightDataCommand}"/>
                         </TextBox.KeyBindings>
                         
                     </TextBox>

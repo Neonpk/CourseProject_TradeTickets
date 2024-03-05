@@ -41,7 +41,7 @@
                     DockPanel.Dock="Top"
                     Content="Рейсы" FontSize="15"
                     IsVisible="{Binding ShowedSideBar}"
-                    Command="{Binding FetchCommand}"
+                    Command="{Binding SwitchControlCommand}"
                     CommandParameter="flights"
                     />
                     
@@ -51,7 +51,7 @@
                     DockPanel.Dock="Top"
                     Content="Билеты" FontSize="15"
                     IsVisible="{Binding ShowedSideBar}"
-                    Command="{Binding FetchCommand}"
+                    Command="{Binding SwitchControlCommand}"
                     CommandParameter="tickets"
                     />
                     

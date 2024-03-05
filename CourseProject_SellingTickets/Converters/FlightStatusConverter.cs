@@ -13,11 +13,6 @@ public class FlightStatusConverter : IMultiValueConverter
     public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
     {
         string param = parameter != null ? (string)parameter : String.Empty;
-
-        foreach(var item in values)
-        {
-            Console.WriteLine("{0} = {1}", item, item is UnsetValueType);
-        }
         
         if (values.Any(x => x is UnsetValueType))
             return param.Equals("String") ? "" : param.Equals("Foreground") ? Brushes.Transparent : false;

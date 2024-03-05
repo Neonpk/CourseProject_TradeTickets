@@ -4,6 +4,7 @@ using CourseProject_SellingTickets.Services.AircraftProvider;
 using CourseProject_SellingTickets.Services.AirlineProvider;
 using CourseProject_SellingTickets.Services.DiscountProvider;
 using CourseProject_SellingTickets.Services.FlightClassProvider;
+using CourseProject_SellingTickets.Services.PhotoProvider;
 using CourseProject_SellingTickets.Services.PlaceProvider;
 using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
@@ -49,6 +50,9 @@ public static class AddDatabaseProvidersHostBuilderExtensions
             
             resolver.RegisterLazySingleton<IFlightClassDbProvider>( () => 
                 new FlightClassDbProvider(tradeTicketsDbContext!) );
+            
+            resolver.RegisterLazySingleton<IPhotoDbProvider>( () => 
+                new PhotoDbProvider(tradeTicketsDbContext!) );
             
         });
 

@@ -25,7 +25,7 @@ public class FlightDbProvider : IFlightDbProvider
     
     public async Task<IEnumerable<Flight>> GetAllFlights()
     {
-        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 AsNoTracking().
@@ -44,7 +44,7 @@ public class FlightDbProvider : IFlightDbProvider
 
     public async Task<IEnumerable<Flight>> GetTopFlights(int topRows = 50)
     {
-        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 OrderByDescending(x => x.Id).
@@ -65,7 +65,7 @@ public class FlightDbProvider : IFlightDbProvider
     
     public async Task<IEnumerable<Flight>> GetFlightsByFilter( Expression<Func<FlightDTO, bool>> searchFunc, int topRows = -1)
     {
-        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 Where(searchFunc).
@@ -88,7 +88,7 @@ public class FlightDbProvider : IFlightDbProvider
     public async Task<IEnumerable<Flight>> GetFlightsByFilterSort<TKeySelector>
         ( Expression<Func<FlightDTO, bool>> searchFunc, Expression<Func<FlightDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1)
     {
-        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             IEnumerable<FlightDTO> flightDtos = await context.Flights.
                 Where(searchFunc).
@@ -110,7 +110,7 @@ public class FlightDbProvider : IFlightDbProvider
     
     public async Task<int> CreateOrEditFlight(Flight flight)
     {
-        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             FlightDTO flightDto = ToFlightDto(flight);
 
@@ -125,7 +125,7 @@ public class FlightDbProvider : IFlightDbProvider
 
     public async Task<int> DeleteFlight(Flight flight)
     {
-        await using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
             FlightDTO flightDto = ToFlightDto(flight);
             

@@ -1,4 +1,7 @@
 using System;
+using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using CourseProject_SellingTickets.Helpers;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 
@@ -21,6 +24,11 @@ public class Photo : ReactiveObject
     private bool _isDeleted;
     public bool IsDeleted { get => _isDeleted; set => this.RaiseAndSetIfChanged(ref _isDeleted, value); }
 
+    // Custom properties
+    
+    private Task<Bitmap?>? _bitmapFromUrl;
+    public Task<Bitmap?> BitMapFromUrl => _bitmapFromUrl ??= ImageHelper.LoadFromWeb(new Uri(UrlPath)); 
+    
     public Photo()
     {
         Name = String.Empty;

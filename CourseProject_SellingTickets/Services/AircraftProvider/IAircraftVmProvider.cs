@@ -6,7 +6,7 @@ using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Services.AircraftProvider;
 
-public interface IAircraftDbProvider
+public interface IAircraftVmProvider
 {
     Task<IEnumerable<Aircraft>> GetAllAircrafts();
     
@@ -16,8 +16,9 @@ public interface IAircraftDbProvider
     
     Task<IEnumerable<Aircraft>> GetAircraftsByFilterSort<TKeySelector>
         ( Expression<Func<AircraftDTO, bool>> searchFunc, Expression<Func<AircraftDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1);
+
+    Task<IEnumerable<Photo>> GetAllPhotos();
     
     Task<int> CreateOrEditAircraft(Aircraft aircraft);
     Task<int> DeleteAircraft(Aircraft aircraft);
-    
 }

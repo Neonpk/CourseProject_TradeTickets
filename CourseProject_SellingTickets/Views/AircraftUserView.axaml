@@ -1,0 +1,338 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:CourseProject_SellingTickets.Controls"
+             xmlns:vm="clr-namespace:CourseProject_SellingTickets.ViewModels"
+             xmlns:converter="clr-namespace:CourseProject_SellingTickets.Converters"
+             x:DataType="vm:AircraftUserViewModel"
+             xmlns:s="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CourseProject_SellingTickets.Views.AircraftUserView">
+    
+    <UserControl.Resources>
+        <converter:InverseBooleanConverter x:Key="InvertBoolConverter"/>
+        <converter:InitializeDataErrorConverter x:Key="InitializeDataErrorConverter"/>
+        <converter:BlockDataFieldConverter x:Key="BlockDataFieldConverter"/>
+        <converter:CollectionHasItemsConverter x:Key="CollectionHasItemsConverter"/>
+        
+        <s:Boolean x:Key="FalseValue">False</s:Boolean>
+        <s:Boolean x:Key="TrueValue">True</s:Boolean>
+    </UserControl.Resources>
+    
+    <SplitView IsPaneOpen="{Binding SideBarShowed}" 
+               DisplayMode="Inline" PanePlacement="Right">
+        
+        <SplitView.Content>
+            
+                        
+            <DockPanel>
+            
+                <DockPanel Margin="10" DockPanel.Dock="Top">
+                    <Label Content="Самолеты" FontSize="30" />
+                    
+                    <Button Content="Обновить" 
+                            DockPanel.Dock="Right" HorizontalAlignment="Right"
+                            Margin="5 0 0 0"
+                            Command="{Binding SearchAircraftDataCommand}"
+                            />
+                    
+                    <Button Content="Добавить новый самолет" 
+                            HorizontalAlignment="Right" 
+                            HorizontalContentAlignment="Center"
+                            Width="200" DockPanel.Dock="Right"
+                            Command="{Binding AddEditDataCommand}"
+                            CommandParameter="{StaticResource TrueValue}"
+                            >
+                        
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource BlockDataFieldConverter}">
+                                <Binding Path="IsLoading"/>
+                                <Binding Path="DatabaseHasConnected"/>
+                            </MultiBinding>
+                        </Button.IsEnabled>
+                        
+                    </Button>
+                    
+                </DockPanel>
+                
+                <DockPanel Margin="10" DockPanel.Dock="Top">
+                    
+                    <DockPanel.IsEnabled>
+                        <MultiBinding Converter="{StaticResource BlockDataFieldConverter}">
+                            <Binding Path="IsLoading"/>
+                            <Binding Path="DatabaseHasConnected"/>
+                        </MultiBinding>
+                    </DockPanel.IsEnabled>
+                    
+                    <Label FontSize="15" Content="Применить фильтр" DockPanel.Dock="Top"/>
+
+                    <ComboBox DockPanel.Dock="Right" SelectedIndex="{Binding SelectedSearchMode}">
+                        <ComboBoxItem>По модели</ComboBoxItem>
+                        <ComboBoxItem>По по типу</ComboBoxItem>
+                        <ComboBoxItem>По кол-ву мест</ComboBoxItem>
+                    </ComboBox>
+
+                    <TextBox 
+                        FontSize="15" 
+                        DockPanel.Dock="Left" Watermark="Введите поисковый запрос." Text="{Binding SearchTerm}">
+                        
+                        <TextBox.KeyBindings>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchAircraftDataCommand}"/>
+                        </TextBox.KeyBindings>
+                        
+                    </TextBox>
+                </DockPanel>
+                            
+                <Grid Margin="10" DockPanel.Dock="Top" ColumnDefinitions="*,*" RowDefinitions="*,*">
+                    
+                    <Grid.IsEnabled>
+                        <MultiBinding Converter="{StaticResource BlockDataFieldConverter}">
+                            <Binding Path="IsLoading"/>
+                            <Binding Path="DatabaseHasConnected"/>
+                        </MultiBinding>
+                    </Grid.IsEnabled>
+                    
+                    <Label Grid.Column="0" Grid.Row="0" FontSize="15" Content="Применить сортировку" DockPanel.Dock="Top"/>
+
+                    <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
+
+                        <ComboBox SelectedIndex="{Binding SelectedSortMode}">
+                            <ComboBoxItem>По возрастанию</ComboBoxItem>
+                            <ComboBoxItem>По убыванию</ComboBoxItem>
+                        </ComboBox>
+
+                        <ComboBox SelectedIndex="{Binding SelectedSortValue}">
+                            <ComboBoxItem>По модели</ComboBoxItem>
+                            <ComboBoxItem>По по типу</ComboBoxItem>
+                            <ComboBoxItem>По кол-ву мест</ComboBoxItem>
+                        </ComboBox>
+
+                    </StackPanel>
+                    
+                    <Label Grid.Column="1" Grid.Row="0" Content="Лимит записей" HorizontalAlignment="Right" />
+                    
+                    <NumericUpDown Grid.Column="1" Grid.Row="1" Width="200"
+                                   Value="{Binding LimitRows}"
+                                   HorizontalAlignment="Right"
+                                   Watermark="Лимит записей"
+                                   Minimum="-1"
+                                   ParsingNumberStyle="Integer"
+                                   FormatString="N0"
+                                   >
+                        
+                        <NumericUpDown.KeyBindings>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchAircraftDataCommand}"/>
+                        </NumericUpDown.KeyBindings>
+                        
+                    </NumericUpDown>
+
+                </Grid>
+                
+                <Grid>
+                    
+                    <controls:DoubleBounceSpinner 
+                        IsActive="{Binding IsLoading}"
+                        ForegroundSpinner="White"
+                        Diameter="60"
+                        />
+                    
+                    <Grid IsVisible="{Binding IsLoading, Converter={StaticResource InvertBoolConverter}}">
+                    
+                        <TextBlock 
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="Red"
+                            Text="{Binding ErrorMessage}"
+                            TextWrapping="WrapWithOverflow"
+                            >
+                            
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{StaticResource InitializeDataErrorConverter}">
+                                    <Binding Path="HasErrorMessage"/>
+                                    <Binding Path="DatabaseHasConnected"/>
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            
+                        </TextBlock>
+                    
+                        <Grid IsVisible="{Binding DatabaseHasConnected}">
+                        
+                            <TextBlock 
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="Orange"
+                                Text="Данные не найдены"
+                                IsVisible="{Binding AircraftItems.Count, 
+                                    Converter={StaticResource CollectionHasItemsConverter}, 
+                                    ConverterParameter={StaticResource FalseValue}}"
+                                TextWrapping="WrapWithOverflow"/>
+                            
+                            <ListBox 
+                                IsVisible="{Binding AircraftItems.Count, 
+                                    Converter={StaticResource CollectionHasItemsConverter}, 
+                                    ConverterParameter={StaticResource TrueValue}}"
+                                HorizontalAlignment="Stretch" 
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                ItemsSource="{Binding AircraftItems, FallbackValue=1}"
+                                SelectedValue="{Binding SelectedAircraft}"
+                                >
+                                
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="5"/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        
+                                        <StackPanel>
+                                            
+                                            <Image Width="150" Height="150" 
+                                                   Source="{Binding Photo.BitMapFromUrl^, Mode=OneTime}" Stretch="Uniform" Margin="0 20 0 0"/>
+                                            
+                                            <Grid ColumnDefinitions="200,*" RowDefinitions="50,50,50">
+
+                                                <TextBlock FontSize="15" TextWrapping="Wrap" Text="Модель:" Margin="0 20 0 0"
+                                                           Grid.Row="0" Grid.Column="0"/>
+                                                <TextBlock FontSize="15" TextDecorations="underline" TextWrapping="Wrap" Margin="0 20 0 0"
+                                                           Text="{Binding Model, Mode=OneTime}" Grid.Column="1" Grid.Row="0"/>
+
+                                                <TextBlock FontSize="15" TextWrapping="Wrap" Text="Тип: " 
+                                                           Grid.Column="0" Grid.Row="1" />
+                                                <TextBlock FontSize="15" TextDecorations="underline" TextWrapping="Wrap"
+                                                           Text="{Binding Type, Mode=OneTime}" 
+                                                           Grid.Row="1" Grid.Column="1"/>
+                                                
+                                                <TextBlock FontSize="15" TextWrapping="Wrap" Text="Кол-во мест: " 
+                                                           Grid.Column="0" Grid.Row="2" />
+                                                <TextBlock FontSize="15" TextDecorations="underline" TextWrapping="Wrap"
+                                                           Text="{Binding TotalPlace, Mode=OneTime}" 
+                                                           Grid.Row="2" Grid.Column="1"/>
+                                                
+                                            </Grid>
+                                            
+                                            <Button Content="Править" 
+                                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                                    Command="{Binding Path=$parent[ListBox].((vm:AircraftUserViewModel)DataContext).AddEditDataCommand}"
+                                                    CommandParameter="{StaticResource FalseValue}"
+                                                    />
+                                            <Button Content="Удалить" 
+                                                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                                    Command="{Binding Path=$parent[ListBox].((vm:AircraftUserViewModel)DataContext).DeleteAircraftDataCommand}"
+                                                    />
+                                            
+                                        </StackPanel>
+                                            
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+
+                            </ListBox>
+                            
+                        </Grid>
+                        
+                    </Grid>
+                        
+                </Grid>
+                
+            </DockPanel>
+            
+        </SplitView.Content>
+        
+        <SplitView.Pane>
+            
+            <Border Background="#252525" 
+                    Width="320">
+                <ScrollViewer>
+                    <StackPanel Margin="10">
+                        
+                        <DockPanel>
+                            
+                            <Label Content="Изменить/Добавить рейс" FontSize="15"
+                                   Margin="0 0 0 10" />
+                            
+                            <Button Content="x" HorizontalAlignment="Right" 
+                                    VerticalAlignment="Top"
+                                    Command="{Binding HideSideBarCommand}"
+                                    />
+                            
+                        </DockPanel>
+                        
+                        <Label Content="Id записи (не подлежит изменению)"
+                               Margin="0 10 0 10"/>
+                        <TextBox IsEnabled="False" 
+                                 Text="{Binding SelectedAircraft.Id}" />
+                        
+                        <Label Content="Модель" 
+                               Margin="0 10 0 10"/>
+                        
+                        <TextBox Text="{Binding SelectedAircraft.Model}" 
+                                 Watermark="Укажите модель самолета."/>
+                        
+                        <Label Content="Тип" 
+                               Margin="0 10 0 10"/>
+                        
+                        <TextBox Text="{Binding SelectedAircraft.Type}" 
+                                 Watermark="Укажите тип самолета."/>
+                        
+                        <Label Content="Кол-во мест" 
+                               Margin="0 10 0 10"/>
+                        <NumericUpDown 
+                            Watermark="Укажите кол-во мест"
+                            Value="{Binding SelectedAircraft.TotalPlace}" 
+                            Minimum="1"
+                            ParsingNumberStyle="Integer"
+                            FormatString="N0"/>
+                        
+                        <Label Content="Фото" 
+                               Margin="0 10 0 0"/>
+                        
+                        <ComboBox 
+                            ItemsSource="{Binding Photos}"
+                            SelectedValue="{Binding SelectedAircraft.Photo}"
+                            HorizontalAlignment="Stretch" 
+                            Margin="0 10 0 10"
+                            PlaceholderText="Выберите фото."
+                            >
+                            
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="32,*">
+                                        <Image Source="{Binding BitMapFromUrl^}" Height="32" Width="32" Grid.Column="0"/>
+                                        <Label Content="{Binding Name}" Grid.Column="1" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            
+                        </ComboBox>
+                        
+                        <TextBlock Margin="0 0 0 10"
+                                   Foreground="OrangeRed" 
+                                   Text="{Binding SelectedAircraft.ErrorValidations}" 
+                                   FontSize="12"
+                                   TextWrapping="WrapWithOverflow"
+                                   IsVisible="{Binding SelectedAircraft.ValidationContext.IsValid, Converter={StaticResource InvertBoolConverter}}"/>
+                        
+                        <Button Content="Сохранить" 
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                IsEnabled="{Binding IsLoadingEditMode, Converter={StaticResource InvertBoolConverter}}"
+                                Command="{Binding SaveAircraftDataCommand}"
+                                Margin="0 0 0 10"/>
+                        
+                        <TextBlock Foreground="Red"
+                                   Text="{Binding ErrorMessage}"
+                                   TextWrapping="WrapWithOverflow"
+                                   IsVisible="{Binding HasErrorMessage}"/>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+            
+        </SplitView.Pane>
+        
+    </SplitView>
+    
+</UserControl>

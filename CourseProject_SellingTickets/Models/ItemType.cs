@@ -10,6 +10,13 @@ namespace CourseProject_SellingTickets.Models
         UniqueViolation
     }
     
+    public enum AircraftSearchSortModes
+    {
+        Model = 0,
+        Type,
+        TotalPlace
+    }
+    
     public enum FlightSortModes
     {
         FlightNumber = 0,

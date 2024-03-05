@@ -167,11 +167,11 @@
                                     ConverterParameter={StaticResource TrueValue}}"
                                     HorizontalAlignment="Stretch" 
                                     VerticalAlignment="Stretch"
-                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                     ItemsSource="{Binding TicketItems}"
                                     SelectedItem="{Binding SelectedTicket}"
                                     IsReadOnly="True"
-                                    CanUserResizeColumns="True">
+                                    CanUserResizeColumns="True"
+                                    >
                                 
                                 <DataGrid.Columns>
                                     

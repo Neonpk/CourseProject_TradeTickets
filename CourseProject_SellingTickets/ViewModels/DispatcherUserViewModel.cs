@@ -43,12 +43,12 @@ public class DispatcherUserViewModel : ViewModelBase
     public ICommand ExitCommand { get => _exitCommand ??= ReactiveCommand.Create<string>((obj) => NavigationMainService?.NavigateTo<AuthUserViewModel>()); }
 
     #pragma  warning disable
-    private ICommand? _fetchCommand;
-    public ICommand FetchCommand
+    private ICommand? _switchControlCommand;
+    public ICommand SwitchControlCommand
     {
         get
         {
-            return _fetchCommand ??= ReactiveCommand.Create<string>((obj) =>
+            return _switchControlCommand ??= ReactiveCommand.Create<string>((obj) =>
             {
                 switch (obj)
                 {

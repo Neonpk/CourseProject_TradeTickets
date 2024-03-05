@@ -16,6 +16,9 @@ public class AdminUserViewModel : ViewModelBase
     
     private INavigationService? _navigationService;
     public INavigationService? NavigationService { get =>  _navigationService; set => this.RaiseAndSetIfChanged(ref _navigationService, value); }
+
+    private INavigationService? _navigationAdminService;
+    public INavigationService? NavigationAdminService { get => _navigationAdminService; set => this.RaiseAndSetIfChanged(ref _navigationAdminService, value); }
     
     // Commands (Event handlers)
     
@@ -34,6 +37,24 @@ public class AdminUserViewModel : ViewModelBase
     }
     
     #pragma  warning disable
+    private ICommand? _switchControlCommand;
+    public ICommand SwitchControlCommand 
+    {
+        get
+        { 
+            return _switchControlCommand ??= ReactiveCommand.Create<string>((obj) =>
+            {
+                switch (obj)
+                {
+                    case "aircraft":
+                        NavigationAdminService?.NavigateTo<AircraftUserViewModel>();
+                        break;
+                }
+            });
+        } 
+    }
+    
+    #pragma  warning disable
     private ICommand? _exitCommand;
     public ICommand ExitCommand
     {
@@ -46,8 +67,9 @@ public class AdminUserViewModel : ViewModelBase
         } 
     }
     
-    public AdminUserViewModel(INavigationService? navigationService)
+    public AdminUserViewModel(INavigationService? navigationService, INavigationService? navigationAdminService)
     {
         NavigationService = navigationService;
+        NavigationAdminService = navigationAdminService;
     }
 }
