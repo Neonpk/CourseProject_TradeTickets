@@ -6,7 +6,7 @@ using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Services.PlaceProvider;
 
-public interface IPlaceDbProvider
+public interface IPlaceVmProvider
 {
     Task<IEnumerable<Place>> GetAllPlaces();
     
@@ -16,6 +16,8 @@ public interface IPlaceDbProvider
     
     Task<IEnumerable<Place>> GetPlacesByFilterSort<TKeySelector>
         ( Expression<Func<PlaceDTO, bool>> searchFunc, Expression<Func<PlaceDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1);
+
+    Task<IEnumerable<Photo>> GetAllPhotos();
     
     Task<int> CreateOrEditPlace(Place place);
     Task<int> DeletePlace(Place place);

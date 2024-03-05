@@ -283,7 +283,7 @@
                                                        Margin="30"
                                                        >
                                                    <Border.Background>
-                                                       <ImageBrush Stretch="Fill" Source="{Binding AircraftImage^, Mode=OneTime}"/>
+                                                       <ImageBrush Stretch="Fill" Source="{Binding Aircraft.Photo.BitMapFromUrl^, Mode=OneTime}"/>
                                                    </Border.Background>
                                                </Border>
                                                
@@ -336,7 +336,7 @@
                                                            Width="150" Height="100"
                                                            Margin="10">
                                                        <Border.Background>
-                                                           <ImageBrush Stretch="Fill" Source="{Binding DeparturePlaceImage^, Mode=OneTime}"/>
+                                                           <ImageBrush Stretch="Fill" Source="{Binding DeparturePlace.Photo.BitMapFromUrl^, Mode=OneTime}"/>
                                                        </Border.Background>
                                                    </Border>
                                                    
@@ -380,7 +380,7 @@
                                                            Width="150" Height="100"
                                                            Margin="10">
                                                        <Border.Background>
-                                                           <ImageBrush Stretch="Fill" Source="{Binding DestinationPlaceImage^, Mode=OneTime}"/>
+                                                           <ImageBrush Stretch="Fill" Source="{Binding DestinationPlace.Photo.BitMapFromUrl^, Mode=OneTime}"/>
                                                        </Border.Background>
                                                    </Border>
                                                    

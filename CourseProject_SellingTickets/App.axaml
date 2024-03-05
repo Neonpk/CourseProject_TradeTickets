@@ -45,6 +45,10 @@
             <view:AircraftUserView />
         </DataTemplate>
         
+        <DataTemplate DataType="{x:Type vm:PlaceUserViewModel}">
+            <view:PlaceUserView />
+        </DataTemplate>
+        
     </Application.DataTemplates>
 
     <Application.Styles>

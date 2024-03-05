@@ -16,6 +16,12 @@ namespace CourseProject_SellingTickets.Models
         Type,
         TotalPlace
     }
+
+    public enum PlaceSearchSortModes
+    {
+        Name = 0,
+        Description,
+    }
     
     public enum FlightSortModes
     {

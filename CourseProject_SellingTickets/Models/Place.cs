@@ -1,11 +1,14 @@
 using System;
+using CourseProject_SellingTickets.ValidationRules;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Contexts;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning  disable
-public class Place : ReactiveObject
+public class Place : ReactiveObject, IValidatableViewModel
 {
     //Columns 
 
@@ -21,11 +24,20 @@ public class Place : ReactiveObject
     private Photo _photo;
     public Photo Photo { get => _photo; set => this.RaiseAndSetIfChanged(ref _photo, value); }
 
+    // Validation 
+    
+    private string _errorValidations;
+    public string ErrorValidations { get => _errorValidations; set => this.RaiseAndSetIfChanged(ref _errorValidations, value); }
+    
+    public ValidationContext ValidationContext { get; } = new ValidationContext();
+    
     public Place()
     {
         Name = string.Empty;
         Description = string.Empty;
         Photo = new Photo();
+        
+        this.InitializeValidationRules();
     }
     
     public Place( long id, string name, string description, Photo photo  )
@@ -34,6 +46,8 @@ public class Place : ReactiveObject
         Name = name;
         Description = description;
         Photo = photo;
+        
+        this.InitializeValidationRules();
     }
     
     public override bool Equals(object? obj)

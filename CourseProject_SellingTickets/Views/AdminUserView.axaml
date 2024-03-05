@@ -44,6 +44,8 @@
                     DockPanel.Dock="Top"
                     Content="Места" FontSize="15"
                     IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="place"
                 />
                 
                 <Button 

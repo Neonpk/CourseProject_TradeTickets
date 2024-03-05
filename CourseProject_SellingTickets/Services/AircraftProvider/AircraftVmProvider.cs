@@ -9,8 +9,8 @@ namespace CourseProject_SellingTickets.Services.AircraftProvider;
 
 public class AircraftVmProvider : IAircraftVmProvider
 {
-    private IAircraftDbProvider? _aircraftDbProvider;
-    private IPhotoDbProvider? _photoDbProvider;
+    private readonly IAircraftDbProvider? _aircraftDbProvider;
+    private readonly IPhotoDbProvider? _photoDbProvider;
 
     public AircraftVmProvider(IAircraftDbProvider? aircraftVmProvider, IPhotoDbProvider? photoDbProvider)
     {

@@ -49,6 +49,10 @@ public class AdminUserViewModel : ViewModelBase
                     case "aircraft":
                         NavigationAdminService?.NavigateTo<AircraftUserViewModel>();
                         break;
+                    
+                    case "place":
+                        NavigationAdminService?.NavigateTo<PlaceUserViewModel>();
+                        break;
                 }
             });
         } 

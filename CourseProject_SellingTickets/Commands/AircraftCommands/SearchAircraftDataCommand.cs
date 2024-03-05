@@ -14,23 +14,23 @@ namespace CourseProject_SellingTickets.Commands.AircraftCommands;
 public class SearchAircraftDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Aircraft>?>>
 {
     
-    private static async Task<IEnumerable<Aircraft>> GetFlightDataByFilter(IAircraftVmProvider aircraftVmProvider, string searchTerm, AircraftSearchSortModes searchMode, int limitRows = 50)
+    private static async Task<IEnumerable<Aircraft>> GetAircraftDataByFilter(IAircraftVmProvider aircraftVmProvider, string searchTerm, AircraftSearchSortModes searchMode, int limitRows = 50)
     {
          switch (searchMode)
          {
-             // By Flight Number
+             // By Model
              case AircraftSearchSortModes.Model:
                  return await aircraftVmProvider.GetAircraftsByFilter(
                      x => x.Model.ToLower().StartsWith(searchTerm.ToLower()), 
                      limitRows);
                 
-             // By Departure Place
+             // By Type
              case AircraftSearchSortModes.Type:
                  return await aircraftVmProvider.GetAircraftsByFilter(
                      x => x.Type.ToLower().StartsWith(searchTerm.ToLower()),
                      limitRows);
              
-             // By Destination Place
+             // By TotalPlace
              case AircraftSearchSortModes.TotalPlace:
                  return await aircraftVmProvider.GetAircraftsByFilter(
                      x => x.TotalPlace.ToString().StartsWith(searchTerm),
@@ -51,7 +51,7 @@ public class SearchAircraftDataCommand : ReactiveCommand<Unit, Task<IEnumerable<
         try
         {
             aircraftUserViewModel.IsLoading = true;
-            IEnumerable<Aircraft> aircrafts = await GetFlightDataByFilter(aircraftVmProvider, searchTerm, selectedSearchMode, limitRows);
+            IEnumerable<Aircraft> aircrafts = await GetAircraftDataByFilter(aircraftVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return aircrafts;
         }
@@ -64,8 +64,8 @@ public class SearchAircraftDataCommand : ReactiveCommand<Unit, Task<IEnumerable<
         }
     }
     
-    public SearchAircraftDataCommand(AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider flightVmProvider) : 
-        base(_ => Observable.Start(async () => await SearchDataAsync(aircraftUserViewModel, flightVmProvider)), canExecute: Observable.Return(true))
+    public SearchAircraftDataCommand(AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider aircraftVmProvider) : 
+        base(_ => Observable.Start(async () => await SearchDataAsync(aircraftUserViewModel, aircraftVmProvider)), canExecute: Observable.Return(true))
     {
         
     }

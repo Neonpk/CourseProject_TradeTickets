@@ -35,10 +35,15 @@ public static class AddViewModelsProvidersHostBuilderExtensions
             
             //ViewModels
             
+            //ViewModels => AdminMode
+            
             resolver.RegisterLazySingleton<IAircraftVmProvider>( () => 
                 new AircraftVmProvider( iAircraftDbProvider, iPhotoDbProvider ) );
             
-            //
+            resolver.RegisterLazySingleton<IPlaceVmProvider>( () => 
+                new PlaceVmProvider( iPlaceDbProvider, iPhotoDbProvider ) );
+            
+            //ViewModels=>DispatcherMode
             
             resolver.RegisterLazySingleton<IFlightVmProvider>(() => 
                 new FlightVmVmProvider(iFlightDbProvider, iAircraftDbProvider, iAirlineDbProvider, iPlaceDbProvider));

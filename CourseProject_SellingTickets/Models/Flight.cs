@@ -53,15 +53,6 @@ public class Flight : ReactiveObject, IValidatableViewModel
     
     // Custom Properties
 
-    private Task<Bitmap?>? _departurePlaceImage;
-    public Task<Bitmap?> DeparturePlaceImage => _departurePlaceImage ??= ImageHelper.LoadFromWeb(new Uri(DeparturePlace.Photo.UrlPath));
-
-    private Task<Bitmap?>? _destinationPlaceImage;
-    public Task<Bitmap?> DestinationPlaceImage => _destinationPlaceImage ??= ImageHelper.LoadFromWeb(new Uri(DestinationPlace.Photo.UrlPath));
-
-    private Task<Bitmap?>? _aircraftImage;
-    public Task<Bitmap?> AircraftImage => _aircraftImage ??= ImageHelper.LoadFromWeb(new Uri(Aircraft.Photo.UrlPath));
-
     // Flight Status
     public bool IsCompleted => DateTime.Now > ArrivalTime && !IsCanceled;
     public bool InProgress => DateTime.Now > DepartureTime && DateTime.Now < ArrivalTime && !IsCanceled;

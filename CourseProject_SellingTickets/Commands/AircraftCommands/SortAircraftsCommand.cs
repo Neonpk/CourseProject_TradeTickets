@@ -22,20 +22,21 @@ public class SortAircraftsCommand : ReactiveCommand<Unit, Unit>
 
         Dispatcher.UIThread.Post(() =>
         {
-            var flightItems = flightUserViewModel.AircraftItems;
+            var aircraftItems = flightUserViewModel.AircraftItems;
 
             switch (searchSortModes)
             {
+                // By Model
                 case AircraftSearchSortModes.Model:
-                    flightItems!.OrderByReferenceMode(x => x.Model, sortMode);
+                    aircraftItems!.OrderByReferenceMode(x => x.Model, sortMode);
                     break;
-
+                // By Type
                 case AircraftSearchSortModes.Type:
-                    flightItems!.OrderByReferenceMode(x => x.Type, sortMode);
+                    aircraftItems!.OrderByReferenceMode(x => x.Type, sortMode);
                     break;
-
+                // By TotalPlace
                 case AircraftSearchSortModes.TotalPlace:
-                    flightItems!.OrderByReferenceMode(x => x.TotalPlace, sortMode);
+                    aircraftItems!.OrderByReferenceMode(x => x.TotalPlace, sortMode);
                     break;
             }
         });
