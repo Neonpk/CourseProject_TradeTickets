@@ -49,6 +49,22 @@
             <view:PlaceUserView />
         </DataTemplate>
         
+        <DataTemplate DataType="{x:Type vm:DiscountUserViewModel}">
+            <view:DiscountUserView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:AirlineUserViewModel}">
+            <view:AirlineUserView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:FlightClassUserViewModel}">
+            <view:FlightClassUserView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:PhotoUserViewModel}">
+            <view:PhotoUserView />
+        </DataTemplate>
+        
     </Application.DataTemplates>
 
     <Application.Styles>

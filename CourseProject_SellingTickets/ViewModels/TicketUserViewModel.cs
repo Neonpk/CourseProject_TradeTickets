@@ -1,19 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Collections;
-using CourseProject_SellingTickets.Commands;
 using CourseProject_SellingTickets.Commands.TicketCommands;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.TicketProvider;
-using DynamicData;
-using DynamicData.Binding;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;
@@ -74,7 +68,7 @@ public class TicketUserViewModel : ViewModelBase
 
     public bool HasErrorMessage => !string.IsNullOrEmpty(ErrorMessage);
     
-    // => // ObservableCollection
+    // => // ObservableCollection And SourceCache
     
     private ObservableCollection<Ticket>? _ticketItems;
     public ObservableCollection<Ticket> TicketItems => _ticketItems ??= new ObservableCollection<Ticket>();
@@ -105,14 +99,7 @@ public class TicketUserViewModel : ViewModelBase
     {
         _ticketProvider = ticketVmProvider;
         _connectionStateProvider = connectionStateProvider;
-    /*
-        var myCache = new SourceCache<Ticket, long>(t => t.Id);
-        var disposable = myCache
-            .Connect()
-            .Bind(out _ticketItems)
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe();
-    */       
+        
         LoadTicketDataCommand.Execute();
         SearchTicketDataCommand.Subscribe(filteredTickets => LoadTicketDataCommand!.Execute(filteredTickets.Result!));
     }

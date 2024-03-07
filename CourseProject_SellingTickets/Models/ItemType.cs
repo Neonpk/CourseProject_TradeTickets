@@ -22,6 +22,30 @@ namespace CourseProject_SellingTickets.Models
         Name = 0,
         Description,
     }
+
+    public enum DiscountSearchSortModes
+    {
+        Name = 0,
+        Description,
+        DiscountSize
+    }
+
+    public enum PhotoSearchSortModes
+    {
+        Name = 0,
+        UrlPath, 
+        IsDeleted
+    }
+
+    public enum FlightClassSearchSortModes
+    {
+        ClassName = 0
+    }
+
+    public enum AirlineSearchSortModes
+    {
+        Name = 0,
+    }
     
     public enum FlightSortModes
     {

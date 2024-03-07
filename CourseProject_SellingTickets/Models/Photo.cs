@@ -2,13 +2,16 @@ using System;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using CourseProject_SellingTickets.Helpers;
+using CourseProject_SellingTickets.ValidationRules;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Contexts;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class Photo : ReactiveObject
+public class Photo : ReactiveObject, IValidatableViewModel
 {
     // Main Model
 
@@ -28,11 +31,20 @@ public class Photo : ReactiveObject
     
     private Task<Bitmap?>? _bitmapFromUrl;
     public Task<Bitmap?> BitMapFromUrl => _bitmapFromUrl ??= ImageHelper.LoadFromWeb(new Uri(UrlPath)); 
+
+    // Validation
+    
+    private string _errorValidations;
+    public string ErrorValidations { get => _errorValidations; set => this.RaiseAndSetIfChanged(ref _errorValidations, value); }
+    
+    public ValidationContext ValidationContext { get; } = new ValidationContext();
     
     public Photo()
     {
         Name = String.Empty;
         UrlPath = String.Empty;
+        
+        this.InitializeValidationRules();
     }
     
     public Photo(long id, string name, string urlPath, bool isDeleted)
@@ -41,6 +53,8 @@ public class Photo : ReactiveObject
         Name = name;
         UrlPath = urlPath;
         IsDeleted = isDeleted;
+        
+        this.InitializeValidationRules();
     }
 
     public override bool Equals(object? obj)

@@ -1,0 +1,253 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
+             xmlns:converter="using:CourseProject_SellingTickets.Converters"
+             xmlns:controls="using:CourseProject_SellingTickets.Controls"
+             xmlns:s="clr-namespace:System;assembly=mscorlib"
+             x:DataType="vm:AirlineUserViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CourseProject_SellingTickets.Views.AirlineUserView">
+    
+    <UserControl.Resources>
+        <converter:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <converter:BlockDataFieldConverter x:Key="BlockDataFieldConverter" />
+        <converter:InitializeDataErrorConverter x:Key="InitializeDataErrorConverter"/>
+        <converter:CollectionHasItemsConverter x:Key="CollectionHasItemsConverter"/>
+        
+        <s:Boolean x:Key="FalseValue">False</s:Boolean>
+        <s:Boolean x:Key="TrueValue">True</s:Boolean>
+    </UserControl.Resources>
+    
+    <SplitView IsPaneOpen="{Binding SideBarShowed}" 
+               DisplayMode="Inline" PanePlacement="Right">
+        
+        <SplitView.Content>
+            
+            <DockPanel>
+                
+                <DockPanel Margin="10" DockPanel.Dock="Top">
+                    <Label Content="Авиалинии" FontSize="30" />
+                    
+                    <Button Content="Обновить" 
+                            DockPanel.Dock="Right" HorizontalAlignment="Right"
+                            Margin="5 0 0 0"
+                            Command="{Binding SearchAirlineDataCommand}"
+                    />
+                    
+                    <Button Content="Добавить новую авиалинию" 
+                            HorizontalAlignment="Right" 
+                            HorizontalContentAlignment="Center"
+                            Width="220" DockPanel.Dock="Right"
+                            Command="{Binding AddEditDataCommand}"
+                            CommandParameter="{StaticResource TrueValue}">
+                        
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource BlockDataFieldConverter}">
+                                <Binding Path="IsLoading"/>
+                                <Binding Path="DatabaseHasConnected"/>
+                            </MultiBinding>
+                        </Button.IsEnabled>
+                        
+                    </Button>
+                    
+                </DockPanel>
+                
+                <DockPanel Margin="10" DockPanel.Dock="Top">
+                    
+                    <DockPanel.IsEnabled>
+                        <MultiBinding Converter="{StaticResource BlockDataFieldConverter}">
+                            <Binding Path="IsLoading"/>
+                            <Binding Path="DatabaseHasConnected"/>
+                        </MultiBinding>
+                    </DockPanel.IsEnabled>
+                    
+                    <Label FontSize="15" Content="Применить фильтр" DockPanel.Dock="Top"/>
+
+                    <ComboBox DockPanel.Dock="Right" SelectedIndex="{Binding SelectedSearchMode}">
+                        <ComboBoxItem>По имени</ComboBoxItem>
+                    </ComboBox>
+
+                    <TextBox 
+                        FontSize="15" Text="{Binding SearchTerm}"
+                        DockPanel.Dock="Left" Watermark="Введите поисковый запрос.">
+                        
+                        <TextBox.KeyBindings>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchAirlineDataCommand}"></KeyBinding>
+                        </TextBox.KeyBindings>
+                        
+                    </TextBox>
+                    
+                </DockPanel>
+                
+                <StackPanel Margin="10" HorizontalAlignment="Right" DockPanel.Dock="Top">
+                
+                    <StackPanel.IsEnabled>
+                        <MultiBinding Converter="{StaticResource BlockDataFieldConverter}">
+                            <Binding Path="IsLoading"/>
+                            <Binding Path="DatabaseHasConnected"/>
+                        </MultiBinding>
+                    </StackPanel.IsEnabled>
+                    
+                    <Label Content="Лимит записей" HorizontalAlignment="Right" />
+                    
+                    <NumericUpDown Width="200"
+                                   Value="{Binding LimitRows}"
+                                   HorizontalAlignment="Right"
+                                   Watermark="Лимит записей"
+                                   Minimum="-1"
+                                   ParsingNumberStyle="Integer"
+                                   FormatString="N0">
+                            
+                        <NumericUpDown.KeyBindings>
+                            <KeyBinding Gesture="Enter" Command="{Binding SearchAirlineDataCommand}"/>
+                        </NumericUpDown.KeyBindings>
+                            
+                    </NumericUpDown>
+                    
+                </StackPanel>
+                
+                <Grid>
+                    
+                    <controls:DoubleBounceSpinner 
+                        IsActive="{Binding IsLoading}"
+                        ForegroundSpinner="White"
+                        Diameter="60"
+                        />
+                    
+                    <Grid IsVisible="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}">
+                    
+                        <TextBlock 
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="Red"
+                            Text="{Binding ErrorMessage}"
+                            TextWrapping="WrapWithOverflow"
+                            >
+                            
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{StaticResource InitializeDataErrorConverter}">
+                                    <Binding Path="HasErrorMessage"/>
+                                    <Binding Path="DatabaseHasConnected"/>
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                            
+                        </TextBlock>
+                    
+                        <Grid IsVisible="{Binding DatabaseHasConnected}">
+                        
+                            <TextBlock 
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="Orange"
+                                Text="Данные не найдены"
+                                IsVisible="{Binding AirlineItems.Count, 
+                                    Converter={StaticResource CollectionHasItemsConverter}, 
+                                    ConverterParameter={StaticResource FalseValue}}"
+                                TextWrapping="WrapWithOverflow"/>
+                            
+                            
+                            <DataGrid
+                                    IsVisible="{Binding AirlineItems.Count, 
+                                    Converter={StaticResource CollectionHasItemsConverter}, 
+                                    ConverterParameter={StaticResource TrueValue}}"
+                                    HorizontalAlignment="Stretch" 
+                                    VerticalAlignment="Stretch"
+                                    ItemsSource="{Binding AirlineItems}"
+                                    SelectedItem="{Binding SelectedAirline}"
+                                    IsReadOnly="True"
+                                    CanUserResizeColumns="True"
+                                    >
+                                
+                                <DataGrid.Columns>
+                                    
+                                    <DataGridTemplateColumn Header="Действие">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    
+                                                    <Button Content="Править" Margin="0 0 0 5"
+                                                            IsEnabled="{Binding  Path=$parent[DataGrid].((vm:AirlineUserViewModel)DataContext).IsLoadingEditMode, Converter={StaticResource InverseBooleanConverter}}"
+                                                            Command="{Binding Path=$parent[DataGrid].((vm:AirlineUserViewModel)DataContext).AddEditDataCommand}"
+                                                            CommandParameter="{StaticResource FalseValue}"/>
+                                                    
+                                                    <Button Content="Удалить"
+                                                            IsEnabled="{Binding  Path=$parent[DataGrid].((vm:AirlineUserViewModel)DataContext).IsLoadingEditMode, Converter={StaticResource InverseBooleanConverter}}"
+                                                            Command="{Binding Path=$parent[DataGrid].((vm:AirlineUserViewModel)DataContext).DeleteAirlineDataCommand}"/>
+                                                    
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    
+                                    <DataGridTextColumn Header="Название авиалинии" Binding="{Binding Name, Mode=OneTime}" />
+                                    
+                                </DataGrid.Columns>
+                                
+                            </DataGrid>   
+                        </Grid>
+                    </Grid>
+                </Grid>
+                
+            </DockPanel>
+            
+        </SplitView.Content>
+        
+        <SplitView.Pane>
+            <Border Background="#252525" 
+                    Width="320">
+                <ScrollViewer>
+                    <StackPanel Margin="10">
+                        
+                        <DockPanel>
+                            <Label Content="Изменить/Добавить авилинию" FontSize="15"
+                                   Margin="0 0 0 10" />
+                            
+                            <Button Content="x" HorizontalAlignment="Right" 
+                                    VerticalAlignment="Top"
+                                    Command="{Binding HideSideBarCommand}"
+                                    />
+                        </DockPanel>
+                        
+                        <Label Content="Id записи (не подлежит изменению)"
+                               Margin="0 10 0 10"
+                               />
+                        <TextBox IsEnabled="False" 
+                                 Text="{Binding SelectedAirline.Id}" />
+                        
+                        
+                        <Label Content="Название скидки" Margin="0 10 0 0"/>
+                        <TextBox Text="{Binding SelectedAirline.Name}" 
+                                 Watermark="Укажите название авиалинии."
+                                 Margin="0 0 0 10"
+                                 />
+                        
+                        <TextBlock Margin="0 0 0 10"
+                                   Foreground="OrangeRed" 
+                                   Text="{Binding SelectedAirline.ErrorValidations}" 
+                                   FontSize="12"
+                                   TextWrapping="WrapWithOverflow"
+                                   IsVisible="{Binding SelectedAirline.ValidationContext.IsValid, Converter={StaticResource InverseBooleanConverter}}"/>
+                        
+                        <Button Content="Сохранить" 
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                IsEnabled="{Binding IsLoadingEditMode, Converter={StaticResource InverseBooleanConverter}}"
+                                Margin="0 0 0 10"
+                                Command="{Binding SaveAirlineDataCommand}"
+                                />
+                        
+                        <TextBlock Foreground="Red"
+                                   Text="{Binding ErrorMessage}"
+                                   TextWrapping="WrapWithOverflow"
+                                   IsVisible="{Binding HasErrorMessage}"/>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </SplitView.Pane>
+        
+    </SplitView>
+    
+</UserControl>

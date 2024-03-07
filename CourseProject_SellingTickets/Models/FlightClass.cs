@@ -1,11 +1,14 @@
 using System;
+using CourseProject_SellingTickets.ValidationRules;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
+using ReactiveUI.Validation.Abstractions;
+using ReactiveUI.Validation.Contexts;
 
 namespace CourseProject_SellingTickets.Models;
 
 #pragma warning disable
-public class FlightClass : ReactiveObject
+public class FlightClass : ReactiveObject, IValidatableViewModel
 {
     // Main Model 
 
@@ -15,15 +18,26 @@ public class FlightClass : ReactiveObject
     private string _className;
     public string ClassName { get => _className; set => this.RaiseAndSetIfChanged(ref _className, value); }
 
+    // Validation
+    
+    private string _errorValidations;
+    public string ErrorValidations { get => _errorValidations; set => this.RaiseAndSetIfChanged(ref _errorValidations, value); }
+    
+    public ValidationContext ValidationContext { get; } = new ValidationContext();
+    
     public FlightClass()
     {
         ClassName = String.Empty;
+        
+        this.InitializeValidationRules();
     }
     
     public FlightClass(System.Int64 id, string className)
     {
         Id = id;
         ClassName = className;
+        
+        this.InitializeValidationRules();
     }
     
     public override bool Equals(object? obj)

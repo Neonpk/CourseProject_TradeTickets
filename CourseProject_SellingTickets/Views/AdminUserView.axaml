@@ -65,6 +65,8 @@
                     DockPanel.Dock="Top"
                     Content="Виды скидок" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="discount"
                     />
                 
                 <Button 
@@ -73,6 +75,8 @@
                     DockPanel.Dock="Top"
                     Content="Авиа компании" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="airline"
                     />
                 
                 <Button 
@@ -81,8 +85,9 @@
                     DockPanel.Dock="Top"
                     Content="Классы рейсов" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="flight_class"
                     />
-                
                                 
                 <Button 
                     HorizontalAlignment="Stretch"
@@ -90,6 +95,8 @@
                     DockPanel.Dock="Top"
                     Content="Изображения" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="photo"
                     />
                 
                 <Button Content="Выход" FontSize="15" 

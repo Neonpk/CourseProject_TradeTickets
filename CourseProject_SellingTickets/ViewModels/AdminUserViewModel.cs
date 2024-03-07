@@ -53,6 +53,22 @@ public class AdminUserViewModel : ViewModelBase
                     case "place":
                         NavigationAdminService?.NavigateTo<PlaceUserViewModel>();
                         break;
+                    
+                    case "discount":
+                        NavigationAdminService?.NavigateTo<DiscountUserViewModel>();
+                        break;
+                    
+                    case "airline":
+                        NavigationAdminService?.NavigateTo<AirlineUserViewModel>();
+                        break;
+                    
+                    case "flight_class":
+                        NavigationAdminService?.NavigateTo<FlightClassUserViewModel>();
+                        break;
+                    
+                    case "photo":
+                        NavigationAdminService?.NavigateTo<PhotoUserViewModel>();
+                        break;
                 }
             });
         } 

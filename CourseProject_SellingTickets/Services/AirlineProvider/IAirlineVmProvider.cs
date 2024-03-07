@@ -6,7 +6,7 @@ using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Services.AirlineProvider;
 
-public interface IAirlineDbProvider
+public interface IAirlineVmProvider
 {
     Task<IEnumerable<Airline>> GetAllAirlines();
     

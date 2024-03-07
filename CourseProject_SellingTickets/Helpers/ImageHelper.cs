@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 
@@ -27,7 +28,7 @@ public static class ImageHelper
         catch (HttpRequestException ex)
         {
             Console.WriteLine($"An error occurred while downloading image '{url}' : {ex.Message}");
-            return null;
+            return LoadFromResource(new Uri("avares://CourseProject_SellingTickets/Assets/404image.jpg"));
         }
     }
 }

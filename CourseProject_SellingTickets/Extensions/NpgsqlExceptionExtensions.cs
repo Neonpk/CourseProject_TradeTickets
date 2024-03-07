@@ -27,6 +27,22 @@ public static class NpgsqlExceptionExtensions
             [nameof(PlaceUserViewModel)] = new ()
             {
                 [PostgresStates.UniqueViolation] = "Не удалось сохранить данные: (Место с такими данными уже существует)"
+            },
+            [nameof(DiscountUserViewModel)] = new ()
+            {
+                [PostgresStates.UniqueViolation] = "Не удалось сохранить данные: (Скидка с такими данными уже существует)"
+            },
+            [nameof(PhotoUserViewModel)] = new()
+            {
+                [PostgresStates.UniqueViolation] = "Не удалось сохранить данные: (Фото с такими данными уже существует)"
+            },
+            [nameof(FlightClassUserViewModel)] = new()
+            {
+                [PostgresStates.UniqueViolation] = "Не удалось сохранить данные: (Такой класс полета уже существует)"        
+            },
+            [nameof(AirlineUserViewModel)] = new()
+            {
+                [PostgresStates.UniqueViolation] = "Не удалось сохранить данные: (Авиалиния с таким именем уже существует)"
             }
         };
 
