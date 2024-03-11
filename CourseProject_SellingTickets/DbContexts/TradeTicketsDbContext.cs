@@ -20,6 +20,7 @@ public class TradeTicketsDbContext : DbContext
     public DbSet<PhotoDTO> Photos { get; set; }
     public DbSet<PlaceDTO> Places { get; set; }
     public DbSet<TicketDTO> Tickets { get; set; }
+    public DbSet<UserDTO> Users { get; set; }
     
     // Postgres DateTime (timestamp) Format 
     [DbFunction("to_char", "")]

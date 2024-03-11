@@ -8,6 +8,7 @@ using CourseProject_SellingTickets.Services.PhotoProvider;
 using CourseProject_SellingTickets.Services.PlaceProvider;
 using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
+using CourseProject_SellingTickets.Services.UserProvider;
 using CourseProject_SellingTickets.ViewModels;
 using Microsoft.Extensions.Hosting;
 using Splat;
@@ -27,6 +28,16 @@ public static class AddDatabaseProvidersHostBuilderExtensions
 
             var tradeTicketsDbContext = service.GetService<ITradeTicketsDbContextFactory>();
 
+            // User
+            
+            resolver.RegisterLazySingleton<IUserDbProvider>( () => 
+                new UserDbProvider( tradeTicketsDbContext! ) );
+            
+            resolver.RegisterLazySingleton<IAuthCheckerProvider>( () => 
+                new AuthCheckerProvider( service.GetService<IUserDbProvider>()! ) );
+            
+            // Other
+            
             resolver.RegisterLazySingleton<IConnectionStateProvider>(() =>
                 new ConnectionStateProvider( tradeTicketsDbContext! ));
             

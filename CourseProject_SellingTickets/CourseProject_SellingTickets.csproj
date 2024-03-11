@@ -15,6 +15,7 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.0.10" />
+        <PackageReference Include="Avalonia.BuildServices" Version="0.0.31" />
         <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.10" />
         <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10" />

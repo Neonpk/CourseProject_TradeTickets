@@ -16,6 +16,7 @@
         <converter:BlockDataFieldConverter x:Key="BlockDataFieldConverter" />
         <converter:InitializeDataErrorConverter x:Key="InitializeDataErrorConverter"/>
         <converter:CollectionHasItemsConverter x:Key="CollectionHasItemsConverter"/>
+        <converter:TrimTextConverter x:Key="TrimTextConverter"/>
         
         <s:Boolean x:Key="FalseValue">False</s:Boolean>
         <s:Boolean x:Key="TrueValue">True</s:Boolean>
@@ -191,8 +192,8 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <Image Width="32" Height="32" Source="{Binding BitMapFromUrl^}"/>
-                                                    <Label Content="{Binding UrlPath}" VerticalAlignment="Center"/>
+                                                    <Image Width="32" Height="32" Source="{Binding BitMapFromUrl^}" Margin="0 5 0 0"/>
+                                                    <Label Content="{Binding UrlPath, Converter={StaticResource TrimTextConverter}}" VerticalAlignment="Center"/>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>

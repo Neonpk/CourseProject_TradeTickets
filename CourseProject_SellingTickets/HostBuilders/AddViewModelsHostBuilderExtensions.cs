@@ -8,6 +8,7 @@ using CourseProject_SellingTickets.Services.PhotoProvider;
 using CourseProject_SellingTickets.Services.PlaceProvider;
 using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
+using CourseProject_SellingTickets.Services.UserProvider;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CourseProject_SellingTickets.ViewModels;
@@ -27,6 +28,9 @@ public static class AddViewModelsHostBuilderExtensions
             var service = Locator.Current;
             
             // Included services 
+
+            IUserDbProvider? userDbProvider = service.GetService<IUserDbProvider>();
+            IAuthCheckerProvider? authCheckerProvider = service.GetService<IAuthCheckerProvider>();
             
             INavigationService? mainNavigation = service.GetService<INavigationService>("mainNavigation");
             INavigationService? dispatcherNavigation = service.GetService<INavigationService>("dispatcherNavigation");
@@ -74,7 +78,7 @@ public static class AddViewModelsHostBuilderExtensions
             
             // Main 
             
-            resolver.RegisterLazySingleton<AuthUserViewModel>(() => new AuthUserViewModel( mainNavigation ));
+            resolver.RegisterLazySingleton<AuthUserViewModel>(() => new AuthUserViewModel( authCheckerProvider, mainNavigation ));
         
             resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel( mainNavigation ));
             
