@@ -1,7 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
-        xmlns:view="clr-namespace:CourseProject_SellingTickets.Views"
+        xmlns:converters="using:CourseProject_SellingTickets.Converters"
         x:DataType="vm:MainWindowViewModel"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,6 +16,10 @@
         Width="850"
         Title="Информационная система по управлению Авиарейсов">
         
+        <Window.Resources>
+                <converters:ConnectionStateConverter x:Key="ConnectionStateConverter"/>
+        </Window.Resources>
+        
         <Grid RowDefinitions="100, *, 40">
                 
                 <Border Background="#252525">
@@ -28,10 +32,12 @@
                 </Border>
                 
                 <ContentPresenter Grid.Row="1" 
-                                  Content="{Binding NavigationService.CurrentView}" />
+                                  Content="{Binding NavigationService.CurrentView}"
+                                  />
 
-                <Border Background="#252525" Grid.Row="2">
-                        <Label Content="Соединение с БД установлено" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Border Background="{Binding DatabaseHasConnected, Converter={StaticResource ConnectionStateConverter}, ConverterParameter='Foreground'}" Grid.Row="2">
+                        <Label Content="{Binding DatabaseHasConnected, Converter={StaticResource ConnectionStateConverter}, ConverterParameter='String'}" 
+                               FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 
         </Grid>

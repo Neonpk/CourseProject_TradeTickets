@@ -23,12 +23,13 @@ public class SaveTicketDataCommand : ReactiveCommand<Unit, Task>
         return ticketVm.WhenAnyValue(x => x.SelectedTicket.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider, IConnectionStateProvider connectionStateProvider )
+    private static async Task SaveDataAsync( TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider)
     {
         ticketUserViewModel.ErrorMessage = string.Empty;
         ticketUserViewModel.IsLoadingEditMode = true;
 
-        ticketUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute()
+            .Subscribe(isConnected => ticketUserViewModel.DatabaseHasConnected = isConnected.Result);
         
         if (!ticketUserViewModel.DatabaseHasConnected)
         {
@@ -60,8 +61,8 @@ public class SaveTicketDataCommand : ReactiveCommand<Unit, Task>
         ticketUserViewModel.IsLoadingEditMode = false;
     }
     
-    public SaveTicketDataCommand(TicketUserViewModel tickerUserViewModel, ITicketVmProvider ticketVmProvider, IConnectionStateProvider connectionStateProvider) : 
-        base(_ => Observable.Start(async () => await SaveDataAsync(tickerUserViewModel, ticketVmProvider, connectionStateProvider)), 
+    public SaveTicketDataCommand(TicketUserViewModel tickerUserViewModel, ITicketVmProvider ticketVmProvider) : 
+        base(_ => Observable.Start(async () => await SaveDataAsync(tickerUserViewModel, ticketVmProvider)), 
         canExecute: CanExecuteCommand(tickerUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }

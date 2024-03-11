@@ -19,7 +19,6 @@ public class AircraftUserViewModel : ViewModelBase
     // Private
     
     private readonly IAircraftVmProvider? _aircraftVmProvider;
-    private readonly IConnectionStateProvider? _connectionStateProvider;
     
     //Observable properties 
     
@@ -85,32 +84,33 @@ public class AircraftUserViewModel : ViewModelBase
     public ICommand HideSideBarCommand => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false);
 
     private ReactiveCommand<IEnumerable<Aircraft>, Task>? _loadAircraftDataCommand;
-    public ReactiveCommand<IEnumerable<Aircraft>, Task> LoadAircraftDataCommand => _loadAircraftDataCommand ??= new LoadAircraftDataCommand(this, _aircraftVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<IEnumerable<Aircraft>, Task> LoadAircraftDataCommand => _loadAircraftDataCommand ??= new LoadAircraftDataCommand(this, _aircraftVmProvider!);
 
     private ReactiveCommand<bool,Unit>? _addEditDataCommand;
     public ReactiveCommand<bool,Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditAircraftDataCommand(this!);
 
     private ReactiveCommand<Unit, Task>? _saveAircraftDataCommand;
-    public ReactiveCommand<Unit, Task> SaveAircraftDataCommand => _saveAircraftDataCommand ??= new SaveAircraftDataCommand(this, _aircraftVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> SaveAircraftDataCommand => _saveAircraftDataCommand ??= new SaveAircraftDataCommand(this, _aircraftVmProvider!);
 
     private ReactiveCommand<Unit, Task>? _deleteAircraftDataCommand;
-    public ReactiveCommand<Unit, Task>? DeleteAircraftDataCommand => _deleteAircraftDataCommand ??= new DeleteAircraftDataCommand(this, _aircraftVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task>? DeleteAircraftDataCommand => _deleteAircraftDataCommand ??= new DeleteAircraftDataCommand(this, _aircraftVmProvider!);
 
     private ReactiveCommand<Unit, Unit>? _sortAircraftCommand;
     public ReactiveCommand<Unit, Unit> SortAircraftCommand => _sortAircraftCommand ??= new SortAircraftsCommand(this);
 
     private ReactiveCommand<Unit, Task<IEnumerable<Aircraft>?>>? _searchAircraftDataCommand;
-    public ReactiveCommand<Unit, Task<IEnumerable<Aircraft>?>> SearchAircraftDataCommand => _searchAircraftDataCommand ??= new SearchAircraftDataCommand(this, _aircraftVmProvider!)!;
+    public ReactiveCommand<Unit, Task<IEnumerable<Aircraft>?>> SearchAircraftDataCommand => _searchAircraftDataCommand ??= new SearchAircraftDataCommand(this!, _aircraftVmProvider!);
     
-    public AircraftUserViewModel(IAircraftVmProvider? aircraftVmProvider, IConnectionStateProvider? connectionStateProvider)
+    public AircraftUserViewModel(IAircraftVmProvider? aircraftVmProvider)
     {
         _aircraftVmProvider = aircraftVmProvider;
-        _connectionStateProvider = connectionStateProvider;
         
         LoadAircraftDataCommand.Execute();
         SearchAircraftDataCommand.Subscribe(filteredAircrafts => LoadAircraftDataCommand.Execute(filteredAircrafts.Result!));
         
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortAircraftCommand!.Execute());
+        
+        ConnectionDbState.CheckConnectionState.Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
     }
 }

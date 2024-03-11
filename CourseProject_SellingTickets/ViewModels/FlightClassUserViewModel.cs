@@ -15,7 +15,6 @@ namespace CourseProject_SellingTickets.ViewModels;
 public class FlightClassUserViewModel : ViewModelBase
 {
     private readonly IFlightClassVmProvider _flightClassVmProvider;
-    private readonly IConnectionStateProvider _connectionStateProvider;
     
     //Observable properties 
     
@@ -71,26 +70,27 @@ public class FlightClassUserViewModel : ViewModelBase
     public ReactiveCommand<bool, Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditFlightClassCommand(this);
     
     private ReactiveCommand<IEnumerable<FlightClass>, Task>? _loadFlightClassDataCommand;
-    public ReactiveCommand<IEnumerable<FlightClass>, Task> LoadFlightClassDataCommand => _loadFlightClassDataCommand ??= new LoadFlightClassDataCommand(this, _flightClassVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<IEnumerable<FlightClass>, Task> LoadFlightClassDataCommand => _loadFlightClassDataCommand ??= new LoadFlightClassDataCommand(this, _flightClassVmProvider!);
 
     private ReactiveCommand<Unit, Task<IEnumerable<FlightClass>?>>? _searchFlightClassDataCommand;
-    public ReactiveCommand<Unit, Task<IEnumerable<FlightClass>?>> SearchFlightClassDataCommand => _searchFlightClassDataCommand ??= new SearchFlightClassDataCommand(this, _flightClassVmProvider!);
+    public ReactiveCommand<Unit, Task<IEnumerable<FlightClass>?>> SearchFlightClassDataCommand => _searchFlightClassDataCommand ??= new SearchFlightClassDataCommand(this, _flightClassVmProvider);
 
     private ReactiveCommand<Unit, Task>? _saveFlightClassDataCommand;
-    public ReactiveCommand<Unit, Task> SaveFlightClassDataCommand => _saveFlightClassDataCommand ??= new SaveFlightClassDataCommand(this, _flightClassVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> SaveFlightClassDataCommand => _saveFlightClassDataCommand ??= new SaveFlightClassDataCommand(this, _flightClassVmProvider!);
 
     private ReactiveCommand<Unit, Task>? _deleteFlightClassDataCommand;
-    public ReactiveCommand<Unit, Task> DeleteFlightClassDataCommand => _deleteFlightClassDataCommand ??= new DeleteFlightClassDataCommand(this, _flightClassVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> DeleteFlightClassDataCommand => _deleteFlightClassDataCommand ??= new DeleteFlightClassDataCommand(this, _flightClassVmProvider!);
     
     
     // Constructor 
     
-    public FlightClassUserViewModel(IFlightClassVmProvider? flightClassVmProvider, IConnectionStateProvider? connectionStateProvider)
+    public FlightClassUserViewModel(IFlightClassVmProvider? flightClassVmProvider)
     {
         _flightClassVmProvider = flightClassVmProvider!;
-        _connectionStateProvider = connectionStateProvider!;
         
         LoadFlightClassDataCommand.Execute();
         SearchFlightClassDataCommand.Subscribe(filteredFlightClasses => LoadFlightClassDataCommand!.Execute(filteredFlightClasses.Result!));
+        
+        ConnectionDbState.CheckConnectionState.Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
     }
 }

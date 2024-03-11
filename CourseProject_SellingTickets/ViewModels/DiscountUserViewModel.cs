@@ -15,7 +15,6 @@ namespace CourseProject_SellingTickets.ViewModels;
 public class DiscountUserViewModel : ViewModelBase
 {
     private readonly IDiscountVmProvider _discountVmProvider;
-    private readonly IConnectionStateProvider _connectionStateProvider;
     
     //Observable properties 
     
@@ -71,25 +70,26 @@ public class DiscountUserViewModel : ViewModelBase
     public ReactiveCommand<bool, Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditDiscountCommand(this);
     
     private ReactiveCommand<IEnumerable<Discount>, Task>? _loadDiscountDataCommand;
-    public ReactiveCommand<IEnumerable<Discount>, Task> LoadDiscountDataCommand => _loadDiscountDataCommand ??= new LoadDiscountDataCommand(this, _discountVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<IEnumerable<Discount>, Task> LoadDiscountDataCommand => _loadDiscountDataCommand ??= new LoadDiscountDataCommand(this, _discountVmProvider!);
 
     private ReactiveCommand<Unit, Task<IEnumerable<Discount>?>>? _searchDiscountDataCommand;
     public ReactiveCommand<Unit, Task<IEnumerable<Discount>?>> SearchDiscountDataCommand => _searchDiscountDataCommand ??= new SearchDiscountDataCommand(this, _discountVmProvider!);
 
     private ReactiveCommand<Unit, Task>? _saveDiscountDataCommand;
-    public ReactiveCommand<Unit, Task> SaveDiscountDataCommand => _saveDiscountDataCommand ??= new SaveDiscountDataCommand(this, _discountVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> SaveDiscountDataCommand => _saveDiscountDataCommand ??= new SaveDiscountDataCommand(this, _discountVmProvider!);
 
     private ReactiveCommand<Unit, Task>? _deleteDiscountDataCommand;
-    public ReactiveCommand<Unit, Task> DeleteDiscountDataCommand => _deleteDiscountDataCommand ??= new DeleteDiscountDataCommand(this, _discountVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> DeleteDiscountDataCommand => _deleteDiscountDataCommand ??= new DeleteDiscountDataCommand(this, _discountVmProvider!);
     
     // Constructor 
     
-    public DiscountUserViewModel(IDiscountVmProvider? discountVmProvider, IConnectionStateProvider? connectionStateProvider)
+    public DiscountUserViewModel(IDiscountVmProvider? discountVmProvider)
     {
         _discountVmProvider = discountVmProvider!;
-        _connectionStateProvider = connectionStateProvider!;
         
         LoadDiscountDataCommand.Execute();
         SearchDiscountDataCommand.Subscribe(filteredDiscounts => LoadDiscountDataCommand!.Execute(filteredDiscounts.Result!));
+        
+        ConnectionDbState.CheckConnectionState.Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
     }
 }

@@ -15,8 +15,7 @@ namespace CourseProject_SellingTickets.Commands.PlaceCommands;
 
 public class LoadPlaceDataCommand : ReactiveCommand<IEnumerable<Place>, Task>
 {
-    private static async Task LoadDataAsync(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider, 
-        IConnectionStateProvider connectionStateProvider, IEnumerable<Place> filteredPlaces
+    private static async Task LoadDataAsync(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider, IEnumerable<Place> filteredPlaces
     )
     {
         var limitRows = placeUserViewModel.LimitRows;
@@ -24,7 +23,7 @@ public class LoadPlaceDataCommand : ReactiveCommand<IEnumerable<Place>, Task>
         placeUserViewModel.ErrorMessage = string.Empty;
         placeUserViewModel.IsLoading = true;
 
-        placeUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         try
         {
@@ -54,9 +53,9 @@ public class LoadPlaceDataCommand : ReactiveCommand<IEnumerable<Place>, Task>
         placeUserViewModel.IsLoading = false;
     }
     
-    public LoadPlaceDataCommand(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider, IConnectionStateProvider connectionStateProvider) :
-        base(filteredFlights => 
-                Observable.Start( async () => await LoadDataAsync(placeUserViewModel, placeVmProvider, connectionStateProvider, filteredFlights)),
+    public LoadPlaceDataCommand(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider) :
+        base(filteredPlaces => 
+                Observable.Start( async () => await LoadDataAsync(placeUserViewModel, placeVmProvider, filteredPlaces)),
             canExecute: Observable.Return(true))
     {
         

@@ -15,7 +15,6 @@ namespace CourseProject_SellingTickets.ViewModels;
 public class AirlineUserViewModel : ViewModelBase
 {
     private readonly IAirlineVmProvider _airlineVmProvider;
-    private readonly IConnectionStateProvider _connectionStateProvider;
     
     //Observable properties 
     
@@ -71,26 +70,27 @@ public class AirlineUserViewModel : ViewModelBase
     public ReactiveCommand<bool, Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditAirlineCommand(this);
     
     private ReactiveCommand<IEnumerable<Airline>, Task>? _loadAirlineDataCommand;
-    public ReactiveCommand<IEnumerable<Airline>, Task> LoadAirlineDataCommand => _loadAirlineDataCommand ??= new LoadAirlineDataCommand(this, _airlineVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<IEnumerable<Airline>, Task> LoadAirlineDataCommand => _loadAirlineDataCommand ??= new LoadAirlineDataCommand(this, _airlineVmProvider!);
 
     private ReactiveCommand<Unit, Task<IEnumerable<Airline>?>>? _searchAirlineDataCommand;
     public ReactiveCommand<Unit, Task<IEnumerable<Airline>?>> SearchAirlineDataCommand => _searchAirlineDataCommand ??= new SearchAirlineDataCommand(this, _airlineVmProvider!);
 
     private ReactiveCommand<Unit, Task>? _saveAirlineDataCommand;
-    public ReactiveCommand<Unit, Task> SaveAirlineDataCommand => _saveAirlineDataCommand ??= new SaveAirlineDataCommand(this, _airlineVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> SaveAirlineDataCommand => _saveAirlineDataCommand ??= new SaveAirlineDataCommand(this, _airlineVmProvider!);
 
     private ReactiveCommand<Unit, Task>? _deleteAirlineDataCommand;
-    public ReactiveCommand<Unit, Task> DeleteAirlineDataCommand => _deleteAirlineDataCommand ??= new DeleteAirlineDataCommand(this, _airlineVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> DeleteAirlineDataCommand => _deleteAirlineDataCommand ??= new DeleteAirlineDataCommand(this, _airlineVmProvider!);
     
     
     // Constructor 
     
-    public AirlineUserViewModel(IAirlineVmProvider? airlineVmProvider, IConnectionStateProvider? connectionStateProvider)
+    public AirlineUserViewModel(IAirlineVmProvider? airlineVmProvider)
     {
         _airlineVmProvider = airlineVmProvider!;
-        _connectionStateProvider = connectionStateProvider!;
         
         LoadAirlineDataCommand.Execute();
         SearchAirlineDataCommand.Subscribe(filteredAirlines => LoadAirlineDataCommand!.Execute(filteredAirlines.Result!));
+        
+        ConnectionDbState.CheckConnectionState.Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
     }
 }

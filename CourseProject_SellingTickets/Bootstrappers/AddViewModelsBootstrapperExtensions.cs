@@ -1,3 +1,4 @@
+using Avalonia;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.AircraftProvider;
 using CourseProject_SellingTickets.Services.AirlineProvider;
@@ -10,7 +11,6 @@ using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 using CourseProject_SellingTickets.Services.UserProvider;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using CourseProject_SellingTickets.ViewModels;
 using CourseProject_SellingTickets.Views;
 using ReactiveUI;
@@ -18,25 +18,21 @@ using Splat;
 
 namespace CourseProject_SellingTickets.HostBuilders;
 
-public static class AddViewModelsHostBuilderExtensions
+public static class AddViewModelsBootstrapperExtensions
 {
-    public static IHostBuilder AddViewModels(this IHostBuilder hostBuilder)
+    public static IMutableDependencyResolver AddViewModels(this IMutableDependencyResolver serviceBuilder)
     {
-        hostBuilder.ConfigureServices(services =>
+        return serviceBuilder.ConfigureServices((service, resolver) =>
         {
-            var resolver = Locator.CurrentMutable;
-            var service = Locator.Current;
-            
             // Included services 
 
-            IUserDbProvider? userDbProvider = service.GetService<IUserDbProvider>();
             IAuthCheckerProvider? authCheckerProvider = service.GetService<IAuthCheckerProvider>();
             
             INavigationService? mainNavigation = service.GetService<INavigationService>("mainNavigation");
             INavigationService? dispatcherNavigation = service.GetService<INavigationService>("dispatcherNavigation");
             INavigationService? adminNavigation = service.GetService<INavigationService>("administratorNavigation");
 
-            IConnectionStateProvider? connectionStateProvider = service.GetService<IConnectionStateProvider>();
+            //IConnectionStateProvider? connectionStateProvider = service.GetService<IConnectionStateProvider>();
 
             IAircraftVmProvider? aircraftProvider = service.GetService<IAircraftVmProvider>();
             IPlaceVmProvider? placeVmProvider = service.GetService<IPlaceVmProvider>();
@@ -52,26 +48,26 @@ public static class AddViewModelsHostBuilderExtensions
             
             // Admin 
             
-            resolver.RegisterLazySingleton<AircraftUserViewModel>( () => new AircraftUserViewModel( aircraftProvider, connectionStateProvider ) );
+            resolver.RegisterLazySingleton<AircraftUserViewModel>( () => new AircraftUserViewModel( aircraftProvider ) );
             
-            resolver.RegisterLazySingleton<PlaceUserViewModel>( () => new PlaceUserViewModel( placeVmProvider, connectionStateProvider ) );
+            resolver.RegisterLazySingleton<PlaceUserViewModel>( () => new PlaceUserViewModel( placeVmProvider ) );
             
-            resolver.RegisterLazySingleton<DiscountUserViewModel>( () => new DiscountUserViewModel( discountVmProvider, connectionStateProvider ) );
+            resolver.RegisterLazySingleton<DiscountUserViewModel>( () => new DiscountUserViewModel( discountVmProvider ) );
             
-            resolver.RegisterLazySingleton<PhotoUserViewModel>( () => new PhotoUserViewModel( photoVmProvider, connectionStateProvider ) );
+            resolver.RegisterLazySingleton<PhotoUserViewModel>( () => new PhotoUserViewModel( photoVmProvider ) );
             
-            resolver.RegisterLazySingleton<FlightClassUserViewModel>( () => new FlightClassUserViewModel( flightClassVmProvider, connectionStateProvider ) );
+            resolver.RegisterLazySingleton<FlightClassUserViewModel>( () => new FlightClassUserViewModel( flightClassVmProvider ) );
             
-            resolver.RegisterLazySingleton<AirlineUserViewModel>( () => new AirlineUserViewModel( airlineVmProvider, connectionStateProvider ) );
+            resolver.RegisterLazySingleton<AirlineUserViewModel>( () => new AirlineUserViewModel( airlineVmProvider ) );
             
             //--AdminUserViewModel
             resolver.RegisterLazySingleton<AdminUserViewModel>( () => new AdminUserViewModel( mainNavigation, adminNavigation ));
             
             // Dispatcher 
             
-            resolver.RegisterLazySingleton<TicketUserViewModel>( () => new TicketUserViewModel( ticketProvider, connectionStateProvider ) );
+            resolver.RegisterLazySingleton<TicketUserViewModel>( () => new TicketUserViewModel( ticketProvider ) );
             
-            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( flightProvider, connectionStateProvider ) );
+            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( flightProvider ) );
             
             //--DispatcherUserViewModel
             resolver.RegisterLazySingleton<DispatcherUserViewModel>( () => new DispatcherUserViewModel( mainNavigation, dispatcherNavigation ) );
@@ -83,7 +79,5 @@ public static class AddViewModelsHostBuilderExtensions
             resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel( mainNavigation ));
             
         });
-
-        return hostBuilder;
     }
 }

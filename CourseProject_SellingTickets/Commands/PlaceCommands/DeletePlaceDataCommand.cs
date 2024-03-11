@@ -13,12 +13,12 @@ namespace CourseProject_SellingTickets.Commands.PlaceCommands;
 
 public class DeletePlaceDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task DeleteDataAsync(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider? placeVmProvider, IConnectionStateProvider connectionStateProvider)
+    private static async Task DeleteDataAsync(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider? placeVmProvider)
     {
         placeUserViewModel.ErrorMessage = string.Empty;
         placeUserViewModel.IsLoadingEditMode = true;
         
-        placeUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         if (!placeUserViewModel.DatabaseHasConnected)
         {
@@ -43,10 +43,9 @@ public class DeletePlaceDataCommand : ReactiveCommand<Unit, Task>
         placeUserViewModel.IsLoadingEditMode = false;
     }
 
-    public DeletePlaceDataCommand( PlaceUserViewModel placeUserViewModel, IPlaceVmProvider? placeVmProvider, IConnectionStateProvider connectionStateProvider ) : 
+    public DeletePlaceDataCommand( PlaceUserViewModel placeUserViewModel, IPlaceVmProvider? placeVmProvider) : 
         base(_ => 
-            Observable.Start(async () => await DeleteDataAsync(placeUserViewModel, placeVmProvider, connectionStateProvider)), canExecute: Observable.Return(true))
+            Observable.Start(async () => await DeleteDataAsync(placeUserViewModel, placeVmProvider)), canExecute: Observable.Return(true))
     {
-        
     }
 }

@@ -15,15 +15,14 @@ namespace CourseProject_SellingTickets.Commands.DiscountCommands;
 
 public class LoadDiscountDataCommand : ReactiveCommand<IEnumerable<Discount>, Task>
 {
-    private static async Task LoadDataAsync(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider, 
-        IConnectionStateProvider connectionStateProvider, IEnumerable<Discount> filteredDiscounts)
+    private static async Task LoadDataAsync(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider, IEnumerable<Discount> filteredDiscounts)
     {
         var limitRows = discountUserViewModel.LimitRows;
 
         discountUserViewModel.ErrorMessage = string.Empty;
         discountUserViewModel.IsLoading = true;
 
-        discountUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         try
         {
@@ -47,9 +46,9 @@ public class LoadDiscountDataCommand : ReactiveCommand<IEnumerable<Discount>, Ta
         discountUserViewModel.IsLoading = false;
     }
     
-    public LoadDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider, IConnectionStateProvider connectionStateProvider) :
+    public LoadDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider) :
         base(filteredDiscounts => Observable.Start(async () => 
-                await LoadDataAsync(discountUserViewModel, discountVmProvider, connectionStateProvider, filteredDiscounts) ),
+                await LoadDataAsync(discountUserViewModel, discountVmProvider, filteredDiscounts) ),
             canExecute: Observable.Return(true))
     {
     }

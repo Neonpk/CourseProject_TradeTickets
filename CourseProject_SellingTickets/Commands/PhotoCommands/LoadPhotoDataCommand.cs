@@ -14,15 +14,14 @@ namespace CourseProject_SellingTickets.Commands.PhotoCommands;
 
 public class LoadPhotoDataCommand : ReactiveCommand<IEnumerable<Photo>, Task>
 {
-    private static async Task LoadDataAsync(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider, 
-        IConnectionStateProvider connectionStateProvider, IEnumerable<Photo> filteredPhotos)
+    private static async Task LoadDataAsync(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider, IEnumerable<Photo> filteredPhotos)
     {
         var limitRows = photoUserViewModel.LimitRows;
 
         photoUserViewModel.ErrorMessage = string.Empty;
         photoUserViewModel.IsLoading = true;
 
-        photoUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         try
         {
@@ -46,9 +45,9 @@ public class LoadPhotoDataCommand : ReactiveCommand<IEnumerable<Photo>, Task>
         photoUserViewModel.IsLoading = false;
     }
     
-    public LoadPhotoDataCommand(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider, IConnectionStateProvider connectionStateProvider) :
+    public LoadPhotoDataCommand(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider) :
         base(filteredPhotos => Observable.Start(async () => 
-                await LoadDataAsync(photoUserViewModel, photoVmProvider, connectionStateProvider, filteredPhotos) ),
+                await LoadDataAsync(photoUserViewModel, photoVmProvider, filteredPhotos) ),
             canExecute: Observable.Return(true))
     {
     }

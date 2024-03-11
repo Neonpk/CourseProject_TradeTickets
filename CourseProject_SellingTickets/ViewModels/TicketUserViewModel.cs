@@ -15,7 +15,6 @@ namespace CourseProject_SellingTickets.ViewModels;
 public class TicketUserViewModel : ViewModelBase
 {
     private readonly ITicketVmProvider? _ticketProvider;
-    private readonly IConnectionStateProvider? _connectionStateProvider;
 
     //Observable properties 
     
@@ -82,26 +81,28 @@ public class TicketUserViewModel : ViewModelBase
     public ReactiveCommand<bool, Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditTicketCommand(this);
     
     private ReactiveCommand<IEnumerable<Ticket>, Task>? _loadTicketDataCommand;
-    public ReactiveCommand<IEnumerable<Ticket>, Task> LoadTicketDataCommand => _loadTicketDataCommand ??= new LoadTicketDataCommand(this, _ticketProvider!, _connectionStateProvider!);
+    public ReactiveCommand<IEnumerable<Ticket>, Task> LoadTicketDataCommand => _loadTicketDataCommand ??= new LoadTicketDataCommand(this, _ticketProvider!);
 
     private ReactiveCommand<Unit, Task<IEnumerable<Ticket>?>>? _searchTicketDataCommand;
     public ReactiveCommand<Unit, Task<IEnumerable<Ticket>?>> SearchTicketDataCommand => _searchTicketDataCommand ??= new SearchTicketDataCommand(this, _ticketProvider!);
 
     private ReactiveCommand<Unit, Task>? _saveTicketDataCommand;
-    public ReactiveCommand<Unit, Task> SaveTicketDataCommand => _saveTicketDataCommand ??= new SaveTicketDataCommand(this, _ticketProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> SaveTicketDataCommand => _saveTicketDataCommand ??= new SaveTicketDataCommand(this, _ticketProvider!);
 
     private ReactiveCommand<Unit, Task>? _deleteTicketDataCommand;
-    public ReactiveCommand<Unit, Task> DeleteTicketDataCommand => _deleteTicketDataCommand ??= new DeleteTicketDataCommand(this, _ticketProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> DeleteTicketDataCommand => _deleteTicketDataCommand ??= new DeleteTicketDataCommand(this, _ticketProvider!);
     
     // Constructor
     
-    public TicketUserViewModel(ITicketVmProvider? ticketVmProvider, IConnectionStateProvider? connectionStateProvider)
+    public TicketUserViewModel(ITicketVmProvider? ticketVmProvider)
     {
         _ticketProvider = ticketVmProvider;
-        _connectionStateProvider = connectionStateProvider;
         
         LoadTicketDataCommand.Execute();
         SearchTicketDataCommand.Subscribe(filteredTickets => LoadTicketDataCommand!.Execute(filteredTickets.Result!));
+        
+        ConnectionDbState.CheckConnectionState
+            .Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
     }
     
 }

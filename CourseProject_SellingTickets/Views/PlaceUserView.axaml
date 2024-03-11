@@ -189,8 +189,14 @@
                                         
                                         <StackPanel>
                                             
-                                            <Image Width="150" Height="150" 
-                                                   Source="{Binding Photo.BitMapFromUrl^, Mode=OneTime}" Stretch="Uniform" Margin="0 20 0 0"/>
+                                            <Border BorderThickness="2" 
+                                                    CornerRadius="100"
+                                                    Width="150" Height="150"
+                                                    Margin="0 20 0 0">
+                                                <Border.Background>
+                                                    <ImageBrush Stretch="Uniform" Source="{Binding Photo.BitMapFromUrl^, Mode=OneTime}"/>
+                                                </Border.Background>
+                                            </Border>
                                             
                                             <Grid ColumnDefinitions="200,*" RowDefinitions="50,50">
 

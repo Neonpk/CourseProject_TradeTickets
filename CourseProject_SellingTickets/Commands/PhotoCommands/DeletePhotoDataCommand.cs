@@ -12,12 +12,12 @@ namespace CourseProject_SellingTickets.Commands.PhotoCommands;
 
 public class DeletePhotoDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task DeleteDataAsync(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider? photoVmProvider, IConnectionStateProvider connectionStateProvider)
+    private static async Task DeleteDataAsync(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider? photoVmProvider)
     {
         photoUserViewModel.ErrorMessage = string.Empty;
         photoUserViewModel.IsLoadingEditMode = true;
-        
-        photoUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         if (!photoUserViewModel.DatabaseHasConnected)
         {
@@ -42,8 +42,8 @@ public class DeletePhotoDataCommand : ReactiveCommand<Unit, Task>
         photoUserViewModel.IsLoadingEditMode = false;
     }
     
-    public DeletePhotoDataCommand(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider? photoVmProvider, IConnectionStateProvider connectionStateProvider) : 
-        base(_ => Observable.Start(async () => await DeleteDataAsync(photoUserViewModel, photoVmProvider, connectionStateProvider)), 
+    public DeletePhotoDataCommand(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider? photoVmProvider) : 
+        base(_ => Observable.Start(async () => await DeleteDataAsync(photoUserViewModel, photoVmProvider)), 
             canExecute: Observable.Return(true)) 
     {
     }

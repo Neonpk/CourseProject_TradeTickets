@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using CourseProject_SellingTickets.Helpers;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
@@ -22,7 +23,6 @@ public class MainWindowViewModel : ViewModelBase
 {
     
     // Services
-
     private INavigationService? _navigationService;
 
     public INavigationService? NavigationService { get => _navigationService; set => this.RaiseAndSetIfChanged(ref _navigationService, value); }
@@ -31,13 +31,17 @@ public class MainWindowViewModel : ViewModelBase
 
     private bool _databaseHasConnected;
     public bool DatabaseHasConnected { get => _databaseHasConnected; set => this.RaiseAndSetIfChanged(ref _databaseHasConnected, value); }
-    
+
     // Commands 
+
+    // Constructor 
 
     public MainWindowViewModel(INavigationService? navService)
     {
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
+        ConnectionDbState.CheckConnectionState.Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
+        
         NavigationService = navService;
         NavigationService?.NavigateTo<AuthUserViewModel>();
-        
     }
 }

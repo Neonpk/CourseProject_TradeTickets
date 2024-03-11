@@ -13,12 +13,12 @@ namespace CourseProject_SellingTickets.Commands.DiscountCommands;
 
 public class DeleteDiscountDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task DeleteDataAsync(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider? discountProvider, IConnectionStateProvider connectionStateProvider)
+    private static async Task DeleteDataAsync(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider? discountProvider)
     {
         discountUserViewModel.ErrorMessage = string.Empty;
         discountUserViewModel.IsLoadingEditMode = true;
-        
-        discountUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         if (!discountUserViewModel.DatabaseHasConnected)
         {
@@ -43,8 +43,8 @@ public class DeleteDiscountDataCommand : ReactiveCommand<Unit, Task>
         discountUserViewModel.IsLoadingEditMode = false;
     }
     
-    public DeleteDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider? discountProvider, IConnectionStateProvider connectionStateProvider) : 
-        base(_ => Observable.Start(async () => await DeleteDataAsync(discountUserViewModel, discountProvider, connectionStateProvider)), 
+    public DeleteDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider? discountProvider) : 
+        base(_ => Observable.Start(async () => await DeleteDataAsync(discountUserViewModel, discountProvider)), 
             canExecute: Observable.Return(true)) 
     {
     }

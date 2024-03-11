@@ -12,12 +12,13 @@ namespace CourseProject_SellingTickets.Commands.TicketCommands;
 
 public class DeleteTicketDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task DeleteDataAsync(TicketUserViewModel ticketUserViewModel, ITicketVmProvider? flightProvider, IConnectionStateProvider connectionStateProvider)
+    private static async Task DeleteDataAsync(TicketUserViewModel ticketUserViewModel, ITicketVmProvider? flightProvider)
     {
         ticketUserViewModel.ErrorMessage = string.Empty;
         ticketUserViewModel.IsLoadingEditMode = true;
         
-        ticketUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute()
+            .Subscribe(isConnected => ticketUserViewModel.DatabaseHasConnected = isConnected.Result);
         
         if (!ticketUserViewModel.DatabaseHasConnected)
         {
@@ -42,8 +43,8 @@ public class DeleteTicketDataCommand : ReactiveCommand<Unit, Task>
         ticketUserViewModel.IsLoadingEditMode = false;
     }
     
-    public DeleteTicketDataCommand(TicketUserViewModel ticketUserViewModel, ITicketVmProvider? ticketVmProvider, IConnectionStateProvider connectionStateProvider) : 
-        base(_ => Observable.Start(async () => await DeleteDataAsync(ticketUserViewModel, ticketVmProvider, connectionStateProvider)), 
+    public DeleteTicketDataCommand(TicketUserViewModel ticketUserViewModel, ITicketVmProvider? ticketVmProvider) : 
+        base(_ => Observable.Start(async () => await DeleteDataAsync(ticketUserViewModel, ticketVmProvider)), 
             canExecute: Observable.Return(true)) 
     {
     }

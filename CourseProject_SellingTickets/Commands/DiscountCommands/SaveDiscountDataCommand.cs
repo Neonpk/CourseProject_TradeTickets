@@ -22,12 +22,12 @@ public class SaveDiscountDataCommand : ReactiveCommand<Unit, Task>
         return discountVm.WhenAnyValue(x => x.SelectedDiscount.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider, IConnectionStateProvider connectionStateProvider )
+    private static async Task SaveDataAsync( DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider)
     {
         discountUserViewModel.ErrorMessage = string.Empty;
         discountUserViewModel.IsLoadingEditMode = true;
 
-        discountUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         if (!discountUserViewModel.DatabaseHasConnected)
         {
@@ -59,8 +59,8 @@ public class SaveDiscountDataCommand : ReactiveCommand<Unit, Task>
         discountUserViewModel.IsLoadingEditMode = false;
     }
     
-    public SaveDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider, IConnectionStateProvider connectionStateProvider) : 
-        base(_ => Observable.Start(async () => await SaveDataAsync(discountUserViewModel, discountVmProvider, connectionStateProvider)), 
+    public SaveDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider) : 
+        base(_ => Observable.Start(async () => await SaveDataAsync(discountUserViewModel, discountVmProvider)), 
         canExecute: CanExecuteCommand(discountUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }

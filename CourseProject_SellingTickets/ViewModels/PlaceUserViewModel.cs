@@ -20,7 +20,6 @@ public class PlaceUserViewModel : ViewModelBase
     // Private
     
     private readonly IPlaceVmProvider? _placeVmProvider;
-    private readonly IConnectionStateProvider? _connectionStateProvider;
     
     //Observable properties 
     
@@ -86,16 +85,16 @@ public class PlaceUserViewModel : ViewModelBase
     public ICommand HideSideBarCommand => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false);
 
     private ReactiveCommand<IEnumerable<Place>, Task>? _loadPLaceDataCommand;
-    public ReactiveCommand<IEnumerable<Place>, Task> LoadPlaceDataCommand => _loadPLaceDataCommand ??= new LoadPlaceDataCommand(this, _placeVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<IEnumerable<Place>, Task> LoadPlaceDataCommand => _loadPLaceDataCommand ??= new LoadPlaceDataCommand(this, _placeVmProvider!);
 
     private ReactiveCommand<bool,Unit>? _addEditDataCommand;
     public ReactiveCommand<bool,Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditPlaceDataCommand(this!);
 
     private ReactiveCommand<Unit, Task>? _saveAircraftDataCommand;
-    public ReactiveCommand<Unit, Task> SaveAircraftDataCommand => _saveAircraftDataCommand ??= new SavePlaceDataCommand(this, _placeVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> SaveAircraftDataCommand => _saveAircraftDataCommand ??= new SavePlaceDataCommand(this, _placeVmProvider!);
 
     private ReactiveCommand<Unit, Task>? _deleteAircraftDataCommand;
-    public ReactiveCommand<Unit, Task>? DeleteAircraftDataCommand => _deleteAircraftDataCommand ??= new DeletePlaceDataCommand(this, _placeVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task>? DeleteAircraftDataCommand => _deleteAircraftDataCommand ??= new DeletePlaceDataCommand(this, _placeVmProvider!);
 
     private ReactiveCommand<Unit, Unit>? _sortAircraftCommand;
     public ReactiveCommand<Unit, Unit> SortAircraftCommand => _sortAircraftCommand ??= new SortPlacesCommand(this);
@@ -104,15 +103,16 @@ public class PlaceUserViewModel : ViewModelBase
     public ReactiveCommand<Unit, Task<IEnumerable<Place>?>> SearchPlaceDataCommand => _searchPlaceDataCommand ??= new SearchPlaceDataCommand(this, _placeVmProvider!)!;
 
     
-    public PlaceUserViewModel(IPlaceVmProvider? placeVmProvider, IConnectionStateProvider? connectionStateProvider)
+    public PlaceUserViewModel(IPlaceVmProvider? placeVmProvider)
     {
         _placeVmProvider = placeVmProvider;
-        _connectionStateProvider = connectionStateProvider;
         
         LoadPlaceDataCommand.Execute();
         SearchPlaceDataCommand.Subscribe(filteredPlaces => LoadPlaceDataCommand.Execute(filteredPlaces.Result!));
         
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortAircraftCommand!.Execute());
+        
+        ConnectionDbState.CheckConnectionState.Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
     }
 }

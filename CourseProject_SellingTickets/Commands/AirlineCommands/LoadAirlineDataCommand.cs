@@ -14,15 +14,14 @@ namespace CourseProject_SellingTickets.Commands.AirlineCommands;
 
 public class LoadAirlineDataCommand : ReactiveCommand<IEnumerable<Airline>, Task>
 {
-    private static async Task LoadDataAsync(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider, 
-        IConnectionStateProvider connectionStateProvider, IEnumerable<Airline> filteredAirlines)
+    private static async Task LoadDataAsync(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider, IEnumerable<Airline> filteredAirlines)
     {
         var limitRows = airlineUserViewModel.LimitRows;
 
         airlineUserViewModel.ErrorMessage = string.Empty;
         airlineUserViewModel.IsLoading = true;
 
-        airlineUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         try
         {
@@ -46,9 +45,9 @@ public class LoadAirlineDataCommand : ReactiveCommand<IEnumerable<Airline>, Task
         airlineUserViewModel.IsLoading = false;
     }
     
-    public LoadAirlineDataCommand(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider, IConnectionStateProvider connectionStateProvider) :
+    public LoadAirlineDataCommand(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider) :
         base(filteredAirlines => Observable.Start(async () => 
-                await LoadDataAsync(airlineUserViewModel, airlineVmProvider, connectionStateProvider, filteredAirlines) ),
+                await LoadDataAsync(airlineUserViewModel, airlineVmProvider, filteredAirlines) ),
             canExecute: Observable.Return(true))
     {
     }

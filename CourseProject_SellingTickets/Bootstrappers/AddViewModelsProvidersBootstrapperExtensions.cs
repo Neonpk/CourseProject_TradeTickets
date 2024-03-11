@@ -1,3 +1,4 @@
+using Avalonia;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.AircraftProvider;
 using CourseProject_SellingTickets.Services.AirlineProvider;
@@ -8,21 +9,16 @@ using CourseProject_SellingTickets.Services.PhotoProvider;
 using CourseProject_SellingTickets.Services.PlaceProvider;
 using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
-using CourseProject_SellingTickets.ViewModels;
-using Microsoft.Extensions.Hosting;
 using Splat;
 
 namespace CourseProject_SellingTickets.HostBuilders;
 
-public static class AddViewModelsProvidersHostBuilderExtensions
+public static class AddViewModelsProvidersBootstrapperExtensions
 {
-    public static IHostBuilder AddViewModelsProviders(this IHostBuilder hostBuilder)
+    public static IMutableDependencyResolver AddViewModelsProviders(this IMutableDependencyResolver serviceBuilder)
     {
-        hostBuilder.ConfigureServices(services =>
+        return serviceBuilder.ConfigureServices((service,resolver) =>
         {
-            var resolver = Locator.CurrentMutable;
-            var service = Locator.Current;
-            
             // Included services 
             var iFlightDbProvider = service.GetService<IFlightDbProvider>();
             var iAircraftDbProvider = service.GetService<IAircraftDbProvider>();
@@ -64,7 +60,5 @@ public static class AddViewModelsProvidersHostBuilderExtensions
                 new TicketVmProvider(iTicketDbProvider, iDiscountDbProvider, iFlightClassDbProvider, iFlightDbProvider) );
             
         });
-
-        return hostBuilder;
     }
 }

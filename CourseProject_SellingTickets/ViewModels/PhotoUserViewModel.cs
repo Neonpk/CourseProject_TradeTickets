@@ -15,7 +15,6 @@ namespace CourseProject_SellingTickets.ViewModels;
 public class PhotoUserViewModel : ViewModelBase
 {
     private readonly IPhotoVmProvider _photoVmProvider;
-    private readonly IConnectionStateProvider _connectionStateProvider;
     
     //Observable properties 
     
@@ -71,25 +70,26 @@ public class PhotoUserViewModel : ViewModelBase
     public ReactiveCommand<bool, Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditPhotoCommand(this);
     
     private ReactiveCommand<IEnumerable<Photo>, Task>? _loadPhotoDataCommand;
-    public ReactiveCommand<IEnumerable<Photo>, Task> LoadPhotoDataCommand => _loadPhotoDataCommand ??= new LoadPhotoDataCommand(this, _photoVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<IEnumerable<Photo>, Task> LoadPhotoDataCommand => _loadPhotoDataCommand ??= new LoadPhotoDataCommand(this, _photoVmProvider!);
 
     private ReactiveCommand<Unit, Task<IEnumerable<Photo>?>>? _searchPhotoDataCommand;
     public ReactiveCommand<Unit, Task<IEnumerable<Photo>?>> SearchPhotoDataCommand => _searchPhotoDataCommand ??= new SearchPhotoDataCommand(this, _photoVmProvider!);
 
     private ReactiveCommand<Unit, Task>? _savePhotoDataCommand;
-    public ReactiveCommand<Unit, Task> SavePhotoDataCommand => _savePhotoDataCommand ??= new SavePhotoDataCommand(this, _photoVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> SavePhotoDataCommand => _savePhotoDataCommand ??= new SavePhotoDataCommand(this, _photoVmProvider!);
 
     private ReactiveCommand<Unit, Task>? _deletePhotoDataCommand;
-    public ReactiveCommand<Unit, Task> DeletePhotoDataCommand => _deletePhotoDataCommand ??= new DeletePhotoDataCommand(this, _photoVmProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> DeletePhotoDataCommand => _deletePhotoDataCommand ??= new DeletePhotoDataCommand(this, _photoVmProvider!);
     
     // Constructor 
     
-    public PhotoUserViewModel(IPhotoVmProvider? photoVmProvider, IConnectionStateProvider? connectionStateProvider)
+    public PhotoUserViewModel(IPhotoVmProvider? photoVmProvider)
     {
         _photoVmProvider = photoVmProvider!;
-        _connectionStateProvider = connectionStateProvider!;
         
         LoadPhotoDataCommand.Execute();
         SearchPhotoDataCommand.Subscribe(filteredPhotos => LoadPhotoDataCommand!.Execute(filteredPhotos.Result!));
+        
+        ConnectionDbState.CheckConnectionState.Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
     }
 }

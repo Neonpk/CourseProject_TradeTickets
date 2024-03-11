@@ -19,15 +19,15 @@ namespace CourseProject_SellingTickets.Commands.TicketCommands;
 
 public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
 {
-    private static async Task LoadDataAsync(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider, 
-        IConnectionStateProvider connectionStateProvider, IEnumerable<Ticket> filteredTickets)
+    private static async Task LoadDataAsync(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider, IEnumerable<Ticket> filteredTickets)
     {
         var limitRows = ticketUserViewModel.LimitRows;
 
         ticketUserViewModel.ErrorMessage = string.Empty;
         ticketUserViewModel.IsLoading = true;
 
-        ticketUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute()
+            .Subscribe(isConnected => ticketUserViewModel.DatabaseHasConnected = isConnected.Result);
         
         try
         {
@@ -64,9 +64,9 @@ public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
         ticketUserViewModel.IsLoading = false;
     }
     
-    public LoadTicketDataCommand(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketProvider, IConnectionStateProvider connectionStateProvider) :
+    public LoadTicketDataCommand(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketProvider) :
         base(filteredTickets => Observable.Start(async () => 
-                await LoadDataAsync(ticketUserViewModel, ticketProvider, connectionStateProvider, filteredTickets) ),
+                await LoadDataAsync(ticketUserViewModel, ticketProvider, filteredTickets) ),
             canExecute: Observable.Return(true))
     {
     }

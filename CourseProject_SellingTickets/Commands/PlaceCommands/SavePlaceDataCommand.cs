@@ -22,12 +22,12 @@ public class SavePlaceDataCommand : ReactiveCommand<Unit, Task>
         return flightVm.WhenAnyValue(x => x.SelectedPlace.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider, IConnectionStateProvider connectionStateProvider )
+    private static async Task SaveDataAsync( PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider )
     {
         placeUserViewModel.ErrorMessage = string.Empty;
         placeUserViewModel.IsLoadingEditMode = true;
 
-        placeUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         if (!placeUserViewModel.DatabaseHasConnected)
         {
@@ -59,8 +59,8 @@ public class SavePlaceDataCommand : ReactiveCommand<Unit, Task>
         placeUserViewModel.IsLoadingEditMode = false;
     }
 
-    public SavePlaceDataCommand(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider, IConnectionStateProvider connectionStateProvider) :
-        base(_ => Observable.Start(async () => await SaveDataAsync(placeUserViewModel, placeVmProvider, connectionStateProvider)), 
+    public SavePlaceDataCommand(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider) :
+        base(_ => Observable.Start(async () => await SaveDataAsync(placeUserViewModel, placeVmProvider)), 
             canExecute: CanExecuteCommand(placeUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }

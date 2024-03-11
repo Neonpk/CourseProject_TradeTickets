@@ -21,12 +21,12 @@ public class SaveAirlineDataCommand : ReactiveCommand<Unit, Task>
         return airlineUserViewModel.WhenAnyValue(x => x.SelectedAirline.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider, IConnectionStateProvider connectionStateProvider )
+    private static async Task SaveDataAsync( AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider)
     {
         airlineUserViewModel.ErrorMessage = string.Empty;
         airlineUserViewModel.IsLoadingEditMode = true;
-
-        airlineUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         if (!airlineUserViewModel.DatabaseHasConnected)
         {
@@ -58,8 +58,8 @@ public class SaveAirlineDataCommand : ReactiveCommand<Unit, Task>
         airlineUserViewModel.IsLoadingEditMode = false;
     }
     
-    public SaveAirlineDataCommand(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider, IConnectionStateProvider connectionStateProvider) : 
-        base(_ => Observable.Start(async () => await SaveDataAsync(airlineUserViewModel, airlineVmProvider, connectionStateProvider)), 
+    public SaveAirlineDataCommand(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider) : 
+        base(_ => Observable.Start(async () => await SaveDataAsync(airlineUserViewModel, airlineVmProvider)), 
         canExecute: CanExecuteCommand(airlineUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }

@@ -19,7 +19,6 @@ public class FlightUserViewModel : ViewModelBase
     // Private 
 
     private readonly IFlightVmProvider? _flightProvider;
-    private readonly IConnectionStateProvider? _connectionStateProvider;
 
     //Observable properties 
     
@@ -91,16 +90,16 @@ public class FlightUserViewModel : ViewModelBase
     public ICommand HideSideBarCommand => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>((_) => SideBarShowed = false);
 
     private ReactiveCommand<IEnumerable<Flight>, Task>? _loadFlightDataCommand;
-    public ReactiveCommand<IEnumerable<Flight>, Task> LoadFlightDataCommand => _loadFlightDataCommand ??= new LoadFlightDataCommand(this, _flightProvider!, _connectionStateProvider!);
+    public ReactiveCommand<IEnumerable<Flight>, Task> LoadFlightDataCommand => _loadFlightDataCommand ??= new LoadFlightDataCommand(this, _flightProvider!);
 
     private ReactiveCommand<bool,Unit>? _addEditDataCommand;
     public ReactiveCommand<bool,Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditFlightCommand(this!);
 
     private ReactiveCommand<Unit, Task>? _saveFlightDataCommand;
-    public ReactiveCommand<Unit, Task> SaveFlightDataCommand => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task> SaveFlightDataCommand => _saveFlightDataCommand ??= new SaveFlightDataCommand(this, _flightProvider!);
 
     private ReactiveCommand<Unit, Task>? _deleteFlightDataCommand;
-    public ReactiveCommand<Unit, Task>? DeleteFlightDataCommand => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider!, _connectionStateProvider!);
+    public ReactiveCommand<Unit, Task>? DeleteFlightDataCommand => _deleteFlightDataCommand ??= new DeleteFlightDataCommand(this, _flightProvider!);
 
     private ReactiveCommand<Unit, Unit>? _sortFlightsCommand;
     public ReactiveCommand<Unit, Unit> SortFlightsCommand => _sortFlightsCommand ??= new SortFlightsCommand(this);
@@ -109,13 +108,13 @@ public class FlightUserViewModel : ViewModelBase
     public ReactiveCommand<Unit, Task<IEnumerable<Flight>?>> SearchFlightDataCommand => _searchFlightDataCommand ??= new SearchFlightDataCommand(this, _flightProvider!)!;
 
     // Constructor 
-    public FlightUserViewModel(IFlightVmProvider? flightProvider, IConnectionStateProvider? connectionStateProvider)
+    public FlightUserViewModel(IFlightVmProvider? flightProvider)
     {
         _flightProvider = flightProvider;
-        _connectionStateProvider = connectionStateProvider;
 
         LoadFlightDataCommand.Execute();
         SearchFlightDataCommand.Subscribe(filteredFlights => LoadFlightDataCommand.Execute(filteredFlights.Result!));
+        ConnectionDbState.CheckConnectionState.Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
         
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortFlightsCommand!.Execute());

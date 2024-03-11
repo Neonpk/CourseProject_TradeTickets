@@ -21,12 +21,12 @@ public class SavePhotoDataCommand : ReactiveCommand<Unit, Task>
         return photoVm.WhenAnyValue(x => x.SelectedPhoto.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider, IConnectionStateProvider connectionStateProvider )
+    private static async Task SaveDataAsync( PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider)
     {
         photoUserViewModel.ErrorMessage = string.Empty;
         photoUserViewModel.IsLoadingEditMode = true;
 
-        photoUserViewModel.DatabaseHasConnected = await connectionStateProvider.IsConnected();
+        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         if (!photoUserViewModel.DatabaseHasConnected)
         {
@@ -58,8 +58,8 @@ public class SavePhotoDataCommand : ReactiveCommand<Unit, Task>
         photoUserViewModel.IsLoadingEditMode = false;
     }
     
-    public SavePhotoDataCommand(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider, IConnectionStateProvider connectionStateProvider) : 
-        base(_ => Observable.Start(async () => await SaveDataAsync(photoUserViewModel, photoVmProvider, connectionStateProvider)), 
+    public SavePhotoDataCommand(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider) : 
+        base(_ => Observable.Start(async () => await SaveDataAsync(photoUserViewModel, photoVmProvider)), 
         canExecute: CanExecuteCommand(photoUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }

@@ -77,27 +77,38 @@ public class AuthUserViewModel : ViewModelBase
             {
                 return Observable.Start(async () =>
                 {
-                    switch (_operatingMode)
+                    try
                     {
-                        case OperatingModes.AdminMode:
-                            
-                            IsLoading = true;
-                            AuthState = await _authCheckerProvider.CheckAdminPassword(Password);
-                            IsLoading = false;
-                            
-                            if (AuthState == AuthStates.Success)
-                                NavigationService.NavigateTo<AdminUserViewModel>();
-                            break;
+                        switch (_operatingMode)
+                        {
+                            case OperatingModes.AdminMode:
 
-                        case OperatingModes.DispatcherMode:
-                            
-                            IsLoading = true;
-                            AuthState = await _authCheckerProvider.CheckDispatcherPassword(Password);
-                            IsLoading = false;
-                            
-                            if (AuthState == AuthStates.Success)
-                                NavigationService.NavigateTo<DispatcherUserViewModel>();
-                            break;
+                                ConnectionDbState.CheckConnectionState.Execute().Subscribe();
+                                
+                                IsLoading = true;
+                                AuthState = await _authCheckerProvider.CheckAdminPassword(Password);
+                                IsLoading = false;
+
+                                if (AuthState == AuthStates.Success)
+                                    NavigationService.NavigateTo<AdminUserViewModel>();
+                                break;
+
+                            case OperatingModes.DispatcherMode:
+
+                                ConnectionDbState.CheckConnectionState.Execute().Subscribe();
+                                
+                                IsLoading = true;
+                                AuthState = await _authCheckerProvider.CheckDispatcherPassword(Password);
+                                IsLoading = false;
+
+                                if (AuthState == AuthStates.Success)
+                                    NavigationService.NavigateTo<DispatcherUserViewModel>();
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        IsLoading = false;
                     }
                 });
             });
