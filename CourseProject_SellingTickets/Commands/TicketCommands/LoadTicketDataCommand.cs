@@ -5,6 +5,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Collections;
 using Avalonia.ReactiveUI;
 using Avalonia.Threading;
 using CourseProject_SellingTickets.Models;
@@ -50,7 +51,7 @@ public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
 
                 ticketUserViewModel.Flights.Clear();
                 ticketUserViewModel.Flights.AddRange(flights);
-
+                
                 ticketUserViewModel.TicketItems.Clear();
                 ticketUserViewModel.TicketItems.AddRange(tickets);
             });

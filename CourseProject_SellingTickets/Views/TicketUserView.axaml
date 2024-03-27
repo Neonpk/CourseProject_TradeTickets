@@ -160,7 +160,6 @@
                                     ConverterParameter={StaticResource FalseValue}}"
                                 TextWrapping="WrapWithOverflow"/>
                             
-                            
                             <DataGrid
                                     IsVisible="{Binding TicketItems.Count, 
                                     Converter={StaticResource CollectionHasItemsConverter}, 

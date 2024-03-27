@@ -4,10 +4,11 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Collections;
 using CourseProject_SellingTickets.Commands.TicketCommands;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.TicketProvider;
+using DynamicData.Binding;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;
@@ -69,8 +70,8 @@ public class TicketUserViewModel : ViewModelBase
     
     // => // ObservableCollection And SourceCache
     
-    private ObservableCollection<Ticket>? _ticketItems;
-    public ObservableCollection<Ticket> TicketItems => _ticketItems ??= new ObservableCollection<Ticket>();
+    private ObservableCollectionExtended<Ticket>? _ticketItems;
+    public ObservableCollectionExtended<Ticket> TicketItems => _ticketItems ??= new ObservableCollectionExtended<Ticket>();
     
     // Commands 
     
