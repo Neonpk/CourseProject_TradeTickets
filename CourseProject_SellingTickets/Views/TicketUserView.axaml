@@ -7,7 +7,6 @@
              xmlns:converter="using:CourseProject_SellingTickets.Converters"
              xmlns:controls="using:CourseProject_SellingTickets.Controls"
              xmlns:s="clr-namespace:System;assembly=mscorlib"
-             xmlns:models="clr-namespace:CourseProject_SellingTickets.Models"
              x:DataType="vm:TicketUserViewModel"
              x:Class="CourseProject_SellingTickets.Views.TicketUserView">
     
@@ -18,6 +17,7 @@
         <converter:CollectionHasItemsConverter x:Key="CollectionHasItemsConverter"/>
         <converter:HideDefaultIdConverter x:Key="HideDefaultIdConverter"/>
         <converter:FlightStatusConverter x:Key="FlightStatusConverter"/>
+        <converter:StringEmptyToUnsetConverter x:Key="StringEmptyToUnsetConverter" />
         
         <s:Boolean x:Key="FalseValue">False</s:Boolean>
         <s:Boolean x:Key="TrueValue">True</s:Boolean>
@@ -80,6 +80,7 @@
                         <ComboBoxItem>По цене со скидкой</ComboBoxItem>
                         <ComboBoxItem>По времени отправки</ComboBoxItem>
                         <ComboBoxItem>По времени прибытия</ComboBoxItem>
+                        <ComboBoxItem>По покупателю</ComboBoxItem>
                     </ComboBox>
 
                     <TextBox 
@@ -286,6 +287,23 @@
                                     <DataGridTextColumn Header="Итоговая цена" Foreground="Gold" Binding="{Binding DiscountPrice, StringFormat={}{0} руб., Mode=OneTime}" />
                                     <DataGridCheckBoxColumn Header="Продан" Binding="{Binding IsSold, Mode=OneTime}" />
                                     
+                                    <DataGridTemplateColumn Header="Покупатель" SortMemberPath="User.Name">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock VerticalAlignment="Center" Margin="10">
+                                                    <TextBlock 
+                                                        Text="{Binding User.Id, StringFormat={}(Номер: {0}), FallbackValue='', TargetNullValue=''}"
+                                                        IsVisible="{Binding User.Id, FallbackValue=False, TargetNullValue=''}"
+                                                        />
+                                                    <LineBreak/>
+                                                    <Run Text="{Binding User.Name, 
+                                                            Converter={StaticResource StringEmptyToUnsetConverter}, 
+                                                            FallbackValue=''}" />
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    
                                 </DataGrid.Columns>
                                 
                             </DataGrid>   
@@ -384,6 +402,32 @@
                                        ParsingNumberStyle="Integer"
                                        FormatString="N0"
                                        />
+                        
+                        <Label Content="Покупатель" Margin="0 10 0 0"/>
+                        
+                        <ComboBox 
+                            ItemsSource="{Binding Users}"
+                            SelectedValue="{Binding SelectedTicket.User}"
+                            HorizontalAlignment="Stretch" 
+                            Margin="0 10 0 10"
+                            PlaceholderText="Выберите покупателя."
+                        >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Id, StringFormat={}(Номер: {0}) }"/>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        
+                        <Button Content="Убрать покупателя"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                IsEnabled="{Binding SelectedTicket.User.Id, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
+                                Command="{Binding PurgeSelectedUser}"
+                                />
                         
                         <StackPanel Orientation="Horizontal" 
                                     Margin="0 10 0 10">

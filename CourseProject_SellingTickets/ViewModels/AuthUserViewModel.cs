@@ -2,7 +2,7 @@ using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using CourseProject_SellingTickets.Commands.AuthCommands;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.UserProvider;
@@ -14,11 +14,7 @@ public class AuthUserViewModel : ViewModelBase
 {
     // Service
 
-    private readonly IAuthCheckerProvider _authCheckerProvider;
-    
-    // Dynamic variables
-
-    private OperatingModes _operatingMode = OperatingModes.DispatcherMode;
+    private readonly IAuthProvider _authProvider;
     
     // Dynamic binding properties
 
@@ -27,6 +23,8 @@ public class AuthUserViewModel : ViewModelBase
 
     private bool _isLoading;
     public bool IsLoading { get => _isLoading; set => this.RaiseAndSetIfChanged(ref _isLoading, value); }
+
+    public string Login { get; set; } = "";
     
     public string Password { get; set; } = "";
     
@@ -35,83 +33,23 @@ public class AuthUserViewModel : ViewModelBase
     private INavigationService? _navigationService;
     public INavigationService? NavigationService { get => _navigationService; set => this.RaiseAndSetIfChanged(ref _navigationService, value); }
     
-    // Constructor
-
-    public AuthUserViewModel(IAuthCheckerProvider? authCheckerProvider, INavigationService? navService)
-    {
-        _authCheckerProvider = authCheckerProvider!;
-        NavigationService = navService;
-    }
-    
     // Commands (Event handlers) 
     
-    #pragma  warning disable
-    private ICommand? _selectOperationModeCommand;
-    public ICommand SelectOperationModeCommand
-    {
-        get
-        {
-            return _selectOperationModeCommand ??= ReactiveCommand.Create<string>((obj) =>
-            {
-                switch ( obj )
-                {
-                    case "administratorMode":
-                        _operatingMode = OperatingModes.AdminMode;
-                        break;
-                    
-                    case "dispatcherMode":
-                        _operatingMode = OperatingModes.DispatcherMode;
-                        break;
-                }
-            });
-        } 
-    }
-    
-    #pragma warning disable
     private ReactiveCommand<Unit, Task>? _loginCommand;
-    public ReactiveCommand<Unit, Task> LoginCommand
+    public ReactiveCommand<Unit, Task> LoginCommand => _loginCommand ??= new LoginUserCommand(this, _authProvider);
+
+    private ReactiveCommand<Unit, Task>? _registerCommand;
+    public ReactiveCommand<Unit, Task>? RegisterCommand =>
+        _registerCommand ??= 
+            ReactiveCommand.CreateFromObservable<Unit, Task>(_ => 
+                Observable.Start(async () => NavigationService!.NavigateTo<RegisterUserViewModel>())
+            );
+    
+    // Constructor
+
+    public AuthUserViewModel(IAuthProvider? authProvider, INavigationService? navService)
     {
-        get
-        {
-            return _loginCommand ??= ReactiveCommand.CreateFromObservable<Unit, Task>(_ =>
-            {
-                return Observable.Start(async () =>
-                {
-                    try
-                    {
-                        switch (_operatingMode)
-                        {
-                            case OperatingModes.AdminMode:
-
-                                ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-                                
-                                IsLoading = true;
-                                AuthState = await _authCheckerProvider.CheckAdminPassword(Password);
-                                IsLoading = false;
-
-                                if (AuthState == AuthStates.Success)
-                                    NavigationService.NavigateTo<AdminUserViewModel>();
-                                break;
-
-                            case OperatingModes.DispatcherMode:
-
-                                ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-                                
-                                IsLoading = true;
-                                AuthState = await _authCheckerProvider.CheckDispatcherPassword(Password);
-                                IsLoading = false;
-
-                                if (AuthState == AuthStates.Success)
-                                    NavigationService.NavigateTo<DispatcherUserViewModel>();
-                                break;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        IsLoading = false;
-                    }
-                });
-            });
-        }
+        _authProvider = authProvider!;
+        NavigationService = navService;
     }
 }

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Collections;
 using CourseProject_SellingTickets.Commands.TicketCommands;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services.TicketProvider;
@@ -29,6 +29,9 @@ public class TicketUserViewModel : ViewModelBase
 
     private ObservableCollection<FlightClass>? _flightClasses;
     public ObservableCollection<FlightClass> FlightClasses => _flightClasses ??= new ObservableCollection<FlightClass>();
+
+    private ObservableCollection<User>? _users;
+    public ObservableCollection<User> Users => _users ??= new ObservableCollection<User>();
     
     // => // Filters
     
@@ -51,7 +54,7 @@ public class TicketUserViewModel : ViewModelBase
     
     private Ticket? _selectedTicket;
     public Ticket SelectedTicket { get => _selectedTicket!; set => this.RaiseAndSetIfChanged(ref _selectedTicket, value); }
-    
+
     // => // Loading page properties 
 
     private bool _databaseHasConnected;
@@ -78,6 +81,9 @@ public class TicketUserViewModel : ViewModelBase
     private ICommand? _hideSideBarCommand;
     public ICommand HideSideBarCommand => _hideSideBarCommand ??= ReactiveCommand.Create<Unit>(_ => SideBarShowed = false);
 
+    private ICommand? _purgeSelectedUser;
+    public ICommand PurgeSelectedUser => _purgeSelectedUser ??= ReactiveCommand.Create<Unit>(_ => SelectedTicket.User = new User());
+
     private ReactiveCommand<bool, Unit>? _addEditDataCommand;
     public ReactiveCommand<bool, Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditTicketCommand(this);
     
@@ -92,7 +98,8 @@ public class TicketUserViewModel : ViewModelBase
 
     private ReactiveCommand<Unit, Task>? _deleteTicketDataCommand;
     public ReactiveCommand<Unit, Task> DeleteTicketDataCommand => _deleteTicketDataCommand ??= new DeleteTicketDataCommand(this, _ticketProvider!);
-    
+
+
     // Constructor
     
     public TicketUserViewModel(ITicketVmProvider? ticketVmProvider)

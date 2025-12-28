@@ -39,7 +39,7 @@ public class Discount : ReactiveObject, IValidatableViewModel
         this.InitializeValidationRules();
     }
     
-    public Discount(System.Int64 id, string name, int discountSize, string description)
+    public Discount(Int64 id, string name, int discountSize, string description)
     {
         Id = id;
         Name = name;

@@ -35,6 +35,7 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.DestinationPlace!.Photo ).
                 Include( x => x.Flight.DeparturePlace!.Photo ).
                 Include( x => x.Flight.Aircraft!.Photo ).
+                Include( x => x.User).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -59,8 +60,7 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.DestinationPlace!.Photo ).
                 Include( x => x.Flight.DeparturePlace!.Photo ).
                 Include( x => x.Flight.Aircraft!.Photo ).
-                
-                
+                Include( x => x.User).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -86,6 +86,7 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.DestinationPlace!.Photo ).
                 Include( x => x.Flight.DeparturePlace!.Photo ).
                 Include( x => x.Flight.Aircraft!.Photo ).
+                Include( x => x.User).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -112,6 +113,7 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.DestinationPlace!.Photo ).
                 Include( x => x.Flight.DeparturePlace!.Photo ).
                 Include( x => x.Flight.Aircraft!.Photo ).
+                Include( x => x.User).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -152,7 +154,9 @@ public class TicketDbProvider : ITicketDbProvider
             new FlightClass( ticketDto.FlightClass.Id, ticketDto.FlightClass.ClassName ),
             ticketDto.PlaceNumber, 
             new Discount( ticketDto.Discount.Id, ticketDto.Discount.Name, ticketDto.Discount.DiscountSize, ticketDto.Discount.Description ),
-            ticketDto.IsSold
+            ticketDto.IsSold,
+            ticketDto.User is not null ? 
+            new User( ticketDto.User.Id, ticketDto.User.Login, ticketDto.User.Name, ticketDto.User.Role, ticketDto.User.Password, ticketDto.User.Balance ) : new User()
         );
     }
     
@@ -165,7 +169,8 @@ public class TicketDbProvider : ITicketDbProvider
             ClassId = ticket.FlightClass.Id,
             PlaceNumber = ticket.PlaceNumber,
             DiscountId = ticket.Discount.Id,
-            IsSold = ticket.IsSold
+            IsSold = ticket.IsSold,
+            UserId = ticket.User!.Id
         };
     }
     

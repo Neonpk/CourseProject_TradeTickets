@@ -40,6 +40,7 @@ public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
             IEnumerable<FlightClass> flightClasses = await ticketVmProvider.GetAllFlightClasses();
             IEnumerable<Discount> discounts = await ticketVmProvider.GetAllDiscounts();
             IEnumerable<Flight> flights = await ticketVmProvider.GetAllFlights();
+            IEnumerable<User> users = await ticketVmProvider.GetAllUsers();
 
             Dispatcher.UIThread.Post(() =>
             {
@@ -54,6 +55,9 @@ public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
                 
                 ticketUserViewModel.TicketItems.Clear();
                 ticketUserViewModel.TicketItems.AddRange(tickets);
+                
+                ticketUserViewModel.Users.Clear();
+                ticketUserViewModel.Users.AddRange(users);
             });
             
         }

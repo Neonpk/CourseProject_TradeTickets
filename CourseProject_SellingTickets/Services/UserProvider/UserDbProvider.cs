@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
 using CourseProject_SellingTickets.Models;
+using DynamicData.Kernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject_SellingTickets.Services.UserProvider;
@@ -25,9 +26,10 @@ public class UserDbProvider : IUserDbProvider
         {
             IEnumerable<UserDTO> userDtos = await context.Users.
                 AsNoTracking().
+                Include(x => x.Tickets).
                 ToListAsync();
-
-            return userDtos.Select(user => ToUser(user));
+            
+            return userDtos.Select(userDto => ToUser(userDto));
         }
     }
 
@@ -35,19 +37,66 @@ public class UserDbProvider : IUserDbProvider
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
-            IEnumerable<UserDTO> ticketDtos = await context.Users.
+            IEnumerable<UserDTO> userDtos = await context.Users.
                 Where(searchFunc).
                 OrderByDescending(x => x.Id).
                 TakeOrDefault(topRows).
                 AsNoTracking().
+                Include(x => x.Tickets).
                 ToListAsync();
 
-            return ticketDtos.Select(ticket => ToUser(ticket));
+            return userDtos.Select(userDto => ToUser(userDto));
+        }
+    }
+    
+    public async Task<int> CreateOrEditUser(User user)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            UserDTO userDto = ToUserDto(user);
+
+            if (userDto.Id.Equals(default))
+                await context.Users.AddAsync(userDto);
+            else
+                context.Users.Attach(userDto).State = EntityState.Modified;
+
+            return await context.SaveChangesAsync();
+        }
+    }
+
+    public async Task<int> DeleteUser(User user)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            UserDTO userDto = ToUserDto(user);
+            
+            context.Users.Remove(userDto);
+            return await context.SaveChangesAsync();
         }
     }
     
     private User ToUser(UserDTO userDto)
     {
-        return new User(userDto.Id, userDto.Mode, userDto.Password);
+        return new User(
+            userDto.Id,
+            userDto.Login,
+            userDto.Name,
+            userDto.Role,
+            userDto.Password,
+            userDto.Balance
+        );
+    }
+    
+    private UserDTO ToUserDto(User user)
+    {
+        return new UserDTO
+        {
+            Id = user.Id ?? 0,
+            Login = user.Login,
+            Name = user.Name,
+            Role = user.Role,
+            Password = user.Password,
+            Balance = user.Balance
+        };
     }
 }

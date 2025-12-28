@@ -93,6 +93,14 @@ public class SearchTicketDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Ti
                  return await ticketVmProvider.GetTicketsByFilter(x => 
                          TradeTicketsDbContext.DateTimeFormatToString(x.Flight.ArrivalTime,"DD.MM.YYYY HH24:MI:SS").StartsWith(searchTerm), 
                      limitRows); 
+             // By UserCustomer
+             case TicketSearchModes.UserCustomer:
+                 return await ticketVmProvider.GetTicketsByFilter(
+                     x => 
+                         (Nullable.Equals(x.User, null) ? false : x.User.Name.ToLower().StartsWith(searchTerm.ToLower()))
+                         ||
+                         (Nullable.Equals(x.User, null) ? false : x.User.Id.ToString().StartsWith(searchTerm.ToLower()))
+                     , limitRows);
              // Empty 
              default:
                  return new List<Ticket>();

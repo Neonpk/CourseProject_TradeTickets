@@ -34,7 +34,6 @@ namespace CourseProject_SellingTickets.Models
     {
         Name = 0,
         UrlPath, 
-        IsDeleted
     }
 
     public enum FlightClassSearchSortModes
@@ -90,7 +89,8 @@ namespace CourseProject_SellingTickets.Models
         Price,
         DiscountPrice,
         DepartureTime,
-        ArrivalTime
+        ArrivalTime,
+        UserCustomer
     }
     
     public enum SortMode
@@ -99,17 +99,11 @@ namespace CourseProject_SellingTickets.Models
         Desc
     }
     
-    public enum OperatingModes
+    public enum UserRoles
     {
-        AdminMode = 0,
-        DispatcherMode
-    }
-
-    public enum ConnectionStates
-    {
-        Connected = 0,
-        Disconnected,
-        TimedOut
+        Admin = 0,
+        Dispatcher,
+        User
     }
 
     public enum AuthStates
@@ -118,5 +112,4 @@ namespace CourseProject_SellingTickets.Models
         Success,
         Failed
     }
-    
 }

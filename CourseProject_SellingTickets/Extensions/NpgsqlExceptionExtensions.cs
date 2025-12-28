@@ -43,6 +43,10 @@ public static class NpgsqlExceptionExtensions
             [nameof(AirlineUserViewModel)] = new()
             {
                 [PostgresStates.UniqueViolation] = "Не удалось сохранить данные: (Авиалиния с таким именем уже существует)"
+            },
+            [nameof(RegisterUserViewModel)] = new()
+            {
+                [PostgresStates.UniqueViolation] = "Не удалось создать пользователя: (Такой пользователь уже существует)"
             }
         };
 

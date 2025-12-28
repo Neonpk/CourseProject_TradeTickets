@@ -26,7 +26,7 @@ public static class AddViewModelsBootstrapperExtensions
         {
             // Included services 
 
-            IAuthCheckerProvider? authCheckerProvider = service.GetService<IAuthCheckerProvider>();
+            IAuthProvider? authProvider = service.GetService<IAuthProvider>();
             
             INavigationService? mainNavigation = service.GetService<INavigationService>("mainNavigation");
             INavigationService? dispatcherNavigation = service.GetService<INavigationService>("dispatcherNavigation");
@@ -61,6 +61,7 @@ public static class AddViewModelsBootstrapperExtensions
             resolver.RegisterLazySingleton<AirlineUserViewModel>( () => new AirlineUserViewModel( airlineVmProvider ) );
             
             //--AdminUserViewModel
+            
             resolver.RegisterLazySingleton<AdminUserViewModel>( () => new AdminUserViewModel( mainNavigation, adminNavigation ));
             
             // Dispatcher 
@@ -70,11 +71,14 @@ public static class AddViewModelsBootstrapperExtensions
             resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( flightProvider ) );
             
             //--DispatcherUserViewModel
+            
             resolver.RegisterLazySingleton<DispatcherUserViewModel>( () => new DispatcherUserViewModel( mainNavigation, dispatcherNavigation ) );
             
             // Main 
             
-            resolver.RegisterLazySingleton<AuthUserViewModel>(() => new AuthUserViewModel( authCheckerProvider, mainNavigation ));
+            resolver.RegisterLazySingleton<AuthUserViewModel>(() => new AuthUserViewModel( authProvider, mainNavigation ));
+
+            resolver.RegisterLazySingleton<RegisterUserViewModel>(() => new RegisterUserViewModel( mainNavigation!, authProvider! ));
         
             resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel( mainNavigation ));
             

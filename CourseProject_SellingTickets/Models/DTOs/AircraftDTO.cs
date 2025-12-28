@@ -13,7 +13,7 @@ public class AircraftDTO
     [Key]
     [Column("id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public System.Int64 Id { get; init; }
+    public Int64 Id { get; init; }
     
     [Column("model")]
     public required string Model { get; init; }
@@ -28,7 +28,7 @@ public class AircraftDTO
     
     [Column("photo_id")]
     [ForeignKey("Photo")]
-    public System.Int64 PhotoId { get; init; }
+    public Int64 PhotoId { get; init; }
 
     public virtual PhotoDTO? Photo { get; init; }
 }

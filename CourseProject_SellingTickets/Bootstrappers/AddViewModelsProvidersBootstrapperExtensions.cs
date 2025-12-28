@@ -1,5 +1,3 @@
-using Avalonia;
-using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.AircraftProvider;
 using CourseProject_SellingTickets.Services.AirlineProvider;
 using CourseProject_SellingTickets.Services.DiscountProvider;
@@ -9,6 +7,7 @@ using CourseProject_SellingTickets.Services.PhotoProvider;
 using CourseProject_SellingTickets.Services.PlaceProvider;
 using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
+using CourseProject_SellingTickets.Services.UserProvider;
 using Splat;
 
 namespace CourseProject_SellingTickets.HostBuilders;
@@ -28,6 +27,7 @@ public static class AddViewModelsProvidersBootstrapperExtensions
             var iDiscountDbProvider = service.GetService<IDiscountDbProvider>();
             var iFlightClassDbProvider = service.GetService<IFlightClassDbProvider>();
             var iPhotoDbProvider = service.GetService<IPhotoDbProvider>();
+            var iUserDbProvider = service.GetService<IUserDbProvider>();
             
             //ViewModels
             
@@ -57,7 +57,13 @@ public static class AddViewModelsProvidersBootstrapperExtensions
                 new FlightVmVmProvider(iFlightDbProvider, iAircraftDbProvider, iAirlineDbProvider, iPlaceDbProvider));
             
             resolver.RegisterLazySingleton<ITicketVmProvider>( () =>
-                new TicketVmProvider(iTicketDbProvider, iDiscountDbProvider, iFlightClassDbProvider, iFlightDbProvider) );
+                new TicketVmProvider(
+                    iTicketDbProvider, 
+                    iDiscountDbProvider, 
+                    iFlightClassDbProvider, 
+                    iFlightDbProvider,
+                    iUserDbProvider
+                    ) );
             
         });
     }

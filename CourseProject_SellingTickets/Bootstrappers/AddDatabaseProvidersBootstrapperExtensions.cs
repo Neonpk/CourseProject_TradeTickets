@@ -30,8 +30,8 @@ public static class AddDatabaseProvidersBootstrapperExtensions
             resolver.RegisterLazySingleton<IUserDbProvider>(() =>
                 new UserDbProvider(tradeTicketsDbContext!));
 
-            resolver.RegisterLazySingleton<IAuthCheckerProvider>(() =>
-                new AuthCheckerProvider(service.GetService<IUserDbProvider>()!));
+            resolver.RegisterLazySingleton<IAuthProvider>(() =>
+                new AuthProvider(service.GetService<IUserDbProvider>()!));
 
             // Other
 

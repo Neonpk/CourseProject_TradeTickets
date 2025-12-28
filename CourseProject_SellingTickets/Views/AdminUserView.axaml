@@ -2,8 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:view="clr-namespace:CourseProject_SellingTickets.Views"
-             xmlns:controls="using:CourseProject_SellingTickets.Controls"
              xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
              xmlns:converter="using:CourseProject_SellingTickets.Converters"
              x:DataType="vm:AdminUserViewModel"
@@ -26,10 +24,9 @@
                <DockPanel DockPanel.Dock="Top">
                 
                    <Button Content="{Binding ShowedSideBar, Converter={StaticResource HideButtonTextConverter}}"
-                           Command="{Binding ShowSideBarCommand}"
-                   />
+                           Command="{Binding ShowSideBarCommand}"/>
                 
-                   <Label Content="Справочники"
+                   <Label Content="Режим админа"
                           HorizontalAlignment="Center"
                           DockPanel.Dock="Top"
                           FontSize="14"

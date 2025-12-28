@@ -4,7 +4,9 @@
              xmlns:local="using:CourseProject_SellingTickets"
              xmlns:vm="clr-namespace:CourseProject_SellingTickets.ViewModels"
              xmlns:view="clr-namespace:CourseProject_SellingTickets.Views"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Default"
+             
+             >
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>

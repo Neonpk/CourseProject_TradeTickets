@@ -1,0 +1,174 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:CourseProject_SellingTickets.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
+             x:DataType="vm:RegisterUserViewModel"
+             x:Class="CourseProject_SellingTickets.Views.RegisterUserView">
+    
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Image Grid.Column="0"
+                   Source="/Assets/aircraft-logo.png"
+                    Margin="30" Height="250" Width="250"/>
+            
+            <HeaderedContentControl Header="Регистрация" 
+                                    Grid.Column="1" Margin="20" IsEnabled="True"
+                                    Background="White" VerticalAlignment="Center">
+               
+                 <Grid Margin="10" HorizontalAlignment="Center">
+            
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="200" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Content="Регистрация" 
+                           FontSize="15"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           Margin="0 0 0 15"/>
+
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Content="Вернуться назад"
+                        Command="{Binding NavigateBackCommand}"
+                        FontWeight="Bold"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        Margin="0 0 0 15"
+                        />
+                                
+                    <Border Grid.Row="1" 
+                            Grid.ColumnSpan="2" 
+                            Background="LightGray"
+                            CornerRadius="5"
+                            IsVisible="True"
+                            Margin="0 0 0 10">
+                        <TextBlock Foreground="Brown" 
+                                   Text="{Binding ErrorValidations}" 
+                                   TextWrapping="WrapWithOverflow"
+                                   IsVisible="{Binding !ValidationContext.IsValid}"
+                                   FontWeight="Bold"
+                                   Margin="10" />
+                    </Border>
+                    
+                    
+                    <Label Grid.Column="0" 
+                           Grid.Row="2" 
+                           Content="Логин"
+                           FontSize="16"
+                           Margin="0 10 0 0"/>
+                    
+                    <TextBox Grid.Column="1" 
+                             Grid.Row="2" 
+                             Watermark="Придумайте логин"
+                             Text="{Binding Login}"
+                             Height="25"
+                             Margin="0 10 0 0"/>
+                    
+                    <Label Grid.Column="0"
+                           Grid.Row="3"
+                           Content="Имя (ФИО)"
+                           FontSize="16"
+                           Margin="0 10 0 0"/>
+                    
+                    <TextBox 
+                        Grid.Column="1"
+                        Grid.Row="3"
+                        Watermark="Укажите ваше ФИО"
+                        Text="{Binding Name}"
+                        Height="25"
+                        Margin="0 10 0 0"/>
+                    
+                    
+                    <Label Grid.Column="0"
+                           Grid.Row="4"
+                           Grid.RowSpan="2"
+                           VerticalAlignment="Center"
+                           Content="Пароль"
+                           FontSize="16"
+                           Margin="0 10 0 0"/>
+                    
+                    <TextBox 
+                        Grid.Column="1"
+                        Grid.Row="4"
+                        Watermark="Укажите пароль"
+                        Text="{Binding Password}"
+                        Height="25"
+                        Margin="0 10 0 0"/>
+                    
+                    <TextBox 
+                        Grid.Column="1"
+                        Grid.Row="5"
+                        Watermark="Повторите пароль"
+                        Text="{Binding ConfirmPassword}"
+                        Height="25"
+                        Margin="0 10 0 0"/>
+                    
+                    <StackPanel Grid.Row="6" 
+                                Grid.Column="0" 
+                                Grid.ColumnSpan="2" 
+                                HorizontalAlignment="Stretch"
+                                Margin="0 10 0 0">
+                        
+                        <Border Background="LightGray"
+                                CornerRadius="5"
+                                IsVisible="True" 
+                                Margin="0 0 0 10">
+                            <TextBlock Foreground="Brown" 
+                                       Text="{Binding ErrorMessage}" 
+                                       TextWrapping="WrapWithOverflow"
+                                       IsVisible="{Binding HasErrorMessage}"
+                                       FontWeight="Bold"
+                                       Margin="10" />
+                        </Border>
+                            
+                        <Button IsEnabled="{Binding !IsLoading}"
+                                HorizontalAlignment="Stretch" 
+                                HorizontalContentAlignment="Center"
+                                Command="{Binding RegisterCommand}"
+                                >
+                            <StackPanel Orientation="Horizontal">
+                                <controls:DoubleBounceSpinner IsActive="{Binding IsLoading}"    
+                                                              Diameter="10" 
+                                                              ForegroundSpinner="White"
+                                                              Margin="0 1 5 0"/>
+                                <Label Content="Зарегистрироваться" 
+                                       IsEnabled="{Binding !IsLoading}"
+                                       FontWeight="Bold"/>
+                            </StackPanel>
+                        </Button>
+                    
+                    </StackPanel>
+                    
+                </Grid>
+                
+            </HeaderedContentControl>
+            
+        </Grid>
+        
+    </ScrollViewer>
+        
+</UserControl>

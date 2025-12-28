@@ -26,7 +26,7 @@
                             Command="{Binding ShowSideBarCommand}"
                             />
                 
-                    <Label Content="Управление рейсами"
+                    <Label Content="Режим диспетчера"
                            HorizontalAlignment="Center"
                            DockPanel.Dock="Right"
                            FontSize="14"

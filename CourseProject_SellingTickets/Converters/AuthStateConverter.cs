@@ -19,7 +19,7 @@ public class AuthStateConverter : IValueConverter
                 return param.Equals("String") ? "Выполняется вход..." : param.Equals("Foreground") ? Brushes.Orange : null;
             
             case AuthStates.Failed:
-                return param.Equals("String") ? "Неверный пароль." : param.Equals("Foreground") ? Brushes.Red : null;
+                return param.Equals("String") ? "Не удалось войти." : param.Equals("Foreground") ? Brushes.Red : null;
         }
 
         return param.Equals("String") ? "" : param.Equals("Foreground") ? Brushes.Transparent : null;

@@ -1,5 +1,5 @@
+using System;
 using CourseProject_SellingTickets.ValidationRules;
-using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Contexts;
@@ -11,8 +11,8 @@ public class Ticket : ReactiveObject, IValidatableViewModel
 {
     // Columns
 
-    private System.Int64 _id;
-    public System.Int64 Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
+    private Int64 _id;
+    public Int64 Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private Flight _flight;
     public Flight Flight { get => _flight; set => this.RaiseAndSetIfChanged(ref _flight, value); }
@@ -28,10 +28,14 @@ public class Ticket : ReactiveObject, IValidatableViewModel
 
     private bool _isSold;
     public bool IsSold { get => _isSold; set => this.RaiseAndSetIfChanged(ref _isSold, value); }
-        
+
+    private User? _user;
+    public User? User { get => _user; set => this.RaiseAndSetIfChanged(ref _user, value); }
+
     private int _price;
 
     // Non observable 
+    
     public int Price => Flight.Price;
     public double DiscountPrice => Price - Price * (Discount.DiscountSize * 0.01);
     
@@ -46,13 +50,15 @@ public class Ticket : ReactiveObject, IValidatableViewModel
         Flight = new Flight();
         FlightClass = new FlightClass();
         Discount = new Discount();
+        User = new User();
         
         // Validations 
+        
         this.InitializeValidationRules();
     }
     
     public Ticket( long id, Flight flight, FlightClass flightClass, 
-        int placeNumber, Discount discount, bool isSold )
+        int placeNumber, Discount discount, bool isSold, User? user )
     {
         Id = id;
         Flight = flight;
@@ -60,8 +66,10 @@ public class Ticket : ReactiveObject, IValidatableViewModel
         PlaceNumber = placeNumber;
         Discount = discount;
         IsSold = isSold;
+        User = user;
         
         // Validations 
+        
         this.InitializeValidationRules();
     }
     
@@ -69,14 +77,17 @@ public class Ticket : ReactiveObject, IValidatableViewModel
     {
         if (obj is Ticket o)
         {
-            return Id.Equals(o.Id) && 
+            return Id != null && 
+                   o.Id != null && 
+                   Id.Equals(o.Id) &&
                    Flight.Equals(o.Flight) &&
-                   FlightClass.Equals(o.FlightClass) && 
+                   FlightClass.Equals(o.FlightClass) &&
                    PlaceNumber.Equals(o.PlaceNumber) &&
-                   Price.Equals(o.Price) && 
-                   Discount.Equals(o.Discount) && 
+                   Price.Equals(o.Price) &&
+                   Discount.Equals(o.Discount) &&
                    IsSold.Equals(o.IsSold) &&
-                   DiscountPrice.Equals(o.DiscountPrice);
+                   DiscountPrice.Equals(o.DiscountPrice) &&
+                   User.Equals(o.User);
         }
         
         return base.Equals(obj);

@@ -6,6 +6,7 @@ using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services.DiscountProvider;
 using CourseProject_SellingTickets.Services.FlightClassProvider;
 using CourseProject_SellingTickets.Services.TradeTicketsProvider;
+using CourseProject_SellingTickets.Services.UserProvider;
 
 namespace CourseProject_SellingTickets.Services.TicketProvider;
 
@@ -15,14 +16,19 @@ public class TicketVmProvider : ITicketVmProvider
     private IDiscountDbProvider? _discountDbProvider;
     private IFlightClassDbProvider? _flightClassDbProvider;
     private IFlightDbProvider? _flightDbProvider;
+    private IUserDbProvider? _userDbProvider;
     
-    public TicketVmProvider( ITicketDbProvider? ticketDbProvider, IDiscountDbProvider? discountDbProvider, 
-        IFlightClassDbProvider? flightClassDbProvider, IFlightDbProvider? flightDbProvider )
+    public TicketVmProvider( 
+        ITicketDbProvider? ticketDbProvider, IDiscountDbProvider? discountDbProvider, 
+        IFlightClassDbProvider? flightClassDbProvider, IFlightDbProvider? flightDbProvider,
+        IUserDbProvider? userDbProvider
+        )
     {
         _ticketDbProvider = ticketDbProvider;
         _discountDbProvider = discountDbProvider;
         _flightClassDbProvider = flightClassDbProvider;
         _flightDbProvider = flightDbProvider;
+        _userDbProvider = userDbProvider;
     }
     
     public async Task<IEnumerable<Ticket>> GetAllTickets()
@@ -62,7 +68,12 @@ public class TicketVmProvider : ITicketVmProvider
     {
         return await _flightDbProvider!.GetAllFlights();
     }
-    
+
+    public async Task<IEnumerable<User>> GetAllUsers()
+    {
+        return await _userDbProvider!.GetUsersByFilter(x => x.Role.Equals("user"));
+    }
+
     public async Task<int> CreateOrEditTicket(Ticket ticket)
     {
         return await _ticketDbProvider!.CreateOrEditTicket(ticket);
