@@ -2,14 +2,12 @@ using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.ViewModels;
-using Microsoft.VisualBasic;
 using ReactiveUI;
 
-namespace CourseProject_SellingTickets.Commands;
+namespace CourseProject_SellingTickets.Commands.FlightCommands;
 
 public class DeleteFlightDataCommand : ReactiveCommand<Unit, Task>
 {

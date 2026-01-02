@@ -1,14 +1,11 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
-using Avalonia.Threading;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -66,5 +63,4 @@ public class SaveTicketDataCommand : ReactiveCommand<Unit, Task>
         canExecute: CanExecuteCommand(tickerUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }
-    
 }

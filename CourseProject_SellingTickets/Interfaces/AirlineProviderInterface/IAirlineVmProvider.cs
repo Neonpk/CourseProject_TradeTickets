@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Models;
 
-namespace CourseProject_SellingTickets.Services.AirlineProvider;
+namespace CourseProject_SellingTickets.Interfaces.AirlineProviderInterface;
 
 public interface IAirlineVmProvider
 {

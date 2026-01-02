@@ -4,12 +4,9 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using CourseProject_SellingTickets.Commands.AircraftCommands;
 using CourseProject_SellingTickets.Commands.PlaceCommands;
+using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.AircraftProvider;
-using CourseProject_SellingTickets.Services.PlaceProvider;
 using DynamicData.Binding;
 using ReactiveUI;
 

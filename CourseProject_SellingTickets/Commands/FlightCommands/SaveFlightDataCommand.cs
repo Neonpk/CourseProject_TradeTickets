@@ -1,21 +1,17 @@
 using System;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using ReactiveUI;
-using ReactiveUI.Validation.Extensions;
-using AggregateException = System.AggregateException;
 
-namespace CourseProject_SellingTickets.Commands;
+namespace CourseProject_SellingTickets.Commands.FlightCommands;
 
 public class SaveFlightDataCommand : ReactiveCommand<Unit, Task>
 {

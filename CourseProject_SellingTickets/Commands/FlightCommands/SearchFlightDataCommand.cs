@@ -1,18 +1,15 @@
-using System;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
-using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.ViewModels;
-using DynamicData;
 using ReactiveUI;
 using Exception = System.Exception;
 
-namespace CourseProject_SellingTickets.Commands;
+namespace CourseProject_SellingTickets.Commands.FlightCommands;
 
 public class SearchFlightDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Flight>?>>
 {

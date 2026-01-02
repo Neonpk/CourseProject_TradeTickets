@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -173,5 +174,4 @@ public class TicketDbProvider : ITicketDbProvider
             UserId = ticket.User!.Id
         };
     }
-    
 }

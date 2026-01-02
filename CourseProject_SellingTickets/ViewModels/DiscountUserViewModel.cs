@@ -5,9 +5,8 @@ using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CourseProject_SellingTickets.Commands.DiscountCommands;
+using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.DiscountProvider;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;

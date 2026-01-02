@@ -1,7 +1,7 @@
 using System;
 using Splat;
 
-namespace CourseProject_SellingTickets.HostBuilders;
+namespace CourseProject_SellingTickets.Bootstrappers;
 
 public static class LocatorBootstrapperExtensions
 {

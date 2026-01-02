@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.PhotoProvider;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 

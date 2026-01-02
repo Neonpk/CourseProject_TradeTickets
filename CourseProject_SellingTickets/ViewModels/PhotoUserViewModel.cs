@@ -5,9 +5,8 @@ using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CourseProject_SellingTickets.Commands.PhotoCommands;
+using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.PhotoProvider;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;

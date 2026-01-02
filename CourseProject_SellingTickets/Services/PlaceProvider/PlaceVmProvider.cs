@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
+using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.AircraftProvider;
-using CourseProject_SellingTickets.Services.PhotoProvider;
 
 namespace CourseProject_SellingTickets.Services.PlaceProvider;
 

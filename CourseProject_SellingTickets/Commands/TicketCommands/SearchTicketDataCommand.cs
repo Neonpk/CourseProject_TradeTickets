@@ -4,8 +4,8 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
+using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 
@@ -132,5 +132,4 @@ public class SearchTicketDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Ti
         base(_ => Observable.Start(async () => await SearchDataAsync(ticketUserViewModel, ticketVmProvider)), canExecute: Observable.Return(true))
     {
     }
-    
 }

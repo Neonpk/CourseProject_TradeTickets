@@ -3,9 +3,9 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Commands.AuthCommands;
+using CourseProject_SellingTickets.Interfaces;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.UserProvider;
 using CourseProject_SellingTickets.ValidationRules;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
@@ -26,7 +26,7 @@ public class RegisterUserViewModel : ViewModelBase, IValidatableViewModel
     
     // Validations
 
-    private string _errorValidations;
+    private string _errorValidations = String.Empty;
     public string ErrorValidations { get => _errorValidations; set => this.RaiseAndSetIfChanged(ref _errorValidations, value); }
     
     private string? _errorMessage;

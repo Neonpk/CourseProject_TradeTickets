@@ -5,9 +5,8 @@ using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CourseProject_SellingTickets.Commands.FlightClassCommands;
+using CourseProject_SellingTickets.Interfaces.FlightClassProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.FlightClassProvider;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;

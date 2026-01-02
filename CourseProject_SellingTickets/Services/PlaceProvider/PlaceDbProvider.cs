@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -122,5 +123,4 @@ public class PlaceDbProvider : IPlaceDbProvider
             PhotoId = place.Photo.Id
         };
     }
-    
 }

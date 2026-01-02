@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
+using CourseProject_SellingTickets.Interfaces.AirlineProviderInterface;
+using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
+using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.AircraftProvider;
-using CourseProject_SellingTickets.Services.AirlineProvider;
-using CourseProject_SellingTickets.Services.PlaceProvider;
-using CourseProject_SellingTickets.Services.TradeTicketsProvider;
 
 namespace CourseProject_SellingTickets.Services.FlightProvider;
 
@@ -74,5 +74,4 @@ public class FlightVmVmProvider : IFlightVmProvider
     {
         return await _placeDbProvider!.GetAllPlaces();
     }
-    
 }

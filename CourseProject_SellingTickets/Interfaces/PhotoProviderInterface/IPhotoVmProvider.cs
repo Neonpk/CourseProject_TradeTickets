@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Models;
 
-namespace CourseProject_SellingTickets.Services.PhotoProvider;
+namespace CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 
 public interface IPhotoVmProvider
 {

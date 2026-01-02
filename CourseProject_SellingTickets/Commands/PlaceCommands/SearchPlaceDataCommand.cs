@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.AircraftProvider;
-using CourseProject_SellingTickets.Services.PlaceProvider;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
-using DynamicData.Kernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject_SellingTickets.Services.UserProvider;
@@ -19,7 +20,35 @@ public class UserDbProvider : IUserDbProvider
     {
         _dbContextFactory = dbContextFactory;
     }
+
+    public async Task<User> GetUserById(Int64 id)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            var user = await context.Users.FindAsync(id);
+            if (user == null)
+                throw new DataException("[Error]: User not found.");
+            
+            return ToUser(user);
+        }
+    }
     
+    public async Task<Int64> GetUserIdByLogin(string login)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            var user = await context.
+                Users.
+                    Where(x => x.Login.Equals(login)).
+                    FirstOrDefaultAsync();
+
+            if (user == null) 
+                throw new DataException("[Error]: User not found.");
+            
+            return user.Id;
+        }
+    }
+
     public async Task<IEnumerable<User>> GetAllUsers()
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())

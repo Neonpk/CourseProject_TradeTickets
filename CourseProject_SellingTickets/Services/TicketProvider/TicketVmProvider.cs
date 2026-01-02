@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
+using CourseProject_SellingTickets.Interfaces.FlightClassProviderInterface;
+using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
+using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.DiscountProvider;
-using CourseProject_SellingTickets.Services.FlightClassProvider;
-using CourseProject_SellingTickets.Services.TradeTicketsProvider;
-using CourseProject_SellingTickets.Services.UserProvider;
-
 namespace CourseProject_SellingTickets.Services.TicketProvider;
 
 public class TicketVmProvider : ITicketVmProvider

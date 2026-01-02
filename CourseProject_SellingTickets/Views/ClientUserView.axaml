@@ -1,0 +1,93 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CourseProject_SellingTickets.Views.ClientUserView"
+             xmlns:converter="using:CourseProject_SellingTickets.Converters"
+             xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
+             x:DataType="vm:ClientUserViewModel"
+             >
+    
+    <UserControl.Resources>
+        <converter:HideButtonTextConverter x:Key="HideButtonTextConverter"/>
+    </UserControl.Resources>
+    
+    <SplitView DisplayMode="CompactInline" PaneBackground="#252525" 
+           IsPaneOpen="{Binding ShowedSideBar}" 
+           OpenPaneLength="200" CompactPaneLength="30" >
+        <SplitView.Pane>
+            <DockPanel>
+                
+                <DockPanel DockPanel.Dock="Top">
+                
+                    <Button Content="{Binding ShowedSideBar, Converter={StaticResource HideButtonTextConverter}}"
+                            Command="{Binding ShowSideBarCommand}"
+                            />
+                
+                    <Label Content="Режим клиента"
+                           HorizontalAlignment="Center"
+                           DockPanel.Dock="Right"
+                           FontSize="14"
+                           Margin="10"
+                    />
+                    
+                </DockPanel>
+                
+                <Button
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    DockPanel.Dock="Top"
+                    Content="Учетная запись (баланс)" FontSize="15"
+                    IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="clientBalance"
+                />
+                
+                <Button
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    DockPanel.Dock="Top"
+                    Content="Мои рейсы" FontSize="15"
+                    IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="myFlights"
+                    />
+                    
+                <Button 
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    DockPanel.Dock="Top"
+                    Content="Мои билеты" FontSize="15"
+                    IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="myTickets"
+                    />
+                    
+                <Button 
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    DockPanel.Dock="Top"
+                    Content="Доступные билеты" FontSize="15"
+                    IsVisible="{Binding ShowedSideBar}"
+                    Command="{Binding SwitchControlCommand}"
+                    CommandParameter="availableTickets"
+                />
+                
+                <Button Content="Выход" FontSize="15" 
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        IsVisible="{Binding ShowedSideBar}"
+                        Command="{Binding ExitCommand}"/>
+                
+                </DockPanel>
+        </SplitView.Pane>
+            
+        <SplitView.Content>
+            <ContentPresenter Content="{Binding $parent[SplitView].((vm:ClientUserViewModel)DataContext).NavigationClientUserService.CurrentView}"/>
+        </SplitView.Content>
+        
+    </SplitView>
+    
+</UserControl>

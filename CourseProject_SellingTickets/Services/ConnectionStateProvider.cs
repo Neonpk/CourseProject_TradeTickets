@@ -1,12 +1,8 @@
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
+using CourseProject_SellingTickets.Interfaces;
 
 namespace CourseProject_SellingTickets.Services;
-
-public interface IConnectionStateProvider
-{
-    Task<bool> IsConnected();
-}
 
 public class ConnectionStateProvider : IConnectionStateProvider
 {
@@ -24,5 +20,4 @@ public class ConnectionStateProvider : IConnectionStateProvider
             return await context.Database.CanConnectAsync();
         }
     }
-    
 }

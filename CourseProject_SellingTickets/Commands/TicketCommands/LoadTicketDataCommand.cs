@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Avalonia.Collections;
 using Avalonia.ReactiveUI;
 using Avalonia.Threading;
+using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Services;
 using CourseProject_SellingTickets.Services.FlightProvider;

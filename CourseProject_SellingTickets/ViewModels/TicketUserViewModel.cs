@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CourseProject_SellingTickets.Commands.TicketCommands;
+using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.TicketProvider;
 using DynamicData.Binding;
 using ReactiveUI;
 
@@ -112,5 +111,4 @@ public class TicketUserViewModel : ViewModelBase
         ConnectionDbState.CheckConnectionState
             .Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
     }
-    
 }

@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:CourseProject_SellingTickets.ViewModels"
-             xmlns:view="using:CourseProject_SellingTickets.Views"
              xmlns:converter="using:CourseProject_SellingTickets.Converters"
              x:DataType="vm:DispatcherUserViewModel"
              Background="#0f0f0f"

@@ -1,15 +1,9 @@
 using System;
+using CourseProject_SellingTickets.Interfaces;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Services;
-
-public interface INavigationService
-{
-    ViewModelBase? CurrentView { get; }
-    void NavigateTo<T>() where T : ViewModelBase;
-
-}
 
 public class NavigationService : ViewModelBase, INavigationService
 {
@@ -30,9 +24,15 @@ public class NavigationService : ViewModelBase, INavigationService
         _viewModelFactory = viewModelFactory;
     }
 
-    public void NavigateTo<TViewModel>() where TViewModel : ViewModelBase
+    public void NavigateTo<TViewModel>(object? paramater = null) where TViewModel : ViewModelBase
     {
         ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
+
+        if (viewModel is IParameterReceiver receiver && paramater != null)
+        {
+            receiver.ReceieveParameter(paramater);
+        }
+        
         CurrentView = viewModel;
     }
 }

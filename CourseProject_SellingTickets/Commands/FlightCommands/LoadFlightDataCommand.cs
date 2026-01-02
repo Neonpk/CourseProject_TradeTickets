@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.ViewModels;
 using DynamicData;
 using ReactiveUI;
 
-namespace CourseProject_SellingTickets.Commands;
+namespace CourseProject_SellingTickets.Commands.FlightCommands;
 
 public class LoadFlightDataCommand : ReactiveCommand<IEnumerable<Flight>, Task>
 {

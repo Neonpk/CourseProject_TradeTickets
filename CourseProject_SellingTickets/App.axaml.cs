@@ -2,8 +2,9 @@ using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using CourseProject_SellingTickets.Bootstrappers;
 using CourseProject_SellingTickets.DbContexts;
-using CourseProject_SellingTickets.HostBuilders;
+using CourseProject_SellingTickets.Interfaces;
 using CourseProject_SellingTickets.ViewModels;
 using CourseProject_SellingTickets.Views;
 using CourseProject_SellingTickets.Services;
@@ -53,6 +54,9 @@ public partial class App : Application
 
                 resolver.RegisterLazySingleton<INavigationService>(() =>
                     new NavigationService(funcFactory), "administratorNavigation");
+                
+                resolver.RegisterLazySingleton<INavigationService>(() => 
+                    new NavigationService(funcFactory), "clientUserNavigation");
 
             })
             .AddDatabaseProviders()

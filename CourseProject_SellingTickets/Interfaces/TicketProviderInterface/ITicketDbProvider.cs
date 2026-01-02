@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Models;
 
-namespace CourseProject_SellingTickets.Services.TicketProvider;
+namespace CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 
 public interface ITicketDbProvider
 {

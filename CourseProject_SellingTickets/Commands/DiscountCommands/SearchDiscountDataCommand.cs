@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using CourseProject_SellingTickets.DbContexts;
+using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.DiscountProvider;
-using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 

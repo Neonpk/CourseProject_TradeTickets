@@ -1,11 +1,10 @@
-using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Commands.AuthCommands;
+using CourseProject_SellingTickets.Interfaces;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.UserProvider;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;
@@ -42,7 +41,11 @@ public class AuthUserViewModel : ViewModelBase
     public ReactiveCommand<Unit, Task>? RegisterCommand =>
         _registerCommand ??= 
             ReactiveCommand.CreateFromObservable<Unit, Task>(_ => 
-                Observable.Start(async () => NavigationService!.NavigateTo<RegisterUserViewModel>())
+                Observable.Start(() =>
+                {
+                    NavigationService!.NavigateTo<RegisterUserViewModel>();
+                    return Task.CompletedTask;
+                })
             );
     
     // Constructor

@@ -18,7 +18,23 @@
         <DataTemplate DataType="{x:Type vm:AuthUserViewModel}">
             <view:AuthUserView />
         </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:RegisterUserViewModel}">
+            <view:RegisterUserView />
+        </DataTemplate>
 
+        <!-- ClientMode View --> 
+        
+        <DataTemplate DataType="{x:Type vm:ClientUserViewModel}">
+            <view:ClientUserView />
+        </DataTemplate>
+        
+        <!-- SubViews of ClientMode -->
+        
+        <DataTemplate DataType="{x:Type vm:ClientBalanceUserViewModel}">
+            <view:ClientBalanceUserView />
+        </DataTemplate>
+        
         <!-- DispatcherView --> 
         
         <DataTemplate DataType="{x:Type vm:DispatcherUserViewModel}">

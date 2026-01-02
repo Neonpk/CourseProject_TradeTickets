@@ -1,22 +1,17 @@
-using Avalonia;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.AircraftProvider;
-using CourseProject_SellingTickets.Services.AirlineProvider;
-using CourseProject_SellingTickets.Services.DiscountProvider;
-using CourseProject_SellingTickets.Services.FlightClassProvider;
-using CourseProject_SellingTickets.Services.FlightProvider;
-using CourseProject_SellingTickets.Services.PhotoProvider;
-using CourseProject_SellingTickets.Services.PlaceProvider;
-using CourseProject_SellingTickets.Services.TicketProvider;
-using CourseProject_SellingTickets.Services.TradeTicketsProvider;
-using CourseProject_SellingTickets.Services.UserProvider;
-using Microsoft.Extensions.DependencyInjection;
+using CourseProject_SellingTickets.Interfaces;
+using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
+using CourseProject_SellingTickets.Interfaces.AirlineProviderInterface;
+using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
+using CourseProject_SellingTickets.Interfaces.FlightClassProviderInterface;
+using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
+using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
+using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
+using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.ViewModels;
-using CourseProject_SellingTickets.Views;
-using ReactiveUI;
 using Splat;
 
-namespace CourseProject_SellingTickets.HostBuilders;
+namespace CourseProject_SellingTickets.Bootstrappers;
 
 public static class AddViewModelsBootstrapperExtensions
 {
@@ -26,14 +21,16 @@ public static class AddViewModelsBootstrapperExtensions
         {
             // Included services 
 
+            IUserDbProvider? userDbProvider = service.GetService<IUserDbProvider>();
             IAuthProvider? authProvider = service.GetService<IAuthProvider>();
             
             INavigationService? mainNavigation = service.GetService<INavigationService>("mainNavigation");
             INavigationService? dispatcherNavigation = service.GetService<INavigationService>("dispatcherNavigation");
             INavigationService? adminNavigation = service.GetService<INavigationService>("administratorNavigation");
+            INavigationService? clientUserNavigation = service.GetService<INavigationService>("clientUserNavigation");
 
             //IConnectionStateProvider? connectionStateProvider = service.GetService<IConnectionStateProvider>();
-
+            
             IAircraftVmProvider? aircraftProvider = service.GetService<IAircraftVmProvider>();
             IPlaceVmProvider? placeVmProvider = service.GetService<IPlaceVmProvider>();
             IDiscountVmProvider? discountVmProvider = service.GetService<IDiscountVmProvider>();
@@ -48,39 +45,47 @@ public static class AddViewModelsBootstrapperExtensions
             
             // Admin 
             
-            resolver.RegisterLazySingleton<AircraftUserViewModel>( () => new AircraftUserViewModel( aircraftProvider ) );
+            resolver.RegisterLazySingleton( () => new AircraftUserViewModel( aircraftProvider ) );
             
-            resolver.RegisterLazySingleton<PlaceUserViewModel>( () => new PlaceUserViewModel( placeVmProvider ) );
+            resolver.RegisterLazySingleton( () => new PlaceUserViewModel( placeVmProvider ) );
             
-            resolver.RegisterLazySingleton<DiscountUserViewModel>( () => new DiscountUserViewModel( discountVmProvider ) );
+            resolver.RegisterLazySingleton( () => new DiscountUserViewModel( discountVmProvider ) );
             
-            resolver.RegisterLazySingleton<PhotoUserViewModel>( () => new PhotoUserViewModel( photoVmProvider ) );
+            resolver.RegisterLazySingleton( () => new PhotoUserViewModel( photoVmProvider ) );
             
-            resolver.RegisterLazySingleton<FlightClassUserViewModel>( () => new FlightClassUserViewModel( flightClassVmProvider ) );
+            resolver.RegisterLazySingleton( () => new FlightClassUserViewModel( flightClassVmProvider ) );
             
-            resolver.RegisterLazySingleton<AirlineUserViewModel>( () => new AirlineUserViewModel( airlineVmProvider ) );
+            resolver.RegisterLazySingleton( () => new AirlineUserViewModel( airlineVmProvider ) );
             
             //--AdminUserViewModel
             
-            resolver.RegisterLazySingleton<AdminUserViewModel>( () => new AdminUserViewModel( mainNavigation, adminNavigation ));
+            resolver.RegisterLazySingleton( () => new AdminUserViewModel( mainNavigation, adminNavigation ));
             
             // Dispatcher 
             
-            resolver.RegisterLazySingleton<TicketUserViewModel>( () => new TicketUserViewModel( ticketProvider ) );
+            resolver.RegisterLazySingleton( () => new TicketUserViewModel( ticketProvider ) );
             
-            resolver.RegisterLazySingleton<FlightUserViewModel>( () => new FlightUserViewModel( flightProvider ) );
+            resolver.RegisterLazySingleton( () => new FlightUserViewModel( flightProvider ) );
             
             //--DispatcherUserViewModel
             
-            resolver.RegisterLazySingleton<DispatcherUserViewModel>( () => new DispatcherUserViewModel( mainNavigation, dispatcherNavigation ) );
+            resolver.RegisterLazySingleton( () => new DispatcherUserViewModel( mainNavigation, dispatcherNavigation ) );
+            
+            // UserClient 
+            
+            resolver.RegisterLazySingleton(() => new ClientBalanceUserViewModel( userDbProvider! ));
+            
+            //--ClientUserViewModel
+            
+            resolver.RegisterLazySingleton( () => new ClientUserViewModel( mainNavigation, clientUserNavigation ) );
             
             // Main 
             
-            resolver.RegisterLazySingleton<AuthUserViewModel>(() => new AuthUserViewModel( authProvider, mainNavigation ));
+            resolver.RegisterLazySingleton(() => new AuthUserViewModel( authProvider, mainNavigation ));
 
-            resolver.RegisterLazySingleton<RegisterUserViewModel>(() => new RegisterUserViewModel( mainNavigation!, authProvider! ));
+            resolver.RegisterLazySingleton(() => new RegisterUserViewModel( mainNavigation!, authProvider! ));
         
-            resolver.RegisterLazySingleton<MainWindowViewModel>(() => new MainWindowViewModel( mainNavigation ));
+            resolver.RegisterLazySingleton(() => new MainWindowViewModel( mainNavigation ));
             
         });
     }

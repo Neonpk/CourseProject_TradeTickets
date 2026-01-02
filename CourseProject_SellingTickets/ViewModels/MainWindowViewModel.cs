@@ -1,6 +1,6 @@
 ﻿using System;
+using CourseProject_SellingTickets.Interfaces;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;

@@ -1,8 +1,6 @@
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Windows.Input;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.TradeTicketsProvider;
+using CourseProject_SellingTickets.Interfaces;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;

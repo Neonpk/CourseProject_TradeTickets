@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Services.UserProvider;
@@ -13,7 +14,17 @@ public class AuthProvider : IAuthProvider
     {
         _userDbProvider = userDbProvider;
     }
-    
+
+    public async Task<User> GetUserById(Int64 id)
+    {
+        return await _userDbProvider.GetUserById(id);
+    }
+
+    public async Task<Int64> GetUserIdByLogin(string login)
+    {
+        return await _userDbProvider.GetUserIdByLogin(login);
+    }
+
     public async Task<AuthStates> CheckUserPassword(string login, string password)
     {
         if (password.Trim() == String.Empty)
@@ -21,20 +32,22 @@ public class AuthProvider : IAuthProvider
 
         var filter = await _userDbProvider.GetUsersByFilter(x => x.Login.Equals(login), 1);
 
-        if (!filter.Any())
+        var enumerable = filter as User[] ?? filter.ToArray();
+        if (!enumerable.Any())
             return AuthStates.Failed;
         
-        return filter.First().Password.Equals(password) ? AuthStates.Success : AuthStates.Failed;
+        return enumerable.First().Password.Equals(password) ? AuthStates.Success : AuthStates.Failed;
     }
 
     public async Task<UserRoles> GetUserRole(string login)
     {
         var filter = await _userDbProvider.GetUsersByFilter(x => x.Login.Equals(login), 1);
 
-        if (!filter.Any())
+        var enumerable = filter as User[] ?? filter.ToArray();
+        if (!enumerable.Any())
             throw new Exception("[Error]: User not found.");
 
-        var role = filter.First().Role;
+        var role = enumerable.First().Role;
         role = char.ToUpper(role.FirstOrDefault()) + role.Substring(1);
         
         return (UserRoles)Enum.Parse(typeof(UserRoles), role);

@@ -1,18 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Models;
-using DynamicData;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Query;
 
-namespace CourseProject_SellingTickets.Services.TradeTicketsProvider;
+namespace CourseProject_SellingTickets.Services.FlightProvider;
 
 public class FlightDbProvider : IFlightDbProvider
 {
@@ -155,5 +152,4 @@ public class FlightDbProvider : IFlightDbProvider
             Price = flight.Price
         };
     }
-    
 }

@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="clr-namespace:CourseProject_SellingTickets.ViewModels"
+             x:DataType="vm:ClientBalanceUserViewModel"
+             x:Class="CourseProject_SellingTickets.Views.ClientBalanceUserView">
+    
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition MaxHeight="35"/>
+            <RowDefinition MaxHeight="35"/>
+            <RowDefinition MaxHeight="35"/>
+        </Grid.RowDefinitions>
+        
+        
+        <Label Content="Имя: " 
+               Grid.Column="0" 
+               Grid.Row="0" />
+        
+        <Label Content="{Binding UserName}" 
+               Grid.Column="1"
+               Grid.Row="0" />
+        
+        <Label Content="Баланс: " 
+               Grid.Column="0" 
+               Grid.Row="1" />
+        
+        <Label Content="{Binding Balance}" 
+               Grid.Column="1"
+               Grid.Row="1" />
+        
+        <Button Content="Пополнить"
+                Grid.Column="0"
+                Grid.Row="2" 
+                Grid.ColumnSpan="2" />
+        
+    </Grid>
+    
+</UserControl>

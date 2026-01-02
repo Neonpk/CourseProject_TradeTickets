@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using Avalonia.Threading;
 using CourseProject_SellingTickets.Extensions;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.ViewModels;
-using DynamicData;
 using ReactiveUI;
 
-namespace CourseProject_SellingTickets.Commands;
+namespace CourseProject_SellingTickets.Commands.FlightCommands;
 
 public class SortFlightsCommand : ReactiveCommand<Unit, Unit>
 {

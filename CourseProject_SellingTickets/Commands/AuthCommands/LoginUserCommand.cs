@@ -2,8 +2,8 @@ using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services.UserProvider;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 
@@ -32,7 +32,8 @@ public class LoginUserCommand : ReactiveCommand<Unit, Task>
                     authUserViewModel.NavigationService!.NavigateTo<DispatcherUserViewModel>();
                     break;
                 case UserRoles.User:
-                    // TODO: Finalize
+                    var userId = await authProvider.GetUserIdByLogin(authUserViewModel.Login);
+                    authUserViewModel.NavigationService!.NavigateTo<ClientUserViewModel>(userId);
                     break;
             }
 

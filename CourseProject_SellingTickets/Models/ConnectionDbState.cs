@@ -2,6 +2,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
+using CourseProject_SellingTickets.Interfaces;
 using CourseProject_SellingTickets.Services;
 using ReactiveUI;
 using Splat;
