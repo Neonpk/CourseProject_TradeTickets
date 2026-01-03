@@ -85,7 +85,11 @@
         </SplitView.Pane>
             
         <SplitView.Content>
-            <ContentPresenter Content="{Binding $parent[SplitView].((vm:ClientUserViewModel)DataContext).NavigationClientUserService.CurrentView}"/>
+            <TransitioningContentControl Grid.Row="1" Content="{Binding $parent[SplitView].((vm:ClientUserViewModel)DataContext).NavigationClientUserService.CurrentView}">
+                <TransitioningContentControl.PageTransition>
+                    <CrossFade Duration="0:0:0.5" />
+                </TransitioningContentControl.PageTransition>
+            </TransitioningContentControl>
         </SplitView.Content>
         
     </SplitView>

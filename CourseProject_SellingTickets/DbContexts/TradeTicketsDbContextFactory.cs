@@ -1,3 +1,4 @@
+using CourseProject_SellingTickets.Interfaces.DbContextsInterface;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject_SellingTickets.DbContexts;
@@ -18,5 +19,4 @@ public class TradeTicketsDbContextFactory : ITradeTicketsDbContextFactory
         
         return new TradeTicketsDbContext(options);
     }
-    
 }

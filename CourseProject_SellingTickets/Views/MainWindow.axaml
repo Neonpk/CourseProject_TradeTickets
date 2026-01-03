@@ -30,11 +30,15 @@
                                        FontSize="20" Content="по управлению авиарейсов"/>
                         </StackPanel>
                 </Border>
-                
-                <ContentPresenter Grid.Row="1" 
-                                  Content="{Binding NavigationService.CurrentView}"
-                                  />
 
+                <TransitioningContentControl Grid.Row="1" Content="{Binding NavigationService.CurrentView}">
+                        <TransitioningContentControl.PageTransition>
+                                <PageSlide Duration="0:0:0.3" 
+                                           Orientation="Horizontal"
+                                           />
+                        </TransitioningContentControl.PageTransition>
+                </TransitioningContentControl>
+                
                 <Border Background="{Binding DatabaseHasConnected, Converter={StaticResource ConnectionStateConverter}, ConverterParameter='Foreground'}" Grid.Row="2">
                         <Label Content="{Binding DatabaseHasConnected, Converter={StaticResource ConnectionStateConverter}, ConverterParameter='String'}" 
                                FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>

@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using CourseProject_SellingTickets.Bootstrappers;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Interfaces;
+using CourseProject_SellingTickets.Interfaces.DbContextsInterface;
 using CourseProject_SellingTickets.ViewModels;
 using CourseProject_SellingTickets.Views;
 using CourseProject_SellingTickets.Services;

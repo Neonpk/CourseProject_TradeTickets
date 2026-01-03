@@ -1,7 +1,6 @@
-using Avalonia;
-using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
 using CourseProject_SellingTickets.Interfaces.AirlineProviderInterface;
+using CourseProject_SellingTickets.Interfaces.DbContextsInterface;
 using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
 using CourseProject_SellingTickets.Interfaces.FlightClassProviderInterface;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
