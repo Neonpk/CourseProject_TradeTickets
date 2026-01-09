@@ -1,18 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Collections;
-using Avalonia.ReactiveUI;
 using Avalonia.Threading;
 using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Models;
-using CourseProject_SellingTickets.Services;
-using CourseProject_SellingTickets.Services.FlightProvider;
-using CourseProject_SellingTickets.Services.TicketProvider;
 using CourseProject_SellingTickets.ViewModels;
 using DynamicData;
 using ReactiveUI;
@@ -21,7 +13,7 @@ namespace CourseProject_SellingTickets.Commands.TicketCommands;
 
 public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
 {
-    private static async Task LoadDataAsync(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider, IEnumerable<Ticket> filteredTickets)
+    private static async Task LoadDataAsync(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider, IEnumerable<Ticket>? filteredTickets)
     {
         var limitRows = ticketUserViewModel.LimitRows;
 
@@ -30,44 +22,64 @@ public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
 
         ConnectionDbState.CheckConnectionState.Execute()
             .Subscribe(isConnected => ticketUserViewModel.DatabaseHasConnected = isConnected.Result);
-        
+
         try
         {
             bool hasSearching = ticketUserViewModel.HasSearching;
 
-            IEnumerable<Ticket> tickets =
-                hasSearching ? filteredTickets! : await ticketVmProvider.GetTopTickets(limitRows);
+            IEnumerable<Ticket> tickets;
+            TicketUserViewModelParam? ticketUserVmParam = ticketUserViewModel.TicketUserVmParam;
 
-            IEnumerable<FlightClass> flightClasses = await ticketVmProvider.GetAllFlightClasses();
-            IEnumerable<Discount> discounts = await ticketVmProvider.GetAllDiscounts();
-            IEnumerable<Flight> flights = await ticketVmProvider.GetAllFlights();
-            IEnumerable<User> users = await ticketVmProvider.GetAllUsers();
-
-            Dispatcher.UIThread.Post(() =>
+            if (!hasSearching)
             {
-                ticketUserViewModel.Discounts.Clear();
-                ticketUserViewModel.Discounts.AddRange(discounts);
+                if (ticketUserVmParam != null)
+                { 
+                    tickets = await ticketVmProvider.GetTicketsByFilter(
+                        x => 
+                            ticketUserVmParam.Include ? ticketUserVmParam.UserId.Equals(x.UserId) : x.UserId == null && !x.IsSold,
+                        limitRows);
+                }
+                else
+                {
+                    tickets = await ticketVmProvider.GetTopTickets(limitRows);
+                }
+            }
+            else
+            {
+                tickets = filteredTickets!;
+            }
 
-                ticketUserViewModel.FlightClasses.Clear();
-                ticketUserViewModel.FlightClasses.AddRange(flightClasses);
-
-                ticketUserViewModel.Flights.Clear();
-                ticketUserViewModel.Flights.AddRange(flights);
-                
+            Dispatcher.UIThread.Post(async void () =>
+            {
                 ticketUserViewModel.TicketItems.Clear();
-                ticketUserViewModel.TicketItems.AddRange(tickets);
-                
+                ticketUserViewModel.Discounts.Clear();
+                ticketUserViewModel.FlightClasses.Clear();
+                ticketUserViewModel.Flights.Clear();
                 ticketUserViewModel.Users.Clear();
-                ticketUserViewModel.Users.AddRange(users);
+                
+                ticketUserViewModel.TicketItems.AddRange(tickets);
+
+                if (ticketUserVmParam != null)
+                {
+                    ticketUserViewModel.SideBarShowed = false;
+                    return;
+                }
+                
+                ticketUserViewModel.Discounts.AddRange(await ticketVmProvider.GetAllDiscounts());
+                ticketUserViewModel.FlightClasses.AddRange(await ticketVmProvider.GetAllFlightClasses());
+                ticketUserViewModel.Flights.AddRange(await ticketVmProvider.GetAllFlights());
+                ticketUserViewModel.Users.AddRange(await ticketVmProvider.GetAllUsers());
             });
-            
+
         }
         catch (Exception e)
         {
             ticketUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
         }
-
-        ticketUserViewModel.IsLoading = false;
+        finally
+        {
+            ticketUserViewModel.IsLoading = false;
+        }
     }
     
     public LoadTicketDataCommand(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketProvider) :

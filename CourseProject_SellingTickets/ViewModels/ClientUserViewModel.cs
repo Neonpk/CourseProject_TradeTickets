@@ -51,16 +51,16 @@ public class ClientUserViewModel : ViewModelBase, IParameterReceiver
                         NavigationClientUserService.NavigateTo<ClientBalanceUserViewModel>(UserId);
                         break;
                     
-                    case "my_flights":
-                        // TODO: Finalize
+                    case "myFlights":
+                        NavigationClientUserService.NavigateTo<FlightUserViewModel>(UserId);
                         break;
                     
-                    case "my_tickets":
-                        // TODO: Finalize
+                    case "myTickets":
+                        NavigationClientUserService.NavigateTo<TicketUserViewModel>(new TicketUserViewModelParam { UserId = UserId, Include = true });
                         break;
                     
                     case "availableTickets":
-                        // TODO: Finalize
+                        NavigationClientUserService.NavigateTo<TicketUserViewModel>(new TicketUserViewModelParam {  UserId = UserId, Include = false });
                         break;
                 }
             });
@@ -75,7 +75,7 @@ public class ClientUserViewModel : ViewModelBase, IParameterReceiver
     
     public void ReceieveParameter(object parameter)
     {
-        UserId = (Int64)(parameter is Int64 ? parameter : 0);
+        UserId = (Int64)(parameter is Int64 ? parameter : -1);
         NavigationClientUserService.NavigateTo<ClientBalanceUserViewModel>(UserId);
     }
 }

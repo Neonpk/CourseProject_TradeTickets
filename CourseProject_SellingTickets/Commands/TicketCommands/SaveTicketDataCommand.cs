@@ -58,9 +58,9 @@ public class SaveTicketDataCommand : ReactiveCommand<Unit, Task>
         ticketUserViewModel.IsLoadingEditMode = false;
     }
     
-    public SaveTicketDataCommand(TicketUserViewModel tickerUserViewModel, ITicketVmProvider ticketVmProvider) : 
-        base(_ => Observable.Start(async () => await SaveDataAsync(tickerUserViewModel, ticketVmProvider)), 
-        canExecute: CanExecuteCommand(tickerUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
+    public SaveTicketDataCommand(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider) : 
+        base(_ => Observable.Start(async () => await SaveDataAsync(ticketUserViewModel, ticketVmProvider)), 
+        canExecute: CanExecuteCommand(ticketUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }
 }

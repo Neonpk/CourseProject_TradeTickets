@@ -18,6 +18,7 @@
         <converter:HideDefaultIdConverter x:Key="HideDefaultIdConverter"/>
         <converter:FlightStatusConverter x:Key="FlightStatusConverter"/>
         <converter:StringEmptyToUnsetConverter x:Key="StringEmptyToUnsetConverter" />
+        <converter:HideTicketFlightActionColumnConverter x:Key="HideTicketActionColumnConverter" />
         
         <s:Boolean x:Key="FalseValue">False</s:Boolean>
         <s:Boolean x:Key="TrueValue">True</s:Boolean>
@@ -44,7 +45,9 @@
                             HorizontalContentAlignment="Center"
                             Width="200" DockPanel.Dock="Right"
                             Command="{Binding AddEditDataCommand}"
-                            CommandParameter="{StaticResource TrueValue}">
+                            CommandParameter="{StaticResource TrueValue}"
+                            IsVisible="{Binding TicketUserVmParam, Converter={x:Static ObjectConverters.IsNull}}"
+                            >
                         
                         <Button.IsEnabled>
                             <MultiBinding Converter="{StaticResource BlockDataFieldConverter}">
@@ -175,7 +178,8 @@
                                 
                                 <DataGrid.Columns>
                                     
-                                    <DataGridTemplateColumn Header="Действие">
+                                    <DataGridTemplateColumn Header="Действие"
+                                                            IsVisible="{Binding TicketUserVmParam, Converter={StaticResource HideTicketActionColumnConverter}}">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -183,11 +187,19 @@
                                                     <Button Content="Править" Margin="0 0 0 5"
                                                             IsEnabled="{Binding  Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).IsLoadingEditMode, Converter={StaticResource InverseBooleanConverter}}"
                                                             Command="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).AddEditDataCommand}"
-                                                            CommandParameter="{StaticResource FalseValue}"/>
+                                                            CommandParameter="{StaticResource FalseValue}"
+                                                            IsVisible="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).TicketUserVmParam, Converter={x:Static ObjectConverters.IsNull}}"
+                                                            />
                                                     
-                                                    <Button Content="Удалить"
+                                                    <Button Content="Удалить" Margin="0 0 0 5"
                                                             IsEnabled="{Binding  Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).IsLoadingEditMode, Converter={StaticResource InverseBooleanConverter}}"
-                                                            Command="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).DeleteTicketDataCommand}"/>
+                                                            Command="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).DeleteTicketDataCommand}"
+                                                            IsVisible="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).TicketUserVmParam, Converter={x:Static ObjectConverters.IsNull}}"
+                                                            />
+                                                    
+                                                    <Button Content="Бронировать" 
+                                                            IsVisible="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).TicketUserVmParam, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                                            />
                                                     
                                                 </StackPanel>
                                             </DataTemplate>

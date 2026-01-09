@@ -32,10 +32,13 @@ public class LoadFlightDataCommand : ReactiveCommand<IEnumerable<Flight>, Task>
             IEnumerable<Airline> airlines = await flightVmDbProvider.GetAllAirlines();
             IEnumerable<Place> places = await flightVmDbProvider.GetAllPlaces();
 
-            Dispatcher.UIThread.Post(() =>
+            Dispatcher.UIThread.Post(void() =>
             {
 
                 flightUserViewModel.Aircrafts.Clear();
+                flightUserViewModel.Airlines.Clear();
+                flightUserViewModel.Places.Clear();
+                
                 flightUserViewModel.Aircrafts.AddRange(aircrafts);
 
                 flightUserViewModel.Airlines.Clear();

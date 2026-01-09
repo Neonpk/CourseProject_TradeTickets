@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CourseProject_SellingTickets.Commands.TicketCommands;
+using CourseProject_SellingTickets.Interfaces;
 using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Models;
 using DynamicData.Binding;
@@ -12,8 +13,15 @@ using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;
 
-public class TicketUserViewModel : ViewModelBase
+public class TicketUserViewModel : ViewModelBase, IParameterReceiver
 {
+    // Custom parameters for viewModel 
+
+    private TicketUserViewModelParam? _ticketUserVmParam;
+    public TicketUserViewModelParam? TicketUserVmParam { get => _ticketUserVmParam; private set => this.RaiseAndSetIfChanged(ref _ticketUserVmParam, value); }
+    
+    // Services
+    
     private readonly ITicketVmProvider? _ticketProvider;
 
     //Observable properties 
@@ -104,11 +112,18 @@ public class TicketUserViewModel : ViewModelBase
     public TicketUserViewModel(ITicketVmProvider? ticketVmProvider)
     {
         _ticketProvider = ticketVmProvider;
-        
+
         LoadTicketDataCommand.Execute();
         SearchTicketDataCommand.Subscribe(filteredTickets => LoadTicketDataCommand!.Execute(filteredTickets.Result!));
         
         ConnectionDbState.CheckConnectionState
             .Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
+    }
+
+    public void ReceieveParameter(object parameter)
+    {
+        TicketUserVmParam = parameter as TicketUserViewModelParam;
+        
+        SearchTicketDataCommand.Execute().Subscribe();
     }
 }

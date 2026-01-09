@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using CourseProject_SellingTickets.Commands;
 using CourseProject_SellingTickets.Commands.FlightCommands;
+using CourseProject_SellingTickets.Interfaces;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Models;
 using DynamicData.Binding;
@@ -13,8 +13,13 @@ using ReactiveUI;
 
 namespace CourseProject_SellingTickets.ViewModels;
 
-public class FlightUserViewModel : ViewModelBase
+public class FlightUserViewModel : ViewModelBase, IParameterReceiver
 {
+    // Custom parameters for viewModel 
+
+    private Int64 _userId;
+    public Int64 UserId { get => _userId; private set => this.RaiseAndSetIfChanged(ref _userId, value); }
+    
     // Private 
 
     private readonly IFlightVmProvider? _flightProvider;
@@ -117,5 +122,14 @@ public class FlightUserViewModel : ViewModelBase
         
         this.WhenAnyPropertyChanged([nameof(SelectedSortMode), nameof(SelectedSortValue)]).
             Subscribe(x => SortFlightsCommand!.Execute());
+    }
+
+    // Receive Navigation Paramater
+    
+    public void ReceieveParameter(object parameter)
+    {
+        UserId = parameter is Int64 param ? param : -1;
+        
+        SearchFlightDataCommand.Execute().Subscribe();
     }
 }

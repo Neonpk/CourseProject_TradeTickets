@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 
 namespace CourseProject_SellingTickets.Models
@@ -111,5 +112,11 @@ namespace CourseProject_SellingTickets.Models
         None = 0,
         Success,
         Failed
+    }
+
+    public class TicketUserViewModelParam
+    {
+        public Int64 UserId { get; init; }
+        public bool Include { get; init; }
     }
 }

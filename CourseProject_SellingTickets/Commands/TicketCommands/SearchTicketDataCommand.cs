@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -106,25 +107,119 @@ public class SearchTicketDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Ti
                  return new List<Ticket>();
         }
     }
+    
+    private static async Task<IEnumerable<Ticket>> GetTicketDataByFilterWithParam(ITicketVmProvider ticketVmProvider, TicketUserViewModelParam ticketUserVmParam, string searchTerm, TicketSearchModes searchMode, int limitRows = 50)
+    {
+        var tickets = ticketVmProvider.GetTicketsByFilter(x =>
+            ticketUserVmParam.Include ? ticketUserVmParam.UserId.Equals(x.UserId) : x.UserId == null, limitRows);
+        
+        switch (searchMode)
+         {
+             // By Ticket Number
+             case TicketSearchModes.TicketNumber:
+                 return (await tickets).Where(
+                     x => x.Id.ToString().StartsWith(searchTerm));
+                
+             // By Flight Number
+             case TicketSearchModes.FlightNumber:
+                 return (await tickets).Where(
+                     x => x.Flight.FlightNumber.ToString().StartsWith(searchTerm));
+             
+             // By Departure Place (Description or Country)
+             case TicketSearchModes.DeparturePlace:
+                 return (await tickets).Where(
+                     x => 
+                         x.Flight.DeparturePlace!.Description.ToLower().StartsWith(searchTerm.ToLower()) 
+                         || 
+                         x.Flight.DeparturePlace.Name.ToLower().StartsWith(searchTerm.ToLower()));
+
+             // By Destination Place ( Description or Country)
+             case TicketSearchModes.DestinationPlace:
+                 return (await tickets).Where(
+                     x => 
+                         x.Flight.DestinationPlace!.Description.ToLower().StartsWith(searchTerm.ToLower()) 
+                         || 
+                         x.Flight.DestinationPlace.Name.ToLower().StartsWith(searchTerm.ToLower()));
+
+             // By Flight Class
+             case TicketSearchModes.FlightClass:
+                 // Getting from Postgres Timestamp Format as a string
+                 return (await tickets).Where(
+                     x => x.FlightClass.ClassName.ToLower().StartsWith(searchTerm.ToLower()));
+
+             // By PlaceNumber
+             case TicketSearchModes.PlaceNumber:
+                 return (await tickets).Where(
+                     x => x.PlaceNumber.ToString().StartsWith(searchTerm.ToLower()));
+
+             // By Discount (Description or Name or Percent)
+             case TicketSearchModes.DiscountType:
+                 return (await tickets).Where(
+                     x => 
+                          x.Discount.Description.ToLower().StartsWith(searchTerm.ToLower())
+                          ||
+                          x.Discount.Name.ToLower().StartsWith(searchTerm.ToLower())
+                          ||
+                          x.Discount.DiscountSize.ToString().StartsWith(searchTerm));
+
+             // By Price
+             case TicketSearchModes.Price:
+                 return (await tickets).Where(
+                     x => x.Flight.Price.ToString().StartsWith(searchTerm));
+
+             // By Discount Price
+             case TicketSearchModes.DiscountPrice:
+                 return (await tickets).Where(
+                     x => (x.Flight.Price - x.Flight.Price * (x.Discount.DiscountSize * 0.01)).ToString().StartsWith(searchTerm));
+             
+             // By Departure Time
+             case TicketSearchModes.DepartureTime:
+                 return (await tickets).Where(x => 
+                     TradeTicketsDbContext.DateTimeFormatToString(x.Flight.DepartureTime,"DD.MM.YYYY HH24:MI:SS").StartsWith(searchTerm));
+             // By Arrival Time
+             case TicketSearchModes.ArrivalTime:
+                 return (await tickets).Where(x => 
+                     TradeTicketsDbContext.DateTimeFormatToString(x.Flight.ArrivalTime,"DD.MM.YYYY HH24:MI:SS").StartsWith(searchTerm)); 
+             // By UserCustomer
+             case TicketSearchModes.UserCustomer:
+                 return (await tickets).Where(
+                     x => 
+                         (Nullable.Equals(x.User, null) ? false : x.User.Name.ToLower().StartsWith(searchTerm.ToLower()))
+                         ||
+                         (!Nullable.Equals(x.User, null) && x.User.Id.ToString()!.StartsWith(searchTerm.ToLower())));
+             // Empty 
+             default:
+                 return new List<Ticket>();
+        }
+    }
+    
     private static async Task<IEnumerable<Ticket>?> SearchDataAsync(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider)
     {
         int limitRows = ticketUserViewModel.LimitRows;
         string searchTerm = ticketUserViewModel.SearchTerm!;
+        TicketUserViewModelParam? ticketUserVmParam = ticketUserViewModel.TicketUserVmParam;
         TicketSearchModes selectedSearchMode = (TicketSearchModes)ticketUserViewModel.SelectedSearchMode;
-        
+
         try
         {
             ticketUserViewModel.IsLoading = true;
-            IEnumerable<Ticket> tickets = await GetTicketDataByFilter(ticketVmProvider, searchTerm, selectedSearchMode, limitRows);
+            
+            IEnumerable<Ticket> tickets = ticketUserVmParam != null ? 
+                await GetTicketDataByFilterWithParam(ticketVmProvider, ticketUserVmParam, searchTerm, selectedSearchMode, limitRows)
+                :
+                await GetTicketDataByFilter(ticketVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return tickets;
         }
         catch (Exception e)
         {
-            ticketUserViewModel.IsLoading = false;
             ticketUserViewModel.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
 
             return null;
+        }
+        finally
+        {
+            ticketUserViewModel.IsLoading = false;   
         }
     }
     

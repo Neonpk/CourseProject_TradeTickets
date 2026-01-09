@@ -28,9 +28,9 @@ public class NavigationService : ViewModelBase, INavigationService
     {
         ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
 
-        if (viewModel is IParameterReceiver receiver && paramater != null)
+        if (viewModel is IParameterReceiver receiver)
         {
-            receiver.ReceieveParameter(paramater);
+            receiver.ReceieveParameter(paramater ?? -1);
         }
         
         CurrentView = viewModel;
