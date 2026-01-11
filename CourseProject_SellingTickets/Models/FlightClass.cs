@@ -1,6 +1,5 @@
 using System;
 using CourseProject_SellingTickets.ValidationRules;
-using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Contexts;
@@ -44,7 +43,8 @@ public class FlightClass : ReactiveObject, IValidatableViewModel
     {
         if (obj is FlightClass o)
         {
-            return Id.Equals(o.Id) && 
+            return !Nullable.Equals(o, null) &&  
+                   Id.Equals(o.Id) && 
                    ClassName.Equals(o.ClassName);
         }
         

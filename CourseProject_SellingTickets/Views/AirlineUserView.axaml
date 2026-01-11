@@ -142,16 +142,19 @@
                                 VerticalAlignment="Center"
                                 Foreground="Orange"
                                 Text="Данные не найдены"
-                                IsVisible="{Binding AirlineItems.Count, 
-                                    Converter={StaticResource CollectionHasItemsConverter}, 
-                                    ConverterParameter={StaticResource FalseValue}}"
-                                TextWrapping="WrapWithOverflow"/>
+                                TextWrapping="WrapWithOverflow">
+                            
+                                <TextBlock.IsVisible>
+                                    <MultiBinding Converter="{StaticResource CollectionHasItemsConverter}" ConverterParameter="{StaticResource FalseValue}">
+                                        <Binding Path="AirlineItems.Count"/>
+                                        <Binding Path="HasErrorMessage" />
+                                    </MultiBinding>
+                                </TextBlock.IsVisible>
+                                
+                            </TextBlock>
                             
                             
                             <DataGrid
-                                    IsVisible="{Binding AirlineItems.Count, 
-                                    Converter={StaticResource CollectionHasItemsConverter}, 
-                                    ConverterParameter={StaticResource TrueValue}}"
                                     HorizontalAlignment="Stretch" 
                                     VerticalAlignment="Stretch"
                                     ItemsSource="{Binding AirlineItems}"
@@ -159,6 +162,13 @@
                                     IsReadOnly="True"
                                     CanUserResizeColumns="True"
                                     >
+                                
+                                <DataGrid.IsVisible>
+                                    <MultiBinding Converter="{StaticResource CollectionHasItemsConverter}" ConverterParameter="{StaticResource TrueValue}">
+                                        <Binding Path="AirlineItems.Count"/>
+                                        <Binding Path="HasErrorMessage" />
+                                    </MultiBinding>
+                                </DataGrid.IsVisible>
                                 
                                 <DataGrid.Columns>
                                     

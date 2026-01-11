@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.Common;
 using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
@@ -20,6 +21,7 @@ public interface ITicketVmProvider
     public Task<IEnumerable<Discount>> GetAllDiscounts();
     public Task<IEnumerable<Flight>> GetAllFlights();
     public Task<IEnumerable<User>> GetAllUsers();
+    Task<IResult<string>> BuyTicket(Int64 userId, Int64 ticketId);
     
     Task<int> CreateOrEditTicket(Ticket ticket);
     Task<int> DeleteTicket(Ticket ticket);

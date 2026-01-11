@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
 using CourseProject_SellingTickets.Interfaces.AirlineProviderInterface;
+using CourseProject_SellingTickets.Interfaces.Common;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Models;
@@ -26,7 +27,7 @@ public class FlightVmVmProvider : IFlightVmProvider
         _airlineDbProvider = airlineDbProvider;
         _placeDbProvider = placeDbProvider;
     }
-    
+
     public async Task<int> CreateOrEditFlight(Flight flight)
     {
         return await _flightDbProvider!.CreateOrEditFlight(flight);
@@ -58,6 +59,11 @@ public class FlightVmVmProvider : IFlightVmProvider
         SortMode? sortMode, int topRows = -1)
     {
         return await _flightDbProvider!.GetFlightsByFilterSort(searchFunc, sortFunc, sortMode, topRows);
+    }
+
+    public async Task<IResult<IEnumerable<Flight>>> GetFlightsByUserId(long userId, int topRows = -1)
+    {
+        return await _flightDbProvider!.GetFlightsByUserId(userId, topRows);
     }
 
     public async Task<IEnumerable<Airline>> GetAllAirlines()

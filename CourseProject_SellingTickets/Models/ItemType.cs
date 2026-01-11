@@ -114,6 +114,12 @@ namespace CourseProject_SellingTickets.Models
         Failed
     }
 
+    public enum ResultStatus
+    {
+        Success = 0,
+        Failure 
+    }
+    
     public class TicketUserViewModelParam
     {
         public Int64 UserId { get; init; }

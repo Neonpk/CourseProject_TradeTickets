@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using CourseProject_SellingTickets.Helpers;
 using CourseProject_SellingTickets.ValidationRules;
-using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Contexts;
@@ -61,7 +60,8 @@ public class Photo : ReactiveObject, IValidatableViewModel
     {
         if (obj is Photo o)
         {
-            return Id.Equals(o.Id) &&
+            return !Nullable.Equals(o, null) && 
+                   Id.Equals(o.Id) &&
                    Name.Equals(o.Name) &&
                    UrlPath.Equals(o.UrlPath) &&
                    IsDeleted.Equals(o.IsDeleted);

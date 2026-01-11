@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Models;
@@ -44,7 +43,8 @@ public class User : ReactiveObject
     {
         if (obj is User o)
         {
-            return Id.Equals(o.Id) &&
+            return !Nullable.Equals(o, null) && 
+                   Id.Equals(o.Id) &&
                    Name.Equals(o.Name) &&
                    Login.Equals(o.Login) &&
                    Role.Equals(o.Role) &&

@@ -1,13 +1,8 @@
 using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
-using CourseProject_SellingTickets.Helpers;
 using CourseProject_SellingTickets.ValidationRules;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Contexts;
-using ReactiveUI.Validation.Helpers;
 
 namespace CourseProject_SellingTickets.Models;
 
@@ -138,7 +133,8 @@ public class Flight : ReactiveObject, IValidatableViewModel
     {
         if (obj is Flight o)
         {
-            return Id.Equals(o.Id) &&
+            return !Nullable.Equals(o, null) && 
+                   Id.Equals(o.Id) &&
                    FlightNumber.Equals(o.FlightNumber) &&
                    DeparturePlace.Equals(o.DeparturePlace) &&
                    DepartureTime.Equals(o.DepartureTime) &&

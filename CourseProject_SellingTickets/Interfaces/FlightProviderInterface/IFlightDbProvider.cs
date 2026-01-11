@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.Common;
 using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
@@ -15,6 +16,8 @@ public interface IFlightDbProvider
     
     Task<IEnumerable<Flight>> GetFlightsByFilterSort<TKeySelector>
         ( Expression<Func<FlightDTO, bool>> searchFunc, Expression<Func<FlightDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1);
+
+    Task<IResult<IEnumerable<Flight>>> GetFlightsByUserId(Int64 userId, int topRows = -1);
     
     Task<int> CreateOrEditFlight(Flight flight);
     Task<int> DeleteFlight(Flight flight);

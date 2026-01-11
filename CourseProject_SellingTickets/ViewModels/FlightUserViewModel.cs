@@ -79,7 +79,7 @@ public class FlightUserViewModel : ViewModelBase, IParameterReceiver
     public bool? IsLoadingEditMode { get => _isLoadingEditMode; set => this.RaiseAndSetIfChanged(ref _isLoadingEditMode, value); }
 
     private string? _errorMessage;
-    public string ErrorMessage { get => _errorMessage!; set { this.RaiseAndSetIfChanged(ref _errorMessage, value); this.RaisePropertyChanged(nameof(HasErrorMessage)); } }
+    public string? ErrorMessage { get => _errorMessage!; set { this.RaiseAndSetIfChanged(ref _errorMessage, value); this.RaisePropertyChanged(nameof(HasErrorMessage)); } }
 
     public bool HasErrorMessage => !string.IsNullOrEmpty(ErrorMessage);
     
@@ -129,7 +129,7 @@ public class FlightUserViewModel : ViewModelBase, IParameterReceiver
     public void ReceieveParameter(object parameter)
     {
         UserId = parameter is Int64 param ? param : -1;
-        
+
         SearchFlightDataCommand.Execute().Subscribe();
     }
 }

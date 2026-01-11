@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.Common;
 using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
 using CourseProject_SellingTickets.Interfaces.FlightClassProviderInterface;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
@@ -72,6 +73,11 @@ public class TicketVmProvider : ITicketVmProvider
     public async Task<IEnumerable<User>> GetAllUsers()
     {
         return await _userDbProvider!.GetUsersByFilter(x => x.Role.Equals("user"));
+    }
+
+    public async Task<IResult<string>> BuyTicket(long userId, long ticketId)
+    {
+        return await _ticketDbProvider!.BuyTicket(userId, ticketId);
     }
 
     public async Task<int> CreateOrEditTicket(Ticket ticket)

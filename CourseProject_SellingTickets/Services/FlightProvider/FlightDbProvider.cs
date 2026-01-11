@@ -5,9 +5,11 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.Common;
 using CourseProject_SellingTickets.Interfaces.DbContextsInterface;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Models;
+using CourseProject_SellingTickets.Models.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject_SellingTickets.Services.FlightProvider;
@@ -105,7 +107,36 @@ public class FlightDbProvider : IFlightDbProvider
             return flightDtos.Select(flight => ToFlight(flight));
         }
     }
-    
+
+    public async Task<IResult<IEnumerable<Flight>>> GetFlightsByUserId(Int64 userId, int topRows = -1)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            try
+            {
+                IEnumerable<FlightDTO> flightDtos = await context.Flights.
+                    FromSqlInterpolated($"SELECT * FROM public.get_user_flights({(int)userId})").
+                    OrderBy(x => x.Id).
+                    TakeOrDefault(topRows).
+                    AsNoTracking(). 
+                    Include( x => x.Aircraft ).
+                    Include( x => x.Airline ). 
+                    Include( x => x.DeparturePlace ).
+                    Include( x => x.DestinationPlace ).
+                    Include( x => x.Aircraft!.Photo ).
+                    Include( x => x.DeparturePlace!.Photo ).
+                    Include( x => x.DestinationPlace!.Photo ).
+                    ToListAsync();
+
+                return Result<IEnumerable<Flight>>.Success(flightDtos.Select(flight => ToFlight(flight)));
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                return Result<IEnumerable<Flight>>.Failure(ex.MessageText);
+            }
+        }
+    }
+
     public async Task<int> CreateOrEditFlight(Flight flight)
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())

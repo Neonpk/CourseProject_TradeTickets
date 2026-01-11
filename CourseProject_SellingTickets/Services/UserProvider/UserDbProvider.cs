@@ -6,9 +6,11 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.Common;
 using CourseProject_SellingTickets.Interfaces.DbContextsInterface;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
+using CourseProject_SellingTickets.Models.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject_SellingTickets.Services.UserProvider;
@@ -78,7 +80,30 @@ public class UserDbProvider : IUserDbProvider
             return userDtos.Select(userDto => ToUser(userDto));
         }
     }
-    
+
+    public async Task<IResult<string>> DepositBalance(Int64 userId, decimal amount)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            try
+            {
+                IEnumerable<string> result = await context.Database
+                    .SqlQuery<string>($"SELECT * FROM public.deposit_balance({(int)userId}, {amount})")
+                    .ToListAsync();
+
+                return Result<string>.Success(result.FirstOrDefault("The balance was not changed."));
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                return Result<string>.Failure(ex.MessageText);
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure(ex.Message);
+            }
+        }
+    }
+
     public async Task<int> CreateOrEditUser(User user)
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())

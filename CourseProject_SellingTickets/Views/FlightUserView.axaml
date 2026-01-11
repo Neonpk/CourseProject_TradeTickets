@@ -185,20 +185,30 @@
                                 VerticalAlignment="Center"
                                 Foreground="Orange"
                                 Text="Данные не найдены"
-                                IsVisible="{Binding FlightItems.Count, 
-                                    Converter={StaticResource CollectionHasItemsConverter}, 
-                                    ConverterParameter={StaticResource FalseValue}}"
-                                TextWrapping="WrapWithOverflow"/>
+                                TextWrapping="WrapWithOverflow">
+                                
+                                <TextBlock.IsVisible>
+                                    <MultiBinding Converter="{StaticResource CollectionHasItemsConverter}" ConverterParameter="{StaticResource FalseValue}">
+                                        <Binding Path="FlightItems.Count"/>
+                                        <Binding Path="HasErrorMessage" />
+                                    </MultiBinding>
+                                </TextBlock.IsVisible>
+                                
+                            </TextBlock>
                             
-                            <ListBox 
-                                IsVisible="{Binding FlightItems.Count, 
-                                    Converter={StaticResource CollectionHasItemsConverter}, 
-                                    ConverterParameter={StaticResource TrueValue}}"
+                            <ListBox
                                 HorizontalAlignment="Stretch" 
                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                 ItemsSource="{Binding FlightItems, FallbackValue=1}"
                                 SelectedValue="{Binding SelectedFlight}"
                                 >
+                                
+                                <ListBox.IsVisible>
+                                    <MultiBinding Converter="{StaticResource CollectionHasItemsConverter}" ConverterParameter="{StaticResource TrueValue}">
+                                        <Binding Path="FlightItems.Count"/>
+                                        <Binding Path="HasErrorMessage" />
+                                    </MultiBinding>
+                                </ListBox.IsVisible>
                                 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>

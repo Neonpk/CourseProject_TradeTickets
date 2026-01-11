@@ -5,9 +5,11 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.Common;
 using CourseProject_SellingTickets.Interfaces.DbContextsInterface;
 using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Models;
+using CourseProject_SellingTickets.Models.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject_SellingTickets.Services.TicketProvider;
@@ -119,6 +121,25 @@ public class TicketDbProvider : ITicketDbProvider
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
+        }
+    }
+
+    public async Task<IResult<string>> BuyTicket(Int64 userId, Int64 ticketId)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            try
+            {
+                IEnumerable<string> result = await context.Database
+                    .SqlQuery<string>($"SELECT status FROM public.buy_ticket({(int)userId}, {(int)ticketId})")
+                    .ToListAsync();
+
+                return Result<string>.Success(result.FirstOrDefault("The ticket was not purchased."));
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                return Result<string>.Failure(ex.MessageText);
+            }
         }
     }
 

@@ -5,7 +5,7 @@ using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Converters;
 
-public class HideTicketFlightActionColumnConverter : IValueConverter
+public class HideTickettActionColumnConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

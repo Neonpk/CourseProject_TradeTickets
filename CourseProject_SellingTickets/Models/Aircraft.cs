@@ -64,7 +64,8 @@ public class Aircraft : ReactiveObject, IValidatableViewModel
     {
         if (obj is Aircraft o)
         {
-            return o.Id.Equals(Id) && 
+            return !Nullable.Equals(o, null) &&  
+                   o.Id.Equals(Id) && 
                    o.Model!.Equals(Model) &&
                    o.Type!.Equals(Type) && 
                    o.TotalPlace.Equals(TotalPlace) &&

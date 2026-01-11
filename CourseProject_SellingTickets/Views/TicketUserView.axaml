@@ -18,7 +18,7 @@
         <converter:HideDefaultIdConverter x:Key="HideDefaultIdConverter"/>
         <converter:FlightStatusConverter x:Key="FlightStatusConverter"/>
         <converter:StringEmptyToUnsetConverter x:Key="StringEmptyToUnsetConverter" />
-        <converter:HideTicketFlightActionColumnConverter x:Key="HideTicketActionColumnConverter" />
+        <converter:HideTickettActionColumnConverter x:Key="HideTicketActionColumnConverter" />
         
         <s:Boolean x:Key="FalseValue">False</s:Boolean>
         <s:Boolean x:Key="TrueValue">True</s:Boolean>
@@ -159,15 +159,18 @@
                                 VerticalAlignment="Center"
                                 Foreground="Orange"
                                 Text="Данные не найдены"
-                                IsVisible="{Binding TicketItems.Count, 
-                                    Converter={StaticResource CollectionHasItemsConverter}, 
-                                    ConverterParameter={StaticResource FalseValue}}"
-                                TextWrapping="WrapWithOverflow"/>
+                                TextWrapping="WrapWithOverflow">
+                                
+                                <TextBlock.IsVisible>
+                                    <MultiBinding Converter="{StaticResource CollectionHasItemsConverter}" ConverterParameter="{StaticResource FalseValue}">
+                                        <Binding Path="TicketItems.Count"/>
+                                        <Binding Path="HasErrorMessage" />
+                                    </MultiBinding>
+                                </TextBlock.IsVisible> 
+                                
+                            </TextBlock>
                             
                             <DataGrid
-                                    IsVisible="{Binding TicketItems.Count, 
-                                    Converter={StaticResource CollectionHasItemsConverter}, 
-                                    ConverterParameter={StaticResource TrueValue}}"
                                     HorizontalAlignment="Stretch" 
                                     VerticalAlignment="Stretch"
                                     ItemsSource="{Binding TicketItems}"
@@ -175,6 +178,13 @@
                                     IsReadOnly="True"
                                     CanUserResizeColumns="True"
                                     >
+                                
+                                <DataGrid.IsVisible>
+                                    <MultiBinding Converter="{StaticResource CollectionHasItemsConverter}" ConverterParameter="{StaticResource TrueValue}">
+                                        <Binding Path="TicketItems.Count"/>
+                                        <Binding Path="HasErrorMessage" />
+                                    </MultiBinding>
+                                </DataGrid.IsVisible>
                                 
                                 <DataGrid.Columns>
                                     

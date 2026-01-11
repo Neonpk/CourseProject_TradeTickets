@@ -4,42 +4,97 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="clr-namespace:CourseProject_SellingTickets.ViewModels"
+             xmlns:converter="clr-namespace:CourseProject_SellingTickets.Converters"
+             xmlns:controls="clr-namespace:CourseProject_SellingTickets.Controls"
              x:DataType="vm:ClientBalanceUserViewModel"
              x:Class="CourseProject_SellingTickets.Views.ClientBalanceUserView">
     
-    <Grid Margin="5">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <UserControl.Resources>
+        <converter:ResultStateForegroundConverter x:Key="ResultStateForegroundConverter"/>
+        <converter:InitializeDataErrorConverter x:Key="InitializeDataErrorConverter"/>
+    </UserControl.Resources>
+    
+    <Grid>
         
-        <Grid.RowDefinitions>
-            <RowDefinition MaxHeight="35"/>
-            <RowDefinition MaxHeight="35"/>
-            <RowDefinition MaxHeight="35"/>
-        </Grid.RowDefinitions>
+        <controls:DoubleBounceSpinner 
+            IsActive="{Binding IsLoading}"
+            ForegroundSpinner="White"
+            Diameter="60"/>
+        
+        <Grid IsVisible="{Binding !IsLoading}">
+        
+            <TextBlock 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Foreground="Red"
+                Text="{Binding ErrorMessage}"
+                TextWrapping="WrapWithOverflow">
+                            
+                <TextBlock.IsVisible>
+                    <MultiBinding Converter="{StaticResource InitializeDataErrorConverter}">
+                        <Binding Path="HasErrorMessage"/>
+                        <Binding Path="DatabaseHasConnected"/>
+                    </MultiBinding>
+                </TextBlock.IsVisible>
+                            
+            </TextBlock>
+            
+            <Grid IsVisible="{Binding DatabaseHasConnected}"
+                  Margin="10">
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+        
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="35"/>
+                    <RowDefinition MaxHeight="35"/>
+                    <RowDefinition MaxHeight="35"/>
+                </Grid.RowDefinitions>
         
         
-        <Label Content="Имя: " 
-               Grid.Column="0" 
-               Grid.Row="0" />
+                <Label Content="Имя: " 
+                       Grid.Column="0" 
+                       Grid.Row="0" />
         
-        <Label Content="{Binding UserName}" 
-               Grid.Column="1"
-               Grid.Row="0" />
+                <Label Content="{Binding UserName}" 
+                       Grid.Column="1"
+                       Grid.Row="0" />
         
-        <Label Content="Баланс: " 
-               Grid.Column="0" 
-               Grid.Row="1" />
+                <Label Content="Баланс: " 
+                       Grid.Column="0" 
+                       Grid.Row="1" />
         
-        <Label Content="{Binding Balance}" 
-               Grid.Column="1"
-               Grid.Row="1" />
+                <Label Content="{Binding Balance}" 
+                       Grid.Column="1"
+                       Grid.Row="1" />
         
-        <Button Content="Пополнить"
-                Grid.Column="0"
-                Grid.Row="2" 
-                Grid.ColumnSpan="2" />
+                <StackPanel Grid.Column="0" 
+                            Grid.Row="2" 
+                            Grid.ColumnSpan="2" 
+                            Orientation="Horizontal">
+            
+                    <NumericUpDown Margin="0 0 10 0" 
+                                   Watermark="Сумма пополнения"
+                                   Minimum="0"
+                                   Value="{Binding Amount}" />
+            
+                    <Button Content="Пополнить"
+                            Margin="0 0 10 0"
+                            Command="{Binding DepositBalanceUserCommand}" />
+            
+                    <Label Content="{Binding DepositBalanceMsg}"
+                           FontSize="15" 
+                           FontWeight="Bold"
+                           Margin="0 0 0 0"
+                           Foreground="{Binding ResultDepositBalance, Converter={StaticResource ResultStateForegroundConverter}, ConverterParameter='Foreground'}"
+                           VerticalAlignment="Center" />
+            
+                </StackPanel>
+        
+            </Grid>
+            </Grid>
         
     </Grid>
     

@@ -18,38 +18,55 @@ public class LoadFlightDataCommand : ReactiveCommand<IEnumerable<Flight>, Task>
         var limitRows = flightUserViewModel.LimitRows;
         
         flightUserViewModel.ErrorMessage = string.Empty;
-        flightUserViewModel.IsLoading = true;
+        flightUserViewModel.IsLoading = true; 
 
         ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         try
         {
             bool hasSearching = flightUserViewModel.HasSearching;
-           
-            IEnumerable<Flight> flights = hasSearching ? filteredFlights! : await flightVmDbProvider.GetTopFlights(limitRows);
-            
-            IEnumerable<Aircraft> aircrafts = await flightVmDbProvider.GetAllAircrafts();
-            IEnumerable<Airline> airlines = await flightVmDbProvider.GetAllAirlines();
-            IEnumerable<Place> places = await flightVmDbProvider.GetAllPlaces();
+            Int64 userId = flightUserViewModel.UserId;
 
-            Dispatcher.UIThread.Post(void() =>
+            IEnumerable<Flight> flights;
+
+            if (!hasSearching)
+            {
+                if (userId.Equals(-1))
+                {
+                    flights = await flightVmDbProvider.GetTopFlights(limitRows);
+                }
+                else
+                {
+                    var result = await flightVmDbProvider.GetFlightsByUserId(userId, limitRows);
+                    flights = result.IsSuccess ? result.Value! : new List<Flight>();
+                    if (!result.IsSuccess) flightUserViewModel.ErrorMessage = result.Message;
+                }
+            }
+            else
+            {
+                flights = filteredFlights;
+            }
+            
+            Dispatcher.UIThread.Post(async void() =>
             {
 
                 flightUserViewModel.Aircrafts.Clear();
                 flightUserViewModel.Airlines.Clear();
                 flightUserViewModel.Places.Clear();
-                
-                flightUserViewModel.Aircrafts.AddRange(aircrafts);
-
-                flightUserViewModel.Airlines.Clear();
-                flightUserViewModel.Airlines.AddRange(airlines);
-
-                flightUserViewModel.Places.Clear();
-                flightUserViewModel.Places.AddRange(places);
-
                 flightUserViewModel.FlightItems.Clear();
+
                 flightUserViewModel.FlightItems.AddRange(flights);
 
+                if (!flightUserViewModel.UserId.Equals(-1))
+                {
+                    flightUserViewModel.SideBarShowed = false;
+                    return; 
+                }
+
+                flightUserViewModel.Aircrafts.AddRange(await flightVmDbProvider.GetAllAircrafts());
+                flightUserViewModel.Airlines.AddRange(await flightVmDbProvider.GetAllAirlines());
+                flightUserViewModel.Places.AddRange(await flightVmDbProvider.GetAllPlaces());
+                
             });
 
             flightUserViewModel.SortFlightsCommand!.Execute().Subscribe();

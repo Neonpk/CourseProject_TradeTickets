@@ -1,6 +1,5 @@
 using System;
 using CourseProject_SellingTickets.ValidationRules;
-using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
 using ReactiveUI.Validation.Abstractions;
 using ReactiveUI.Validation.Contexts;
@@ -53,7 +52,8 @@ public class Discount : ReactiveObject, IValidatableViewModel
     {
         if (obj is Discount o)
         {
-            return Id.Equals(o.Id) && 
+            return !Nullable.Equals(o, null) &&  
+                   Id.Equals(o.Id) && 
                    Name.Equals(o.Name) &&
                    DiscountSize.Equals(o.DiscountSize) && 
                    Description.Equals(o.Description);

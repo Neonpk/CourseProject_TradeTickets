@@ -77,8 +77,8 @@ public class Ticket : ReactiveObject, IValidatableViewModel
     {
         if (obj is Ticket o)
         {
-            return Id != null && 
-                   o.Id != null && 
+            return !Nullable.Equals(o, null) && 
+                   Id != null && o.Id != null && 
                    Id.Equals(o.Id) &&
                    Flight.Equals(o.Flight) &&
                    FlightClass.Equals(o.FlightClass) &&
