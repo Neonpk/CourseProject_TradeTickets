@@ -1,8 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Common;
-using System.Threading;
-using System.Threading.Tasks;
 using CourseProject_SellingTickets.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,4 +21,8 @@ public class TradeTicketsDbContext : DbContext
     // Postgres DateTime (timestamp) Format 
     [DbFunction("to_char", "")]
     public static string DateTimeFormatToString(DateTime value, string format) => value.ToString(format);
+
+    // Generate custom model builders 
+    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(TradeTicketsDbContext).Assembly);
 }

@@ -51,6 +51,7 @@
                     <RowDefinition MaxHeight="35"/>
                     <RowDefinition MaxHeight="35"/>
                     <RowDefinition MaxHeight="35"/>
+                    <RowDefinition MaxHeight="35"/>
                 </Grid.RowDefinitions>
         
         
@@ -69,9 +70,17 @@
                 <Label Content="{Binding Balance}" 
                        Grid.Column="1"
                        Grid.Row="1" />
+                
+                <Label Content="Ваша скидка: " 
+                       Grid.Column="0" 
+                       Grid.Row="2" />
+        
+                <Label Content="{Binding DiscountText}" 
+                       Grid.Column="1"
+                       Grid.Row="2" />
         
                 <StackPanel Grid.Column="0" 
-                            Grid.Row="2" 
+                            Grid.Row="3" 
                             Grid.ColumnSpan="2" 
                             Orientation="Horizontal">
             

@@ -9,6 +9,10 @@ namespace CourseProject_SellingTickets.Models;
 #pragma warning disable
 public class Discount : ReactiveObject, IValidatableViewModel
 {
+    // Guid (Нужен для идентификации объектов сравнения)
+
+    public Guid Guid { get; } = Guid.NewGuid();
+    
     //Columns
 
     private System.Int64 _id;
@@ -50,20 +54,11 @@ public class Discount : ReactiveObject, IValidatableViewModel
     
     public override bool Equals(object? obj)
     {
-        if (obj is Discount o)
-        {
-            return !Nullable.Equals(o, null) &&  
-                   Id.Equals(o.Id) && 
-                   Name.Equals(o.Name) &&
-                   DiscountSize.Equals(o.DiscountSize) && 
-                   Description.Equals(o.Description);
-        }
-        
-        return base.Equals(obj);
+        return obj is Discount discount && Id.Equals(discount.Id);
     }
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        return Id.GetHashCode();
     }
 }

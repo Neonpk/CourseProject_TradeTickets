@@ -14,6 +14,10 @@ namespace CourseProject_SellingTickets.Models;
 #pragma warning disable
 public class Aircraft : ReactiveObject, IValidatableViewModel
 {
+    // Guid (Нужен для идентификации объектов сравнения)
+
+    public Guid Guid { get; } = Guid.NewGuid();
+    
     // Main Model
 
     private System.Int64 _id;
@@ -49,7 +53,7 @@ public class Aircraft : ReactiveObject, IValidatableViewModel
         this.InitializeValidationRules();
     }
     
-    public Aircraft(System.Int64 id, string model, string type, int totalPlace, Photo photo)
+    public Aircraft(Int64 id, string model, string type, int totalPlace, Photo photo)
     {
         Id = id;
         Model = model;
@@ -62,21 +66,11 @@ public class Aircraft : ReactiveObject, IValidatableViewModel
     
     public override bool Equals(object? obj)
     {
-        if (obj is Aircraft o)
-        {
-            return !Nullable.Equals(o, null) &&  
-                   o.Id.Equals(Id) && 
-                   o.Model!.Equals(Model) &&
-                   o.Type!.Equals(Type) && 
-                   o.TotalPlace.Equals(TotalPlace) &&
-                   o.Photo.Equals(Photo);
-        }
-        
-        return base.Equals(obj);
+        return obj is Aircraft aircraft && Id.Equals(aircraft.Id);
     }
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        return Id.GetHashCode();
     }
 }

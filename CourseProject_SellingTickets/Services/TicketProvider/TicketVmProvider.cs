@@ -80,6 +80,11 @@ public class TicketVmProvider : ITicketVmProvider
         return await _ticketDbProvider!.BuyTicket(userId, ticketId);
     }
 
+    public async Task<IResult<string>> CancelTicket(Int64 ticketId)
+    {
+        return await _ticketDbProvider!.CancelTicket(ticketId);
+    }
+
     public async Task<int> CreateOrEditTicket(Ticket ticket)
     {
         return await _ticketDbProvider!.CreateOrEditTicket(ticket);

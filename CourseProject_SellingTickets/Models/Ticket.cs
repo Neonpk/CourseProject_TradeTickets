@@ -9,6 +9,10 @@ namespace CourseProject_SellingTickets.Models;
 #pragma warning disable
 public class Ticket : ReactiveObject, IValidatableViewModel
 {
+    // Guid (Нужен для идентификации объектов сравнения)
+
+    public Guid Guid { get; } = Guid.NewGuid();
+    
     // Columns
 
     private Int64 _id;
@@ -75,26 +79,11 @@ public class Ticket : ReactiveObject, IValidatableViewModel
     
     public override bool Equals(object? obj)
     {
-        if (obj is Ticket o)
-        {
-            return !Nullable.Equals(o, null) && 
-                   Id != null && o.Id != null && 
-                   Id.Equals(o.Id) &&
-                   Flight.Equals(o.Flight) &&
-                   FlightClass.Equals(o.FlightClass) &&
-                   PlaceNumber.Equals(o.PlaceNumber) &&
-                   Price.Equals(o.Price) &&
-                   Discount.Equals(o.Discount) &&
-                   IsSold.Equals(o.IsSold) &&
-                   DiscountPrice.Equals(o.DiscountPrice) &&
-                   User.Equals(o.User);
-        }
-        
-        return base.Equals(obj);
+        return obj is Ticket ticket && Id.Equals(ticket.Id);
     }
 
-    public override int GetHashCode() 
+    public override int GetHashCode()
     {
-        return base.GetHashCode();
+        return Id.GetHashCode();
     }
 }

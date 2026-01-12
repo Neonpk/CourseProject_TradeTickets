@@ -9,10 +9,14 @@ namespace CourseProject_SellingTickets.Models;
 #pragma warning  disable
 public class Place : ReactiveObject, IValidatableViewModel
 {
+    // Guid (Нужен для идентификации объектов сравнения)
+
+    public Guid Guid { get; } = Guid.NewGuid();
+    
     //Columns 
 
-    private System.Int64 _id;
-    public System.Int64 Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
+    private Int64 _id;
+    public Int64 Id { get => _id; set => this.RaiseAndSetIfChanged(ref _id, value); }
 
     private string _name;
     public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
@@ -51,20 +55,11 @@ public class Place : ReactiveObject, IValidatableViewModel
     
     public override bool Equals(object? obj)
     {
-        if (obj is Place o)
-        {
-            return !Nullable.Equals(o, null) && 
-                   Id.Equals(o.Id) && 
-                   Name.Equals(o.Name) && 
-                   Description.Equals(o.Description) &&
-                   Photo.Equals(o.Photo);
-        }
-        
-        return base.Equals(obj);
+        return obj is Place place && Id.Equals(place.Id);
     }
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        return Id.GetHashCode();
     }
 }

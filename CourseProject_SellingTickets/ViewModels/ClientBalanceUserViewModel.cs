@@ -27,10 +27,13 @@ public class ClientBalanceUserViewModel : ViewModelBase, IParameterReceiver
     
     private string _userName = String.Empty;
     public string UserName { get => _userName;  set => this.RaiseAndSetIfChanged(ref _userName, value); }
-
+    
+    private string _discountText = String.Empty; 
+    public string DiscountText { get => _discountText; set => this.RaiseAndSetIfChanged(ref _discountText, value); }
+    
     private decimal _balance;
     public decimal Balance { get => _balance; set => this.RaiseAndSetIfChanged(ref _balance, value); }
-
+    
     private decimal _amount;
     public decimal Amount { get => _amount; set => this.RaiseAndSetIfChanged(ref _amount, value); }
 

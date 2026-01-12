@@ -40,9 +40,11 @@ public class UserDbProvider : IUserDbProvider
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
         {
-            var user = await context.
-                Users.
+            var user = await context.Users.
                     Where(x => x.Login.Equals(login)).
+                    AsNoTracking(). 
+                    Include(x => x.Discount).
+                    Include(x => x.Tickets).
                     FirstOrDefaultAsync();
 
             if (user == null) 
@@ -58,6 +60,7 @@ public class UserDbProvider : IUserDbProvider
         {
             IEnumerable<UserDTO> userDtos = await context.Users.
                 AsNoTracking().
+                Include(x => x.Discount).
                 Include(x => x.Tickets).
                 ToListAsync();
             
@@ -74,6 +77,7 @@ public class UserDbProvider : IUserDbProvider
                 OrderByDescending(x => x.Id).
                 TakeOrDefault(topRows).
                 AsNoTracking().
+                Include(x => x.Discount).
                 Include(x => x.Tickets).
                 ToListAsync();
 
@@ -138,20 +142,24 @@ public class UserDbProvider : IUserDbProvider
             userDto.Name,
             userDto.Role,
             userDto.Password,
-            userDto.Balance
+            userDto.Balance,
+            new Discount(userDto.Discount.Id, userDto.Discount.Name, userDto.Discount.DiscountSize,  userDto.Discount.Description)
         );
     }
     
     private UserDTO ToUserDto(User user)
     {
-        return new UserDTO
+        var userDto = new UserDTO
         {
             Id = user.Id ?? 0,
             Login = user.Login,
             Name = user.Name,
             Role = user.Role,
             Password = user.Password,
-            Balance = user.Balance
+            Balance = user.Balance,
+            DiscountId = user.Discount.Id
         };
+        
+        return userDto;
     }
 }

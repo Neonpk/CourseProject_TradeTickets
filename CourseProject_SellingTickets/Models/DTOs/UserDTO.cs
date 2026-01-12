@@ -12,22 +12,29 @@ public class UserDTO
     [Key]
     [Column("id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Int64 Id { get; set; }
+    public required Int64 Id { get; init; }
 
     [Column("login")] 
-    public required string Login { get; set; }
+    public required string Login { get; init; }
 
     [Column("name")] 
-    public required string Name { get; set; }
+    public required string Name { get; init; }
 
     [Column("role")] 
-    public required string Role { get; set; }
+    public required string Role { get; init; }
 
     [Column("password")] 
-    public required string Password { get; set; }
+    public required string Password { get; init; }
 
     [Column("balance")] 
-    public required decimal Balance { get; set; }
+    public required decimal Balance { get; init; }
 
+    [Column("discount_id")]
+    [ForeignKey("Discount")]
+    public required Int64 DiscountId { get; init; }
+    
+    // Foreign keys (Navigation)
+    public virtual DiscountDTO Discount { get; init; }
+    
     public virtual ICollection<TicketDTO> Tickets { get; private set; }
 }

@@ -24,6 +24,7 @@ public class LoadUserDataCommand : ReactiveCommand<Unit, Task>
 
             clientBalanceUserVm.UserName = user.Name;
             clientBalanceUserVm.Balance = user.Balance;
+            clientBalanceUserVm.DiscountText = $"{user.Discount.DiscountSize}% ({user.Discount.Description})";
         }
         catch (Exception e)
         {

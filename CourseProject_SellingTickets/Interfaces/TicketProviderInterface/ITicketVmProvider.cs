@@ -21,7 +21,9 @@ public interface ITicketVmProvider
     public Task<IEnumerable<Discount>> GetAllDiscounts();
     public Task<IEnumerable<Flight>> GetAllFlights();
     public Task<IEnumerable<User>> GetAllUsers();
+    
     Task<IResult<string>> BuyTicket(Int64 userId, Int64 ticketId);
+    Task<IResult<string>> CancelTicket(Int64 ticketId);
     
     Task<int> CreateOrEditTicket(Ticket ticket);
     Task<int> DeleteTicket(Ticket ticket);

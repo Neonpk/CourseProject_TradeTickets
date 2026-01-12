@@ -10,6 +10,10 @@ namespace CourseProject_SellingTickets.Models;
 public class Airline : ReactiveObject, IValidatableViewModel
 {
 
+    // Guid (Нужен для идентификации объектов сравнения)
+
+    public Guid Guid { get; } = Guid.NewGuid();
+    
     // Main Model 
     
     private System.Int64 _id;
@@ -32,7 +36,7 @@ public class Airline : ReactiveObject, IValidatableViewModel
         this.InitializeValidationRules();
     }
     
-    public Airline(System.Int64 id, string name)
+    public Airline(Int64 id, string name)
     {
         Id = id;
         Name = name;
@@ -42,18 +46,11 @@ public class Airline : ReactiveObject, IValidatableViewModel
     
     public override bool Equals(object? obj)
     {
-        if (obj is Airline o)
-        {
-            return !Nullable.Equals(o, null) &&  
-                   o.Id.Equals(Id) && 
-                   o.Name!.Equals(Name);
-        }
-        
-        return base.Equals(obj);
+        return obj is Airline airline && Id.Equals(airline.Id);
     }
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        return Id.GetHashCode();
     }
 }

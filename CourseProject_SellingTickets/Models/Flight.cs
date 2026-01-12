@@ -9,6 +9,10 @@ namespace CourseProject_SellingTickets.Models;
 #pragma warning disable
 public class Flight : ReactiveObject, IValidatableViewModel
 {
+    // Guid (Нужен для идентификации объектов сравнения)
+
+    public Guid Guid { get; } = Guid.NewGuid();
+    
     // Main Model 
 
     private System.Int64 _id;
@@ -128,31 +132,13 @@ public class Flight : ReactiveObject, IValidatableViewModel
         this.InitializeValidationRules();
     }
     
-    
     public override bool Equals(object? obj)
     {
-        if (obj is Flight o)
-        {
-            return !Nullable.Equals(o, null) && 
-                   Id.Equals(o.Id) &&
-                   FlightNumber.Equals(o.FlightNumber) &&
-                   DeparturePlace.Equals(o.DeparturePlace) &&
-                   DepartureTime.Equals(o.DepartureTime) &&
-                   DestinationPlace.Equals(o.DestinationPlace) &&
-                   ArrivalTime.Equals(o.ArrivalTime) &&
-                   Aircraft.Equals(o.Aircraft) &&
-                   TotalPlace.Equals(o.TotalPlace) &&
-                   FreePlace.Equals(o.FreePlace) &&
-                   DurationTime.Equals(o.DurationTime) &&
-                   Airline.Equals(o.Airline) &&
-                   IsCanceled.Equals(o.IsCanceled);
-        }
-        
-        return base.Equals(obj);
+        return obj is Flight flight && Id.Equals(flight.Id);
     }
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        return Id.GetHashCode();
     }
 }

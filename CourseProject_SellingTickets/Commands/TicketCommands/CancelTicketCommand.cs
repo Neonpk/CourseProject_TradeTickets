@@ -1,8 +1,8 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
+using Avalonia.ReactiveUI;
 using CourseProject_SellingTickets.Interfaces.Common;
 using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Models;
@@ -11,21 +11,18 @@ using ReactiveUI;
 
 namespace CourseProject_SellingTickets.Commands.TicketCommands;
 
-public class BookTicketCommand : ReactiveCommand<Unit, Task>
+public class CancelTicketCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task BookTicket(TicketUserViewModel ticketUserVm, ITicketVmProvider ticketVmProvider)
+    private static async Task CancelTicket(TicketUserViewModel ticketUserVm, ITicketVmProvider ticketVmProvider)
     {
         ConnectionDbState.CheckConnectionState.Execute().Subscribe();
         
         ticketUserVm.ErrorMessage = String.Empty;
-        
-        if (ticketUserVm.TicketUserVmParam == null) return;
-        
-        Int64 userId = ticketUserVm.TicketUserVmParam.UserId;
+
         Int64 ticketId = ticketUserVm.SelectedTicket.Id;
 
         ticketUserVm.IsLoading = true;
-        IResult<string> result = await ticketVmProvider.BuyTicket(userId, ticketId);
+        IResult<string> result = await ticketVmProvider.CancelTicket(ticketId);
         ticketUserVm.IsLoading = false;
 
         if (result.IsSuccess)
@@ -34,12 +31,13 @@ public class BookTicketCommand : ReactiveCommand<Unit, Task>
         }
         else
         {
-            ticketUserVm.ErrorMessage = $"Не удалось забронировать билет: {result.Message}.";
+            ticketUserVm.ErrorMessage = $"Не удалось отменить билет на рейс: {result.Message}.";
         }
     }
     
-    public BookTicketCommand(TicketUserViewModel ticketUserVm, ITicketVmProvider ticketVmProvider) : 
-        base( _ => Observable.Start(async () => await BookTicket(ticketUserVm, ticketVmProvider)), canExecute: Observable.Return(true)  )
+    public CancelTicketCommand(TicketUserViewModel ticketUserVm, ITicketVmProvider ticketVmProvider) : 
+        base( _ => Observable.Start(async () => await CancelTicket(ticketUserVm, ticketVmProvider)), 
+            canExecute: Observable.Return(true) )
     {
         
     }

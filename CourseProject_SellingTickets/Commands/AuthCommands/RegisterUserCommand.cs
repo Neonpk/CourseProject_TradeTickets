@@ -44,7 +44,7 @@ public class RegisterUserCommand : ReactiveCommand<Unit, Task>
                 Login = registerUserVm.Login,
                 Name = registerUserVm.Name,
                 Password = registerUserVm.Password,
-                Role = "user"
+                Role = "user",
             });
             
             Thread.Sleep(1000);

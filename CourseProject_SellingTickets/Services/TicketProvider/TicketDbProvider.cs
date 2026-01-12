@@ -40,6 +40,7 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.DeparturePlace!.Photo ).
                 Include( x => x.Flight.Aircraft!.Photo ).
                 Include( x => x.User).
+                    ThenInclude(u => u!.Discount).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -65,6 +66,7 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.DeparturePlace!.Photo ).
                 Include( x => x.Flight.Aircraft!.Photo ).
                 Include( x => x.User).
+                    ThenInclude(u => u!.Discount).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -91,6 +93,7 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.DeparturePlace!.Photo ).
                 Include( x => x.Flight.Aircraft!.Photo ).
                 Include( x => x.User).
+                    ThenInclude(u => u!.Discount).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -118,6 +121,7 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.DeparturePlace!.Photo ).
                 Include( x => x.Flight.Aircraft!.Photo ).
                 Include( x => x.User).
+                    ThenInclude(u => u!.Discount).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -131,7 +135,7 @@ public class TicketDbProvider : ITicketDbProvider
             try
             {
                 IEnumerable<string> result = await context.Database
-                    .SqlQuery<string>($"SELECT status FROM public.buy_ticket({(int)userId}, {(int)ticketId})")
+                    .SqlQuery<string>($"SELECT * FROM public.buy_ticket({(int)userId}, {(int)ticketId})")
                     .ToListAsync();
 
                 return Result<string>.Success(result.FirstOrDefault("The ticket was not purchased."));
@@ -139,6 +143,33 @@ public class TicketDbProvider : ITicketDbProvider
             catch (Npgsql.PostgresException ex)
             {
                 return Result<string>.Failure(ex.MessageText);
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure(ex.Message);
+            }
+        }
+    }
+
+    public async Task<IResult<string>> CancelTicket(Int64 ticketId)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            try
+            {
+                IEnumerable<string> result = await context.Database
+                    .SqlQuery<string>($"SELECT * FROM public.cancel_ticket({(int)ticketId})")
+                    .ToListAsync();
+
+                return Result<string>.Success(result.FirstOrDefault("The ticket was not canceled."));
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                return Result<string>.Failure(ex.MessageText);
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure(ex.Message);
             }
         }
     }
@@ -178,8 +209,15 @@ public class TicketDbProvider : ITicketDbProvider
             ticketDto.PlaceNumber, 
             new Discount( ticketDto.Discount.Id, ticketDto.Discount.Name, ticketDto.Discount.DiscountSize, ticketDto.Discount.Description ),
             ticketDto.IsSold,
-            ticketDto.User is not null ? 
-            new User( ticketDto.User.Id, ticketDto.User.Login, ticketDto.User.Name, ticketDto.User.Role, ticketDto.User.Password, ticketDto.User.Balance ) : new User()
+            ticketDto.User is not null ? new User( 
+                ticketDto.User.Id, 
+                ticketDto.User.Login, 
+                ticketDto.User.Name, 
+                ticketDto.User.Role, 
+                ticketDto.User.Password, 
+                ticketDto.User.Balance,
+                new Discount( ticketDto.User.Discount.Id, ticketDto.User.Discount.Name, ticketDto.User.Discount.DiscountSize, ticketDto.User.Discount.Description )
+                ) : new User()
         );
     }
     

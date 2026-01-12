@@ -19,6 +19,8 @@ public interface ITicketDbProvider
     
     Task<IResult<string>> BuyTicket(Int64 userId, Int64 ticketId);
     
+    Task<IResult<string>> CancelTicket(Int64 ticketId);
+    
     Task<int> CreateOrEditTicket(Ticket ticket);
     Task<int> DeleteTicket(Ticket ticket);
 }

@@ -106,7 +106,12 @@ public class TicketUserViewModel : ViewModelBase, IParameterReceiver
     private ReactiveCommand<Unit, Task>? _deleteTicketDataCommand;
     public ReactiveCommand<Unit, Task> DeleteTicketDataCommand => _deleteTicketDataCommand ??= new DeleteTicketDataCommand(this, _ticketProvider!);
 
-
+    private ReactiveCommand<Unit, Task>? _bookTicketCommand;
+    public ReactiveCommand<Unit, Task>? BookTicketCommand => _bookTicketCommand ??= new BookTicketCommand(this, _ticketProvider!);
+    
+    private ReactiveCommand<Unit, Task>? _cancelTicketCommand;
+    public ReactiveCommand<Unit, Task>? CancelTicketCommand => _cancelTicketCommand ??= new CancelTicketCommand(this, _ticketProvider!);
+    
     // Constructor
     
     public TicketUserViewModel(ITicketVmProvider? ticketVmProvider)
