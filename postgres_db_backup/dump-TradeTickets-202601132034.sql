@@ -2,9 +2,9 @@
 -- PostgreSQL database cluster dump
 --
 
--- Started on 2026-01-12 19:50:37 +05
+-- Started on 2026-01-13 20:34:18 +05
 
-\restrict mviIzQ3DmcHdw0d7utWUPd8BNhbCUJ9SvKtMMLve0XzCCzrla2psYnYxdGAHwyk
+\restrict tfMamUleXFQGnjNq4Zgf3xzApY5ev8942Hyu7KFqaZaOhPfU5sbBVB4XLERHTVY
 
 SET default_transaction_read_only = off;
 
@@ -29,7 +29,7 @@ ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION
 
 
 
-\unrestrict mviIzQ3DmcHdw0d7utWUPd8BNhbCUJ9SvKtMMLve0XzCCzrla2psYnYxdGAHwyk
+\unrestrict tfMamUleXFQGnjNq4Zgf3xzApY5ev8942Hyu7KFqaZaOhPfU5sbBVB4XLERHTVY
 
 --
 -- Databases
@@ -45,12 +45,12 @@ ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION
 -- PostgreSQL database dump
 --
 
-\restrict V7DmMf1iPTZIG9PzS8SjN23lZNIyjDJjOa7ocJvj30pjbFsgLHjddXtBZChE7ID
+\restrict 0jZxG9ha5lfkIYe1zpaCBlFOES5cpakM1Ib9nenQ2lb6wgIdTyvD0zOkqLVUIXX
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-01-12 19:50:37 +05
+-- Started on 2026-01-13 20:34:18 +05
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -64,13 +64,13 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
--- Completed on 2026-01-12 19:50:38 +05
+-- Completed on 2026-01-13 20:34:19 +05
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict V7DmMf1iPTZIG9PzS8SjN23lZNIyjDJjOa7ocJvj30pjbFsgLHjddXtBZChE7ID
+\unrestrict 0jZxG9ha5lfkIYe1zpaCBlFOES5cpakM1Ib9nenQ2lb6wgIdTyvD0zOkqLVUIXX
 
 --
 -- Database "TradeTickets" dump
@@ -80,12 +80,12 @@ SET row_security = off;
 -- PostgreSQL database dump
 --
 
-\restrict xRAEmeVKcRSd5MYsSxP6P0sYwTIMuY91cgSxJCeNkoZSSIgBOCdZ4IcMuwu70GH
+\restrict 3C0YDsPc2KgWeOS3HabtnrEywtLc4h6InNYmjOS18vxMeSklAyITLTd9Kqcu1IX
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-01-12 19:50:38 +05
+-- Started on 2026-01-13 20:34:19 +05
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -100,7 +100,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 3621 (class 1262 OID 16388)
+-- TOC entry 3627 (class 1262 OID 16388)
 -- Name: TradeTickets; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -109,9 +109,9 @@ CREATE DATABASE "TradeTickets" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCAL
 
 ALTER DATABASE "TradeTickets" OWNER TO postgres;
 
-\unrestrict xRAEmeVKcRSd5MYsSxP6P0sYwTIMuY91cgSxJCeNkoZSSIgBOCdZ4IcMuwu70GH
+\unrestrict 3C0YDsPc2KgWeOS3HabtnrEywtLc4h6InNYmjOS18vxMeSklAyITLTd9Kqcu1IX
 \connect "TradeTickets"
-\restrict xRAEmeVKcRSd5MYsSxP6P0sYwTIMuY91cgSxJCeNkoZSSIgBOCdZ4IcMuwu70GH
+\restrict 3C0YDsPc2KgWeOS3HabtnrEywtLc4h6InNYmjOS18vxMeSklAyITLTd9Kqcu1IX
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -126,7 +126,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 3031 (class 3456 OID 16389)
+-- TOC entry 3032 (class 3456 OID 16389)
 -- Name: russian; Type: COLLATION; Schema: public; Owner: postgres
 --
 
@@ -395,7 +395,7 @@ $$;
 ALTER FUNCTION public.compare_ticket_limit_by_flight(f_id bigint) OWNER TO postgres;
 
 --
--- TOC entry 265 (class 1255 OID 24603)
+-- TOC entry 264 (class 1255 OID 24603)
 -- Name: deposit_balance(integer, numeric); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -435,6 +435,53 @@ $$;
 
 
 ALTER FUNCTION public.deposit_balance(user_id integer, amount numeric) OWNER TO postgres;
+
+--
+-- TOC entry 268 (class 1255 OID 32816)
+-- Name: generate_user_avatar(integer, character varying); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.generate_user_avatar(p_user_id integer, p_url_path character varying) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    v_hash text;
+    v_photo_id int;
+BEGIN
+    -- 1. Проверяем существование пользователя
+    IF NOT EXISTS (SELECT 1 FROM public."user" WHERE id = p_user_id) THEN
+        RAISE EXCEPTION 'Пользователь с ID % не найден', p_user_id;
+    END IF;
+
+    -- 2. Генерируем MD5 (32 символа), чтобы влезло в varchar(50) с префиксом
+    v_hash := encode(sha256((p_user_id::text || p_url_path)::bytea), 'hex');
+
+    -- 3. Вставка фото с обработкой ошибок уникальности
+    BEGIN
+        INSERT INTO public.photo ("name", url_path, is_deleted)
+        VALUES ('avatar_' || v_hash, p_url_path, false)
+        RETURNING id INTO v_photo_id;
+    EXCEPTION 
+        WHEN unique_violation THEN
+            RAISE EXCEPTION 'Фото с таким именем или URL уже существует (нарушение уникальности)';
+    END;
+
+    -- 4. Обновление пользователя
+    UPDATE public."user"
+    SET photo_id = v_photo_id
+    WHERE id = p_user_id;
+
+    RETURN 'Успешно: Аватар сгенерирован и привязан (ID фото: ' || v_photo_id || ')';
+
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Пробрасываем ошибку дальше с информативным сообщением
+        RAISE EXCEPTION 'Ошибка при генерации аватара: %', SQLERRM;
+END;
+$$;
+
+
+ALTER FUNCTION public.generate_user_avatar(p_user_id integer, p_url_path character varying) OWNER TO postgres;
 
 --
 -- TOC entry 241 (class 1255 OID 16393)
@@ -653,7 +700,7 @@ CREATE TABLE public.flight (
 ALTER TABLE public.flight OWNER TO postgres;
 
 --
--- TOC entry 264 (class 1255 OID 24602)
+-- TOC entry 263 (class 1255 OID 24602)
 -- Name: get_user_flights(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -744,7 +791,7 @@ $$;
 ALTER FUNCTION public.trigger_exception_ticket_limit_by_flight() OWNER TO postgres;
 
 --
--- TOC entry 251 (class 1255 OID 16403)
+-- TOC entry 265 (class 1255 OID 16403)
 -- Name: trigger_update_deleted_photo_info(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -754,7 +801,8 @@ CREATE FUNCTION public.trigger_update_deleted_photo_info() RETURNS trigger
 begin
 	
 	update aircraft set photo_id = 1 where new.id = aircraft.photo_id ;
-	update place  set photo_id = 1 where new.id = place.photo_id ;	
+	update place set photo_id = 1 where new.id = place.photo_id;	
+	update public."user" set photo_id = 14 where new.id = public."user".photo_id;
 
 	return new;
 
@@ -765,7 +813,7 @@ $$;
 ALTER FUNCTION public.trigger_update_deleted_photo_info() OWNER TO postgres;
 
 --
--- TOC entry 252 (class 1255 OID 16404)
+-- TOC entry 251 (class 1255 OID 16404)
 -- Name: trigger_update_tables_info(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -966,7 +1014,7 @@ ALTER TABLE public.flight ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 CREATE TABLE public.photo (
     id integer NOT NULL,
-    name character varying(50) NOT NULL,
+    name character varying(100) NOT NULL,
     url_path character varying(200) NOT NULL,
     is_deleted boolean NOT NULL
 );
@@ -1067,7 +1115,11 @@ CREATE TABLE public."user" (
     role character varying,
     balance money,
     name character varying(50),
-    discount_id integer DEFAULT 6 NOT NULL
+    discount_id integer DEFAULT 6 NOT NULL,
+    birthday date NOT NULL,
+    passport character varying NOT NULL,
+    photo_id integer DEFAULT 14 NOT NULL,
+    CONSTRAINT ck_passport_format CHECK (((passport)::text ~ '^\d{10}$'::text))
 );
 
 
@@ -1089,7 +1141,7 @@ ALTER TABLE public."user" ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 
 
 --
--- TOC entry 3597 (class 0 OID 16405)
+-- TOC entry 3603 (class 0 OID 16405)
 -- Dependencies: 219
 -- Data for Name: aircraft; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1103,7 +1155,7 @@ COPY public.aircraft (id, model, type, total_place, photo_id) FROM stdin;
 
 
 --
--- TOC entry 3599 (class 0 OID 16414)
+-- TOC entry 3605 (class 0 OID 16414)
 -- Dependencies: 221
 -- Data for Name: airline; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1116,7 +1168,7 @@ COPY public.airline (id, name) FROM stdin;
 
 
 --
--- TOC entry 3602 (class 0 OID 16421)
+-- TOC entry 3608 (class 0 OID 16421)
 -- Dependencies: 224
 -- Data for Name: discount; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1130,23 +1182,23 @@ COPY public.discount (id, name, discount_size, description) FROM stdin;
 
 
 --
--- TOC entry 3604 (class 0 OID 16429)
+-- TOC entry 3610 (class 0 OID 16429)
 -- Dependencies: 226
 -- Data for Name: flight; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.flight (id, flight_number, departure_place, departure_time, destination_place, arrival_time, aircraft_id, airline_id, is_canceled, price) FROM stdin;
 32	102	17	2024-10-07 17:00:00	15	2024-10-08 15:00:00	27	2	f	45000
-34	133	16	2024-02-19 22:00:00	17	2024-02-20 06:00:00	27	2	f	22800
-33	100	19	2024-02-03 20:15:00	17	2024-02-04 05:00:00	27	1	f	27000
-35	106	16	2024-09-01 07:30:00	18	2024-09-02 02:02:00	28	1	t	22800
 29	101	16	2024-09-01 19:00:00	18	2024-09-02 17:00:00	29	3	f	50000
+33	100	19	2024-02-03 20:15:00	17	2024-02-04 05:00:00	27	1	f	27000
+34	133	16	2024-02-19 22:00:00	17	2024-02-20 06:00:00	27	2	f	22800
 36	150	17	2026-01-15 22:00:00	15	2026-01-16 08:25:00	27	2	f	32000
+35	106	16	2024-09-01 07:30:00	18	2024-09-02 02:02:00	28	1	t	22800
 \.
 
 
 --
--- TOC entry 3605 (class 0 OID 16446)
+-- TOC entry 3611 (class 0 OID 16446)
 -- Dependencies: 227
 -- Data for Name: flight_class; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1159,13 +1211,12 @@ COPY public.flight_class (id, class_name) FROM stdin;
 
 
 --
--- TOC entry 3608 (class 0 OID 16453)
+-- TOC entry 3614 (class 0 OID 16453)
 -- Dependencies: 230
 -- Data for Name: photo; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.photo (id, name, url_path, is_deleted) FROM stdin;
-1	Удаленное фото	https://www.sknis.gov.kn/wp-content/uploads/2018/05/removed-occupations-australia-2017.jpg	f
 3	Boeing-737	https://i.imgur.com/vzk3CoP.jpeg	f
 4	Gulfstream IVSP	https://i.imgur.com/wxyEuRK.jpeg	f
 5	США - Сан-Диего (Сан-Диего, штат Калифорния)	https://i.imgur.com/Ls1WqFj.jpeg	f
@@ -1174,11 +1225,14 @@ COPY public.photo (id, name, url_path, is_deleted) FROM stdin;
 8	Россия - Москва (Внуково)	https://i.imgur.com/OvM15c0.jpeg	f
 2	ИЛ-86	https://i.imgur.com/WyEhqyU.png	f
 9	Россия - Екатеринбург (Кольцово)	https://i.imgur.com/kEpRFqp.jpeg	f
+29	avatar_da243b1f2af22837d2537f19741d3191f523e81c0a59eef209bc9c4f2adcbbb3	https://avatars.fastly.steamstatic.com/ac1a69c9897d60d20a0b3cf639f209867a465f12_full.jpg	f
+1	removed_photo	https://www.sknis.gov.kn/wp-content/uploads/2018/05/removed-occupations-australia-2017.jpg	f
+14	no_avatar	https://i.imgur.com/mGH0Gwe.png	f
 \.
 
 
 --
--- TOC entry 3610 (class 0 OID 16461)
+-- TOC entry 3616 (class 0 OID 16461)
 -- Dependencies: 232
 -- Data for Name: place; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1193,7 +1247,7 @@ COPY public.place (id, name, description, photo_id) FROM stdin;
 
 
 --
--- TOC entry 3612 (class 0 OID 16470)
+-- TOC entry 3618 (class 0 OID 16470)
 -- Dependencies: 234
 -- Data for Name: ticket; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1207,26 +1261,26 @@ COPY public.ticket (id, flight_id, class_id, place_number, discount_id, is_sold,
 155	33	3	3	1	t	4
 158	29	2	7	6	f	\N
 156	29	1	1	6	t	7
-162	36	1	7	2	f	\N
+162	36	1	7	2	t	7
 \.
 
 
 --
--- TOC entry 3614 (class 0 OID 16480)
+-- TOC entry 3620 (class 0 OID 16480)
 -- Dependencies: 236
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."user" (id, password, login, role, balance, name, discount_id) FROM stdin;
-1	123	user1	dispatcher	0,00 ₽	Диспетчер (Служебный аккаунт)	6
-2	321	user2	admin	0,00 ₽	Администратор (Служебный аккаунт)	6
-4	456	client1	user	50 233,50 ₽	Иванов Андрей Викторович	6
-7	777	client2	user	43 000,00 ₽	Петров Геннадий Константинович	2
+COPY public."user" (id, password, login, role, balance, name, discount_id, birthday, passport, photo_id) FROM stdin;
+7	777	client2	user	69,00 ₽	Петров Геннадий Константинович	2	1991-04-15	4516123457	29
+1	123	user1	dispatcher	0,00 ₽	Диспетчер (Служебный аккаунт)	6	1970-01-01	4516123459	14
+2	321	user2	admin	0,00 ₽	Администратор (Служебный аккаунт)	6	1970-01-01	4516123452	14
+4	456	client1	user	50 235,50 ₽	Иванов Андрей Викторович	6	1996-07-03	4516123456	14
 \.
 
 
 --
--- TOC entry 3622 (class 0 OID 0)
+-- TOC entry 3628 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: aircraft_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1235,7 +1289,7 @@ SELECT pg_catalog.setval('public.aircraft_id_seq', 30, true);
 
 
 --
--- TOC entry 3623 (class 0 OID 0)
+-- TOC entry 3629 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: airline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1244,7 +1298,7 @@ SELECT pg_catalog.setval('public.airline_id_seq', 8, true);
 
 
 --
--- TOC entry 3624 (class 0 OID 0)
+-- TOC entry 3630 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: code_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1253,7 +1307,7 @@ SELECT pg_catalog.setval('public.code_seq', 1, false);
 
 
 --
--- TOC entry 3625 (class 0 OID 0)
+-- TOC entry 3631 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: discount_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1262,7 +1316,7 @@ SELECT pg_catalog.setval('public.discount_id_seq', 9, true);
 
 
 --
--- TOC entry 3626 (class 0 OID 0)
+-- TOC entry 3632 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: flight_class_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1271,7 +1325,7 @@ SELECT pg_catalog.setval('public.flight_class_id_seq', 7, true);
 
 
 --
--- TOC entry 3627 (class 0 OID 0)
+-- TOC entry 3633 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: flight_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1280,16 +1334,16 @@ SELECT pg_catalog.setval('public.flight_id_seq', 36, true);
 
 
 --
--- TOC entry 3628 (class 0 OID 0)
+-- TOC entry 3634 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: photo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.photo_id_seq', 13, true);
+SELECT pg_catalog.setval('public.photo_id_seq', 29, true);
 
 
 --
--- TOC entry 3629 (class 0 OID 0)
+-- TOC entry 3635 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: place_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1298,7 +1352,7 @@ SELECT pg_catalog.setval('public.place_id_seq', 19, true);
 
 
 --
--- TOC entry 3630 (class 0 OID 0)
+-- TOC entry 3636 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: ticket_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1307,16 +1361,16 @@ SELECT pg_catalog.setval('public.ticket_id_seq', 162, true);
 
 
 --
--- TOC entry 3631 (class 0 OID 0)
+-- TOC entry 3637 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 56, true);
+SELECT pg_catalog.setval('public.user_id_seq', 76, true);
 
 
 --
--- TOC entry 3400 (class 2606 OID 16490)
+-- TOC entry 3403 (class 2606 OID 16490)
 -- Name: aircraft aircraft_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1325,7 +1379,7 @@ ALTER TABLE ONLY public.aircraft
 
 
 --
--- TOC entry 3404 (class 2606 OID 16492)
+-- TOC entry 3407 (class 2606 OID 16492)
 -- Name: airline airline_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1334,7 +1388,7 @@ ALTER TABLE ONLY public.airline
 
 
 --
--- TOC entry 3418 (class 2606 OID 16494)
+-- TOC entry 3421 (class 2606 OID 32813)
 -- Name: photo ck_unique_name; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1343,7 +1397,7 @@ ALTER TABLE ONLY public.photo
 
 
 --
--- TOC entry 3420 (class 2606 OID 16496)
+-- TOC entry 3423 (class 2606 OID 16496)
 -- Name: photo ck_unique_urlpath; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1352,7 +1406,7 @@ ALTER TABLE ONLY public.photo
 
 
 --
--- TOC entry 3407 (class 2606 OID 16498)
+-- TOC entry 3410 (class 2606 OID 16498)
 -- Name: discount discount_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1361,7 +1415,7 @@ ALTER TABLE ONLY public.discount
 
 
 --
--- TOC entry 3415 (class 2606 OID 16500)
+-- TOC entry 3418 (class 2606 OID 16500)
 -- Name: flight_class flight_class_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1370,7 +1424,7 @@ ALTER TABLE ONLY public.flight_class
 
 
 --
--- TOC entry 3410 (class 2606 OID 16502)
+-- TOC entry 3413 (class 2606 OID 16502)
 -- Name: flight flight_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1379,7 +1433,7 @@ ALTER TABLE ONLY public.flight
 
 
 --
--- TOC entry 3422 (class 2606 OID 16504)
+-- TOC entry 3425 (class 2606 OID 16504)
 -- Name: photo photo_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1388,7 +1442,7 @@ ALTER TABLE ONLY public.photo
 
 
 --
--- TOC entry 3426 (class 2606 OID 16506)
+-- TOC entry 3429 (class 2606 OID 16506)
 -- Name: place place_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1397,7 +1451,7 @@ ALTER TABLE ONLY public.place
 
 
 --
--- TOC entry 3429 (class 2606 OID 16508)
+-- TOC entry 3432 (class 2606 OID 16508)
 -- Name: ticket ticket_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1406,7 +1460,16 @@ ALTER TABLE ONLY public.ticket
 
 
 --
--- TOC entry 3431 (class 2606 OID 16510)
+-- TOC entry 3434 (class 2606 OID 32806)
+-- Name: user uc_passport; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT uc_passport UNIQUE (passport);
+
+
+--
+-- TOC entry 3436 (class 2606 OID 16510)
 -- Name: user user_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1415,7 +1478,7 @@ ALTER TABLE ONLY public."user"
 
 
 --
--- TOC entry 3433 (class 2606 OID 24582)
+-- TOC entry 3438 (class 2606 OID 24582)
 -- Name: user user_unique_login; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1424,7 +1487,7 @@ ALTER TABLE ONLY public."user"
 
 
 --
--- TOC entry 3411 (class 1259 OID 16513)
+-- TOC entry 3414 (class 1259 OID 16513)
 -- Name: flight_uniqueflightnumber; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1432,7 +1495,7 @@ CREATE UNIQUE INDEX flight_uniqueflightnumber ON public.flight USING btree (flig
 
 
 --
--- TOC entry 3405 (class 1259 OID 16514)
+-- TOC entry 3408 (class 1259 OID 16514)
 -- Name: idx_unique_airline_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1440,7 +1503,7 @@ CREATE UNIQUE INDEX idx_unique_airline_name ON public.airline USING btree (name)
 
 
 --
--- TOC entry 3412 (class 1259 OID 16515)
+-- TOC entry 3415 (class 1259 OID 16515)
 -- Name: idx_unique_departureplace_departure_time; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1448,7 +1511,7 @@ CREATE UNIQUE INDEX idx_unique_departureplace_departure_time ON public.flight US
 
 
 --
--- TOC entry 3413 (class 1259 OID 16516)
+-- TOC entry 3416 (class 1259 OID 16516)
 -- Name: idx_unique_destplace_arrival_time; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1456,7 +1519,7 @@ CREATE UNIQUE INDEX idx_unique_destplace_arrival_time ON public.flight USING btr
 
 
 --
--- TOC entry 3408 (class 1259 OID 16517)
+-- TOC entry 3411 (class 1259 OID 16517)
 -- Name: idx_unique_discount_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1464,7 +1527,7 @@ CREATE UNIQUE INDEX idx_unique_discount_name ON public.discount USING btree (nam
 
 
 --
--- TOC entry 3416 (class 1259 OID 16518)
+-- TOC entry 3419 (class 1259 OID 16518)
 -- Name: idx_unique_flightclass_name; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1472,7 +1535,7 @@ CREATE UNIQUE INDEX idx_unique_flightclass_name ON public.flight_class USING btr
 
 
 --
--- TOC entry 3427 (class 1259 OID 16519)
+-- TOC entry 3430 (class 1259 OID 16519)
 -- Name: idx_unique_flightid_placenumber; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1480,7 +1543,7 @@ CREATE UNIQUE INDEX idx_unique_flightid_placenumber ON public.ticket USING btree
 
 
 --
--- TOC entry 3401 (class 1259 OID 16520)
+-- TOC entry 3404 (class 1259 OID 16520)
 -- Name: idx_unique_model; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1488,7 +1551,7 @@ CREATE UNIQUE INDEX idx_unique_model ON public.aircraft USING btree (model);
 
 
 --
--- TOC entry 3423 (class 1259 OID 16521)
+-- TOC entry 3426 (class 1259 OID 16521)
 -- Name: idx_unique_name_description; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1496,7 +1559,7 @@ CREATE UNIQUE INDEX idx_unique_name_description ON public.place USING btree (nam
 
 
 --
--- TOC entry 3402 (class 1259 OID 16522)
+-- TOC entry 3405 (class 1259 OID 16522)
 -- Name: photo_unique_photo_aircraft; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1504,7 +1567,7 @@ CREATE UNIQUE INDEX photo_unique_photo_aircraft ON public.aircraft USING btree (
 
 
 --
--- TOC entry 3424 (class 1259 OID 16523)
+-- TOC entry 3427 (class 1259 OID 16523)
 -- Name: photo_unique_photo_place; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1512,7 +1575,7 @@ CREATE UNIQUE INDEX photo_unique_photo_place ON public.place USING btree (photo_
 
 
 --
--- TOC entry 3445 (class 2620 OID 16524)
+-- TOC entry 3451 (class 2620 OID 16524)
 -- Name: aircraft triger_update_flight_aircraft; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1520,7 +1583,7 @@ CREATE TRIGGER triger_update_flight_aircraft AFTER UPDATE ON public.aircraft FOR
 
 
 --
--- TOC entry 3448 (class 2620 OID 16525)
+-- TOC entry 3454 (class 2620 OID 16525)
 -- Name: ticket triger_update_flight_ticket; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1528,7 +1591,7 @@ CREATE TRIGGER triger_update_flight_ticket AFTER INSERT OR DELETE OR UPDATE ON p
 
 
 --
--- TOC entry 3449 (class 2620 OID 16526)
+-- TOC entry 3455 (class 2620 OID 16526)
 -- Name: ticket trigger_compare_ticket_limit_by_flight; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1536,7 +1599,7 @@ CREATE TRIGGER trigger_compare_ticket_limit_by_flight BEFORE INSERT ON public.ti
 
 
 --
--- TOC entry 3446 (class 2620 OID 16527)
+-- TOC entry 3452 (class 2620 OID 16527)
 -- Name: aircraft trigger_constraint_aircraft_incorrect_totalplace; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1544,7 +1607,7 @@ CREATE TRIGGER trigger_constraint_aircraft_incorrect_totalplace AFTER UPDATE ON 
 
 
 --
--- TOC entry 3447 (class 2620 OID 16528)
+-- TOC entry 3453 (class 2620 OID 16528)
 -- Name: photo trigger_update_deleted_photo_info; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1552,7 +1615,7 @@ CREATE TRIGGER trigger_update_deleted_photo_info AFTER UPDATE ON public.photo FO
 
 
 --
--- TOC entry 3434 (class 2606 OID 16529)
+-- TOC entry 3439 (class 2606 OID 16529)
 -- Name: aircraft aircraft_photo_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1561,7 +1624,7 @@ ALTER TABLE ONLY public.aircraft
 
 
 --
--- TOC entry 3435 (class 2606 OID 16534)
+-- TOC entry 3440 (class 2606 OID 16534)
 -- Name: flight fk_flight_aircraft_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1570,7 +1633,7 @@ ALTER TABLE ONLY public.flight
 
 
 --
--- TOC entry 3436 (class 2606 OID 16539)
+-- TOC entry 3441 (class 2606 OID 16539)
 -- Name: flight fk_flight_departure_place; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1579,7 +1642,7 @@ ALTER TABLE ONLY public.flight
 
 
 --
--- TOC entry 3437 (class 2606 OID 16544)
+-- TOC entry 3442 (class 2606 OID 16544)
 -- Name: flight fk_flight_destination_place; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1588,7 +1651,7 @@ ALTER TABLE ONLY public.flight
 
 
 --
--- TOC entry 3440 (class 2606 OID 16549)
+-- TOC entry 3445 (class 2606 OID 16549)
 -- Name: ticket fk_ticket_classid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1597,7 +1660,7 @@ ALTER TABLE ONLY public.ticket
 
 
 --
--- TOC entry 3441 (class 2606 OID 16554)
+-- TOC entry 3446 (class 2606 OID 16554)
 -- Name: ticket fk_ticket_discountid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1606,7 +1669,7 @@ ALTER TABLE ONLY public.ticket
 
 
 --
--- TOC entry 3442 (class 2606 OID 16559)
+-- TOC entry 3447 (class 2606 OID 16559)
 -- Name: ticket fk_ticket_flight_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1615,7 +1678,7 @@ ALTER TABLE ONLY public.ticket
 
 
 --
--- TOC entry 3443 (class 2606 OID 24590)
+-- TOC entry 3448 (class 2606 OID 24590)
 -- Name: ticket fk_ticket_userid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1624,7 +1687,7 @@ ALTER TABLE ONLY public.ticket
 
 
 --
--- TOC entry 3438 (class 2606 OID 16564)
+-- TOC entry 3443 (class 2606 OID 16564)
 -- Name: flight flight_airline_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1633,7 +1696,7 @@ ALTER TABLE ONLY public.flight
 
 
 --
--- TOC entry 3439 (class 2606 OID 16569)
+-- TOC entry 3444 (class 2606 OID 16569)
 -- Name: place place_photo_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1642,7 +1705,7 @@ ALTER TABLE ONLY public.place
 
 
 --
--- TOC entry 3444 (class 2606 OID 24605)
+-- TOC entry 3449 (class 2606 OID 24605)
 -- Name: user user_discount_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1650,13 +1713,22 @@ ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_discount_id_fkey FOREIGN KEY (discount_id) REFERENCES public.discount(id);
 
 
--- Completed on 2026-01-12 19:50:39 +05
+--
+-- TOC entry 3450 (class 2606 OID 32797)
+-- Name: user user_photo_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT user_photo_id_fkey FOREIGN KEY (photo_id) REFERENCES public.photo(id);
+
+
+-- Completed on 2026-01-13 20:34:19 +05
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict xRAEmeVKcRSd5MYsSxP6P0sYwTIMuY91cgSxJCeNkoZSSIgBOCdZ4IcMuwu70GH
+\unrestrict 3C0YDsPc2KgWeOS3HabtnrEywtLc4h6InNYmjOS18vxMeSklAyITLTd9Kqcu1IX
 
 --
 -- Database "postgres" dump
@@ -1668,12 +1740,12 @@ ALTER TABLE ONLY public."user"
 -- PostgreSQL database dump
 --
 
-\restrict CtouhPIfW7XiPjYo9O4vMQbkpjbaduuxfbmEYQ5SIVjtxUoScms1JUeVMWaZxKR
+\restrict Cnhhc14669ammobnPMBTguccrGBLFpEKfdXuIfz1Dkox6VsmnmTiEykQBQWFZxZ
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-01-12 19:50:39 +05
+-- Started on 2026-01-13 20:34:19 +05
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1687,15 +1759,15 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
--- Completed on 2026-01-12 19:50:40 +05
+-- Completed on 2026-01-13 20:34:19 +05
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict CtouhPIfW7XiPjYo9O4vMQbkpjbaduuxfbmEYQ5SIVjtxUoScms1JUeVMWaZxKR
+\unrestrict Cnhhc14669ammobnPMBTguccrGBLFpEKfdXuIfz1Dkox6VsmnmTiEykQBQWFZxZ
 
--- Completed on 2026-01-12 19:50:40 +05
+-- Completed on 2026-01-13 20:34:19 +05
 
 --
 -- PostgreSQL database cluster dump complete
