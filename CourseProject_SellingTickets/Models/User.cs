@@ -30,8 +30,18 @@ public class User : ReactiveObject
     private decimal _balance;
     public decimal Balance { get => _balance; set => this.RaiseAndSetIfChanged(ref _balance, value); }
 
+    private DateTime _birthDay;
+    public DateTime BirthDay { get => _birthDay; set => this.RaiseAndSetIfChanged(ref _birthDay, value); }
+    
+    private string _passport;
+    public string Passport { get => _passport; set => this.RaiseAndSetIfChanged(ref _passport, value); }
+
+    
     private Discount _discount;
     public Discount Discount { get => _discount; set => this.RaiseAndSetIfChanged(ref _discount, value); }
+
+    private Photo _photo;
+    public Photo Photo { get => _photo; set => this.RaiseAndSetIfChanged(ref _photo, value); }
     
     public User()
     {
@@ -40,13 +50,17 @@ public class User : ReactiveObject
         Role = "user";
         Password = String.Empty;
         Balance = 0;
+        BirthDay = DateTime.Now;
+        Passport = "0000000000";
         Discount = new Discount();
+        Photo = new Photo();
     }
     
     public User(
         Int64 id, string login, string name, 
         string role, string password, decimal balance,
-        Discount discount
+        DateTime birthDay, string passport,
+        Discount discount, Photo photo
         )
     {
         Id = id;
@@ -55,7 +69,10 @@ public class User : ReactiveObject
         Role = role;
         Password = password;
         Balance = balance;
+        BirthDay = birthDay;
+        Passport = passport;
         Discount = discount;
+        Photo = photo;
     }
 
     public override bool Equals(object? obj)

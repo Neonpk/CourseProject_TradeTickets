@@ -219,7 +219,7 @@
                                                             IsVisible="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).TicketUserVmParam, Converter={x:Static ObjectConverters.IsNull}}">
                                                     </Button>
                                                     
-                                                    <Button Content="Бронировать"
+                                                    <Button Grid.Row="0" Content="Бронировать"
                                                             IsVisible="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).TicketUserVmParam, Converter={x:Static ObjectConverters.IsNotNull}}"
                                                             Command="{Binding Path=$parent[DataGrid].((vm:TicketUserViewModel)DataContext).BookTicketCommand}"
                                                             />
@@ -449,10 +449,15 @@
                         >
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Id, StringFormat={}(Номер: {0}) }"/>
-                                        <TextBlock Text="{Binding Name}" />
-                                    </StackPanel>
+                                    <Grid ColumnDefinitions="32,*">
+                                        <Image Source="{Binding Photo.BitMapFromUrl^}" 
+                                               Height="32" Width="32" 
+                                               Grid.Column="0" Margin="0 0 10 0"/>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Id, StringFormat={}(Номер: {0}) }"/>
+                                            <TextBlock Text="{Binding Name}" />
+                                        </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>

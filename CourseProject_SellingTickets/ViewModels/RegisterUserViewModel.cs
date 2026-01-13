@@ -46,6 +46,12 @@ public class RegisterUserViewModel : ViewModelBase, IValidatableViewModel
     private string _name = String.Empty; 
     public string Name { get => _name; set => this.RaiseAndSetIfChanged(ref _name, value); }
 
+    private DateTime? _birthDay;
+    public DateTime? BirthDay { get => _birthDay; set => this.RaiseAndSetIfChanged(ref _birthDay, value); }
+    
+    private string _passport = String.Empty;
+    public string Passport { get => _passport; set => this.RaiseAndSetIfChanged(ref _passport, value); }
+    
     private string _password = String.Empty;
     public string Password { get => _password; set => this.RaiseAndSetIfChanged(ref _password, value); }
 

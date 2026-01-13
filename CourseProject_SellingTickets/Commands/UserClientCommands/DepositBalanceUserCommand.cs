@@ -36,7 +36,7 @@ public class DepositBalanceUserCommand : ReactiveCommand<Unit, Task>
         
         if (result.IsSuccess)
         {
-            clientBalanceUserVm.DepositBalanceMsg = result.Value;
+            clientBalanceUserVm.DepositBalanceMsg = result.Value!;
             await clientBalanceUserVm.LoadUserDataCommand.Execute();
         }
         else

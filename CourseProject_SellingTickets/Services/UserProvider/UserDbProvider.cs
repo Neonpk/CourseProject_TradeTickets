@@ -44,6 +44,7 @@ public class UserDbProvider : IUserDbProvider
                     Where(x => x.Login.Equals(login)).
                     AsNoTracking(). 
                     Include(x => x.Discount).
+                    Include(x => x.Photo).
                     Include(x => x.Tickets).
                     FirstOrDefaultAsync();
 
@@ -61,6 +62,7 @@ public class UserDbProvider : IUserDbProvider
             IEnumerable<UserDTO> userDtos = await context.Users.
                 AsNoTracking().
                 Include(x => x.Discount).
+                Include(x => x.Photo).
                 Include(x => x.Tickets).
                 ToListAsync();
             
@@ -78,6 +80,7 @@ public class UserDbProvider : IUserDbProvider
                 TakeOrDefault(topRows).
                 AsNoTracking().
                 Include(x => x.Discount).
+                Include(x => x.Photo).
                 Include(x => x.Tickets).
                 ToListAsync();
 
@@ -143,7 +146,10 @@ public class UserDbProvider : IUserDbProvider
             userDto.Role,
             userDto.Password,
             userDto.Balance,
-            new Discount(userDto.Discount.Id, userDto.Discount.Name, userDto.Discount.DiscountSize,  userDto.Discount.Description)
+            userDto.BirthDay,
+            userDto.Passport,
+            new Discount(userDto.Discount.Id, userDto.Discount.Name, userDto.Discount.DiscountSize,  userDto.Discount.Description),
+            new Photo(userDto.Photo.Id, userDto.Photo.Name, userDto.Photo.UrlPath, userDto.Photo.IsDeleted)
         );
     }
     
@@ -157,7 +163,10 @@ public class UserDbProvider : IUserDbProvider
             Role = user.Role,
             Password = user.Password,
             Balance = user.Balance,
-            DiscountId = user.Discount.Id
+            DiscountId = user.Discount.Id,
+            BirthDay = user.BirthDay,
+            Passport = user.Passport,
+            PhotoId = user.Photo.Id
         };
         
         return userDto;

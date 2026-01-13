@@ -11,5 +11,9 @@ public class UserConfiguration : IEntityTypeConfiguration<UserDTO>
         builder.Property(x => x.DiscountId).
                 HasDefaultValueSql().
                 ValueGeneratedOnAdd();
+
+        builder.Property(x => x.PhotoId).
+                HasDefaultValue().
+                ValueGeneratedOnAdd();
     }
 }

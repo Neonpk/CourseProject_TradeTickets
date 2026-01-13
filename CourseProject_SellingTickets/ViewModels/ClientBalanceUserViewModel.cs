@@ -31,25 +31,34 @@ public class ClientBalanceUserViewModel : ViewModelBase, IParameterReceiver
     private string _discountText = String.Empty; 
     public string DiscountText { get => _discountText; set => this.RaiseAndSetIfChanged(ref _discountText, value); }
     
+    private DateTime _birthDay;
+    public DateTime BirthDay { get => _birthDay; set => this.RaiseAndSetIfChanged(ref _birthDay, value); }
+    
+    private string _passport = String.Empty;
+    public string Passport { get => _passport; set => this.RaiseAndSetIfChanged(ref _passport, value); }
+    
     private decimal _balance;
     public decimal Balance { get => _balance; set => this.RaiseAndSetIfChanged(ref _balance, value); }
     
     private decimal _amount;
     public decimal Amount { get => _amount; set => this.RaiseAndSetIfChanged(ref _amount, value); }
 
+    private Photo? _photo;
+    public Photo? Photo { get => _photo; set => this.RaiseAndSetIfChanged(ref _photo, value); }
+    
     private ResultStatus _resultDepositBalance; 
     public ResultStatus ResultDepositBalance { get => _resultDepositBalance; set => this.RaiseAndSetIfChanged(ref _resultDepositBalance, value); }
 
-    private string? _depositBalanceMsg;
-    public string? DepositBalanceMsg { get => _depositBalanceMsg; set => this.RaiseAndSetIfChanged(ref _depositBalanceMsg, value); }
+    private string _depositBalanceMsg = String.Empty;
+    public string DepositBalanceMsg { get => _depositBalanceMsg; set => this.RaiseAndSetIfChanged(ref _depositBalanceMsg, value); }
     
-    private string? _errorMessage;
-    public string? ErrorMessage { get => _errorMessage; set { this.RaiseAndSetIfChanged(ref _errorMessage, value); this.RaisePropertyChanged(nameof(HasErrorMessage)); } }
+    private string _errorMessage = String.Empty;
+    public string ErrorMessage { get => _errorMessage; set { this.RaiseAndSetIfChanged(ref _errorMessage, value); this.RaisePropertyChanged(nameof(HasErrorMessage)); } }
 
     public bool HasErrorMessage => !string.IsNullOrEmpty(ErrorMessage);
     
-    private bool? _isLoading;
-    public bool? IsLoading { get => _isLoading; set => this.RaiseAndSetIfChanged(ref _isLoading, value); }
+    private bool _isLoading;
+    public bool IsLoading { get => _isLoading; set => this.RaiseAndSetIfChanged(ref _isLoading, value); }
 
     // Commands
 

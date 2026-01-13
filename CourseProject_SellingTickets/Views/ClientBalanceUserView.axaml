@@ -43,7 +43,8 @@
                   Margin="10">
                 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="250"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
         
@@ -52,35 +53,69 @@
                     <RowDefinition MaxHeight="35"/>
                     <RowDefinition MaxHeight="35"/>
                     <RowDefinition MaxHeight="35"/>
+                    <RowDefinition MaxHeight="35"/>
+                    <RowDefinition MaxHeight="35"/>
                 </Grid.RowDefinitions>
         
-        
+                <Border Grid.Column="0" 
+                        Grid.RowSpan="5"
+                        BorderThickness="2" 
+                        CornerRadius="5"
+                        >
+                    <Border.Background>
+                        <ImageBrush Stretch="Fill" 
+                                    Source="{Binding Photo.BitMapFromUrl^, Mode=OneTime}" /> 
+                    </Border.Background>   
+                </Border>
+                
+                <Button Content="Изменить аватар" 
+                        Grid.Column="0" Grid.Row="5" 
+                        Margin="0 0 10 0"
+                        HorizontalContentAlignment="Center"
+                        HorizontalAlignment="Stretch" />
+                
                 <Label Content="Имя: " 
-                       Grid.Column="0" 
+                       Grid.Column="1" 
                        Grid.Row="0" />
         
                 <Label Content="{Binding UserName}" 
-                       Grid.Column="1"
+                       Grid.Column="2"
                        Grid.Row="0" />
-        
-                <Label Content="Баланс: " 
-                       Grid.Column="0" 
+                
+                <Label Content="Дата рождения: " 
+                       Grid.Column="1" 
                        Grid.Row="1" />
         
-                <Label Content="{Binding Balance}" 
-                       Grid.Column="1"
+                <Label Content="{Binding BirthDay}" 
+                       Grid.Column="2"
                        Grid.Row="1" />
                 
-                <Label Content="Ваша скидка: " 
-                       Grid.Column="0" 
+                <Label Content="Паспортные данные: " 
+                       Grid.Column="1" 
                        Grid.Row="2" />
+        
+                <Label Content="{Binding Passport}" 
+                       Grid.Column="2"
+                       Grid.Row="2" />
+        
+                <Label Content="Баланс: " 
+                       Grid.Column="1" 
+                       Grid.Row="3" />
+        
+                <Label Content="{Binding Balance}" 
+                       Grid.Column="2"
+                       Grid.Row="3" />
+                
+                <Label Content="Ваша скидка: " 
+                       Grid.Column="1" 
+                       Grid.Row="4" />
         
                 <Label Content="{Binding DiscountText}" 
-                       Grid.Column="1"
-                       Grid.Row="2" />
+                       Grid.Column="2"
+                       Grid.Row="4" />
         
-                <StackPanel Grid.Column="0" 
-                            Grid.Row="3" 
+                <StackPanel Grid.Column="1" 
+                            Grid.Row="5" 
                             Grid.ColumnSpan="2" 
                             Orientation="Horizontal">
             

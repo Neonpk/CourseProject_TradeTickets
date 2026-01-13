@@ -23,9 +23,15 @@ public static class RegisterUserRulesExtensions
                 "^(?:[А-Я]{1}[а-я]{2,15}\\s[А-Я]{1}[а-я]{1,15}\\s[А-Я]{1}[а-я]{5,15})$|^(?:[A-Z]{1}[a-z]{2,15}\\s[A-Z]{1}[a-z]{1,15}\\s[A-Z]{1}[a-z]{5,15})$"), 
             "[=>] Пример ФИО: Петров Андрей Иванович или Petrov Andrey Ivanovich.");
 
+        self.ValidationRule(x => x.BirthDay, x => x.HasValue && x.Value < DateTime.Today, 
+            "[=>] Дата рождения не указана.");
+        
+        self.ValidationRule(x => x.Passport, x => Regex.IsMatch(x!, "^\\d{10}$"),
+            "[=>] Паспортные данные должны содержать 10 цифр без пробелов");
+        
         self.ValidationRule(x => x.Password, x => Regex.IsMatch(x!, "[A-Za-z0-9]{5,30}"),
             "[=>] Пароль должен быть от 5 до 30 символов.");
-
+        
         self.ValidationRule(x => x.ConfirmPassword, passwordObservable, "[=>] Пароли должны быть идентичны.");
         
         self.ValidationContext.Changed.

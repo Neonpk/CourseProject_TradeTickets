@@ -41,6 +41,8 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.Aircraft!.Photo ).
                 Include( x => x.User).
                     ThenInclude(u => u!.Discount).
+                 Include(x => x.User). 
+                    ThenInclude(u => u!.Photo).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -67,6 +69,8 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.Aircraft!.Photo ).
                 Include( x => x.User).
                     ThenInclude(u => u!.Discount).
+                Include(x => x.User). 
+                    ThenInclude(u => u!.Photo).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -94,6 +98,8 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.Aircraft!.Photo ).
                 Include( x => x.User).
                     ThenInclude(u => u!.Discount).
+                Include(x => x.User). 
+                    ThenInclude(u => u!.Photo).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -122,6 +128,8 @@ public class TicketDbProvider : ITicketDbProvider
                 Include( x => x.Flight.Aircraft!.Photo ).
                 Include( x => x.User).
                     ThenInclude(u => u!.Discount).
+                Include(x => x.User). 
+                    ThenInclude(u => u!.Photo).
                 ToListAsync();
 
             return ticketDtos.Select(ticket => ToTicket(ticket));
@@ -216,7 +224,10 @@ public class TicketDbProvider : ITicketDbProvider
                 ticketDto.User.Role, 
                 ticketDto.User.Password, 
                 ticketDto.User.Balance,
-                new Discount( ticketDto.User.Discount.Id, ticketDto.User.Discount.Name, ticketDto.User.Discount.DiscountSize, ticketDto.User.Discount.Description )
+                ticketDto.User.BirthDay,
+                ticketDto.User.Passport,
+                new Discount( ticketDto.User.Discount.Id, ticketDto.User.Discount.Name, ticketDto.User.Discount.DiscountSize, ticketDto.User.Discount.Description ),
+                new Photo(ticketDto.User.Photo.Id, ticketDto.User.Photo.Name, ticketDto.User.Photo.UrlPath, ticketDto.User.Photo.IsDeleted)
                 ) : new User()
         );
     }

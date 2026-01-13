@@ -28,13 +28,25 @@ public class UserDTO
 
     [Column("balance")] 
     public required decimal Balance { get; init; }
-
+    
+    [Column("birthday")]
+    public required DateTime BirthDay { get; init; }
+    
+    [Column("passport")]
+    public required string Passport { get; init; }
+    
     [Column("discount_id")]
     [ForeignKey("Discount")]
     public required Int64 DiscountId { get; init; }
     
+    [Column("photo_id")]
+    [ForeignKey("Photo")]
+    public required Int64 PhotoId { get; init; }
+    
     // Foreign keys (Navigation)
     public virtual DiscountDTO Discount { get; init; }
+    
+    public virtual PhotoDTO Photo { get; init; }
     
     public virtual ICollection<TicketDTO> Tickets { get; private set; }
 }
