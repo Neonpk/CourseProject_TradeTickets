@@ -3,7 +3,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
-using CourseProject_SellingTickets.Interfaces.Common;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.ViewModels;

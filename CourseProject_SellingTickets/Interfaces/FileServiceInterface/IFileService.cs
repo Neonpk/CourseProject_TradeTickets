@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
-using CourseProject_SellingTickets.Interfaces.Common;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 
 namespace CourseProject_SellingTickets.Interfaces.FileServiceInterface;
 

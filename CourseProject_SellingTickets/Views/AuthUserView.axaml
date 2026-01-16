@@ -5,6 +5,7 @@
              x:DataType="vm:AuthUserViewModel"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:CourseProject_SellingTickets.Controls"
              mc:Ignorable="d" d:DesignWidth="1500" d:DesignHeight="450"
              x:Class="CourseProject_SellingTickets.Views.AuthUserView">
     
@@ -29,48 +30,61 @@
                        FontSize="25" 
                        HorizontalAlignment="Center" />
 
-                <StackPanel>
+                <Grid RowDefinitions="*, *" HorizontalAlignment="Stretch">
                     
-                    <TextBox x:Name="LoginBox" 
+                    <TextBox Grid.Row="0" x:Name="LoginBox" 
                              Height="30" FontSize="20"
+                             HorizontalAlignment="Stretch"
                              Text="{Binding Login}"
                              Watermark="Введите логин пользователя"
                              Margin="0 0 0 10"/>
                     
-                    <TextBox x:Name="PasswordBox"
+                    <TextBox Grid.Row="1" x:Name="PasswordBox"
                              Height="30" FontSize="20"
+                             HorizontalAlignment="Stretch"
                              Text="{Binding Password}"
                              PasswordChar="*" Watermark="Введите пароль." />
                     
-                </StackPanel>
+                </Grid>
 
-                <StackPanel Orientation="Horizontal">
-                
-                    <Button Content="{Binding IsLoading, Converter={StaticResource LoadingAuthButtonConverter}}" 
-                            Command="{Binding LoginCommand}"
-                            IsEnabled="True"
-                            Margin="0 10" FontSize="20">
+                <Grid ColumnDefinitions="Auto, Auto, Auto">
+                    
+                    <Button Grid.Column="0" Command="{Binding LoginCommand}"
+                            Margin="0 10" 
+                            HorizontalContentAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <controls:DoubleBounceSpinner IsActive="{Binding IsLoading}"    
+                                                          IsVisible="{Binding IsLoading}"
+                                                          Diameter="10" 
+                                                          ForegroundSpinner="White"
+                                                          Margin="0 1 5 0"/>
+                            <Label FontWeight="Bold"
+                                   Content="{Binding IsLoading, Converter={StaticResource LoadingAuthButtonConverter}}" />
+                        </StackPanel>
                     </Button>
                     
-                    <Button Content="Регистрация"
+                    <Button Grid.Column="1" Content="Регистрация"
                             Command="{Binding RegisterCommand}"
-                            Margin="10 10" FontSize="20">
+                            Margin="10 10"
+                            VerticalAlignment="Stretch"
+                            VerticalContentAlignment="Center"
+                            FontWeight="Bold">
                     </Button>
                     
-                    <Label Content="{Binding AuthState, Converter={StaticResource AuthStateConverter}, ConverterParameter='String'}" 
+                    <Label Grid.Column="2" Content="{Binding AuthState, Converter={StaticResource AuthStateConverter}, ConverterParameter='String'}" 
                            FontSize="20" 
                            Margin="15 0 0 0"
                            Foreground="{Binding AuthState, Converter={StaticResource AuthStateConverter}, ConverterParameter='Foreground'}"
                            VerticalAlignment="Center" />
                     
-                </StackPanel>
+                </Grid>
 
 
             </StackPanel>
             
         </HeaderedContentControl>
        
-        <Image  Source="/Assets/aircraft-logo.png"
+        <Image Grid.Column="0"  Source="/Assets/aircraft-logo.png"
                Margin="30" Height="250" Width="250"/>
         
    </Grid>

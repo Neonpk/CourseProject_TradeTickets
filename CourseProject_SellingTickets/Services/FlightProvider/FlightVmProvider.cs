@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
 using CourseProject_SellingTickets.Interfaces.AirlineProviderInterface;
-using CourseProject_SellingTickets.Interfaces.Common;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Models;

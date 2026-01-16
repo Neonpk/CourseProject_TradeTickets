@@ -75,6 +75,12 @@ public class User : ReactiveObject
         Photo = photo;
     }
 
+    public User CloneWithPassword(string password)
+    {
+        Password = password;
+        return this;
+    }
+    
     public override bool Equals(object? obj)
     {
         return obj is User user && Id.Equals(user.Id);

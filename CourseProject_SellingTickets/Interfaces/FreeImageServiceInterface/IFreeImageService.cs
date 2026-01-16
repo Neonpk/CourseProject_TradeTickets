@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using CourseProject_SellingTickets.Interfaces.Common;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 
 namespace CourseProject_SellingTickets.Interfaces.FreeImageServiceInterface;
 

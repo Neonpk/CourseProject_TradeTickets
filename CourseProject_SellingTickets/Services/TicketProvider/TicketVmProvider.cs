@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using CourseProject_SellingTickets.Interfaces.Common;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
 using CourseProject_SellingTickets.Interfaces.FlightClassProviderInterface;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;

@@ -12,7 +12,7 @@ public static class PhotoRulesExtensions
     {
         self.ValidationRule(x => x.Name, x => !String.IsNullOrEmpty(x?.Trim()), "[=>] Не указано имя изображения.");
         self.ValidationRule(x => x.UrlPath, x => !String.IsNullOrEmpty(x?.Trim()), "[=>] Не указана ссылка на изображение.");
-        self.ValidationRule(x => x.UrlPath, x => Regex.IsMatch(x!.Trim(), "(http[s]?:\\/\\/.*\\.(?:png|jpg|gif|svg|jpeg))"),
+        self.ValidationRule(x => x.UrlPath, x => Regex.IsMatch(x!.Trim(), "^https?:\\/\\/.*\\.(jpg|jpeg|png|webp|gif)$"),
             "[=>] Некорректный адрес изображения.");
         
         self.ValidationContext.Changed.

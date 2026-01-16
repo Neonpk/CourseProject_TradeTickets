@@ -1,6 +1,6 @@
 using CourseProject_SellingTickets.Models;
 
-namespace CourseProject_SellingTickets.Interfaces.Common;
+namespace CourseProject_SellingTickets.Interfaces.CommonInterface;
 
 public interface IResult<out TValue>
 {

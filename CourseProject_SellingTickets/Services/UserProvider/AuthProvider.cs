@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface.PasswordServiceInterface;
 using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Services.UserProvider;
@@ -9,10 +10,12 @@ namespace CourseProject_SellingTickets.Services.UserProvider;
 public class AuthProvider : IAuthProvider
 {
     private readonly IUserDbProvider _userDbProvider;
+    private readonly IPasswordService _passwordService;
     
-    public AuthProvider(IUserDbProvider userDbProvider)
+    public AuthProvider(IUserDbProvider userDbProvider, IPasswordService passwordService)
     {
         _userDbProvider = userDbProvider;
+        _passwordService = passwordService;
     }
 
     public async Task<User> GetUserById(Int64 id)
@@ -33,10 +36,24 @@ public class AuthProvider : IAuthProvider
         var filter = await _userDbProvider.GetUsersByFilter(x => x.Login.Equals(login), 1);
 
         var enumerable = filter as User[] ?? filter.ToArray();
-        if (!enumerable.Any())
-            return AuthStates.Failed;
         
-        return enumerable.First().Password.Equals(password) ? AuthStates.Success : AuthStates.Failed;
+        if (!enumerable.Any()) 
+            return AuthStates.Failed;
+
+        var user = enumerable.FirstOrDefault();
+
+        if (user is null || !_passwordService.VerifyPassword(password, user.Password))
+            return AuthStates.Failed;
+
+        if (_passwordService.NeedsRehash(user.Password))
+        {
+            user.Password = _passwordService.HashPassword(password);
+            
+            if (await _userDbProvider.CreateOrEditUser(user) == 0)
+                return AuthStates.Failed;
+        }
+        
+        return AuthStates.Success;
     }
 
     public async Task<UserRoles> GetUserRole(string login)
@@ -55,6 +72,8 @@ public class AuthProvider : IAuthProvider
 
     public async Task<int> CreateOrEditUser(User user)
     {
-        return await _userDbProvider.CreateOrEditUser(user);
+        return await _userDbProvider.CreateOrEditUser(user.CloneWithPassword(
+            _passwordService.HashPassword(user.Password))
+        );
     }
 }

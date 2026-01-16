@@ -1,7 +1,7 @@
 using System;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using CourseProject_SellingTickets.Interfaces.Common;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.Factories;
 using CourseProject_SellingTickets.Interfaces.FreeImageServiceInterface;
 using CourseProject_SellingTickets.Models.Common;

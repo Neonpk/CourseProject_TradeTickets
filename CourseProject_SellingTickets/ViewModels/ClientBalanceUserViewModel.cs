@@ -1,12 +1,11 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using CourseProject_SellingTickets.Commands.UserClientCommands;
 using CourseProject_SellingTickets.Interfaces;
-using CourseProject_SellingTickets.Interfaces.Common;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.FileServiceInterface;
 using CourseProject_SellingTickets.Interfaces.FreeImageServiceInterface;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;

@@ -8,6 +8,7 @@ using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface.PasswordServiceInterface;
 using CourseProject_SellingTickets.Services.AircraftProvider;
 using CourseProject_SellingTickets.Services.AirlineProvider;
 using CourseProject_SellingTickets.Services.DiscountProvider;
@@ -38,7 +39,11 @@ public static class AddDatabaseProvidersBootstrapperExtensions
                 new UserDbProvider(tradeTicketsDbContext!));
 
             resolver.RegisterLazySingleton<IAuthProvider>(() =>
-                new AuthProvider(service.GetService<IUserDbProvider>()!));
+                new AuthProvider(
+                    service.GetService<IUserDbProvider>()!, 
+                    service.GetService<IPasswordService>()!
+                    )
+            );
 
             // Other
 

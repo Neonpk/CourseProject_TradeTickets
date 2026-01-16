@@ -2,7 +2,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using CourseProject_SellingTickets.Interfaces.Common;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.FileServiceInterface;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Models.Common;

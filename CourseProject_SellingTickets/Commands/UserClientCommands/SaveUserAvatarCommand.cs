@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using CourseProject_SellingTickets.Interfaces.Common;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.ViewModels;
 using ReactiveUI;
