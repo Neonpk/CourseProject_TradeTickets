@@ -2,9 +2,9 @@
 -- PostgreSQL database cluster dump
 --
 
--- Started on 2026-01-16 18:49:56 +05
+-- Started on 2026-01-16 22:40:16 +05
 
-\restrict kJ4OyznElrovTbPNUr0KARHF5dYcP0z1go8H3OEkxWVTjFLLnUNntz8SL8Z6Q5q
+\restrict JH2RGg83BdHcWsiphEzAZcAdMu4LFQHreLD5aVkhwTZwUjVLthAIo4QC2abFo0z
 
 SET default_transaction_read_only = off;
 
@@ -29,7 +29,7 @@ ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION
 
 
 
-\unrestrict kJ4OyznElrovTbPNUr0KARHF5dYcP0z1go8H3OEkxWVTjFLLnUNntz8SL8Z6Q5q
+\unrestrict JH2RGg83BdHcWsiphEzAZcAdMu4LFQHreLD5aVkhwTZwUjVLthAIo4QC2abFo0z
 
 --
 -- Databases
@@ -45,12 +45,12 @@ ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION
 -- PostgreSQL database dump
 --
 
-\restrict VHJIWp9gsvEisGAXSbaMb3VZvRRwDcPB8Tv2PTCPluBwyBGGSIrtWdjC5p3XubI
+\restrict 71FzgnYqsuO2uj0jLVoQosoO5IHPLgV7boRbqy1O85sN8Pz4qXdj3Ht92imGNEa
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-01-16 18:49:56 +05
+-- Started on 2026-01-16 22:40:16 +05
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -64,13 +64,13 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
--- Completed on 2026-01-16 18:49:57 +05
+-- Completed on 2026-01-16 22:40:17 +05
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict VHJIWp9gsvEisGAXSbaMb3VZvRRwDcPB8Tv2PTCPluBwyBGGSIrtWdjC5p3XubI
+\unrestrict 71FzgnYqsuO2uj0jLVoQosoO5IHPLgV7boRbqy1O85sN8Pz4qXdj3Ht92imGNEa
 
 --
 -- Database "TradeTickets" dump
@@ -80,12 +80,12 @@ SET row_security = off;
 -- PostgreSQL database dump
 --
 
-\restrict IwT93x4rJPfkYZ2x8nl5yaPCRGsX2LW9ZBZpsWqHOBkuX5C39aSo77vb3pihB8H
+\restrict CHeKyN4q7xpSkwxnmtslomdBGaCuTTBbIugLyf2gLJzdxzZmfSmmIZld4JIjyYE
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-01-16 18:49:57 +05
+-- Started on 2026-01-16 22:40:17 +05
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -109,9 +109,9 @@ CREATE DATABASE "TradeTickets" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCAL
 
 ALTER DATABASE "TradeTickets" OWNER TO postgres;
 
-\unrestrict IwT93x4rJPfkYZ2x8nl5yaPCRGsX2LW9ZBZpsWqHOBkuX5C39aSo77vb3pihB8H
+\unrestrict CHeKyN4q7xpSkwxnmtslomdBGaCuTTBbIugLyf2gLJzdxzZmfSmmIZld4JIjyYE
 \connect "TradeTickets"
-\restrict IwT93x4rJPfkYZ2x8nl5yaPCRGsX2LW9ZBZpsWqHOBkuX5C39aSo77vb3pihB8H
+\restrict CHeKyN4q7xpSkwxnmtslomdBGaCuTTBbIugLyf2gLJzdxzZmfSmmIZld4JIjyYE
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1317,10 +1317,10 @@ COPY public.ticket (id, flight_id, class_id, place_number, discount_id, is_sold,
 --
 
 COPY public."user" (id, password, login, role, balance, name, discount_id, birthday, passport, photo_id) FROM stdin;
-7	777	client2	user	91,00 ₽	Петров Геннадий Константинович	2	1991-04-15	4516123457	29
-4	456	client1	user	50 257,50 ₽	Иванов Андрей Викторович	6	1996-07-03	4516123456	39
-1	123	user1	dispatcher	0,00 ₽	Диспетчер (Служебный аккаунт)	6	1970-01-01	4516123459	14
-2	321	user2	admin	0,00 ₽	Администратор (Служебный аккаунт)	6	1970-01-01	4516123452	14
+1	$2a$13$bu9YZESTzrELtK46nXGEUujPTKLWpRnsKtwzxtMa3aM708Dq0.uhi	user1	dispatcher	0,00 ₽	Диспетчер (Служебный аккаунт)	6	1970-01-01	4516123459	14
+7	$2a$13$xdzxfNmR35bMEMTBvhVv4.Pr0Cs64zuypk2M3238byl0f81uv6cre	client2	user	91,00 ₽	Петров Геннадий Константинович	2	1991-04-15	4516123457	29
+4	$2a$13$bm/cvtFhd8bmQyRuHymHWuM9yEhVuW.lJxuaJYAK7KsNBhQqXqRJC	client1	user	50 264,50 ₽	Иванов Андрей Викторович	6	1996-07-03	4516123456	39
+2	$2a$11$kxnFB8ljLpdUZhPRzG6aou4WGq3qO7bHIjpVONCJ741eOR2aTJf9K	user2	admin	0,00 ₽	Администратор (Служебный аккаунт)	6	1970-01-01	4516123452	14
 \.
 
 
@@ -1384,7 +1384,7 @@ SELECT pg_catalog.setval('public.flight_id_seq', 36, true);
 -- Name: photo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.photo_id_seq', 41, true);
+SELECT pg_catalog.setval('public.photo_id_seq', 54, true);
 
 
 --
@@ -1411,7 +1411,7 @@ SELECT pg_catalog.setval('public.ticket_id_seq', 162, true);
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 76, true);
+SELECT pg_catalog.setval('public.user_id_seq', 77, true);
 
 
 --
@@ -1775,13 +1775,13 @@ ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_photo_id_fkey FOREIGN KEY (photo_id) REFERENCES public.photo(id);
 
 
--- Completed on 2026-01-16 18:49:58 +05
+-- Completed on 2026-01-16 22:40:18 +05
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict IwT93x4rJPfkYZ2x8nl5yaPCRGsX2LW9ZBZpsWqHOBkuX5C39aSo77vb3pihB8H
+\unrestrict CHeKyN4q7xpSkwxnmtslomdBGaCuTTBbIugLyf2gLJzdxzZmfSmmIZld4JIjyYE
 
 --
 -- Database "postgres" dump
@@ -1793,12 +1793,12 @@ ALTER TABLE ONLY public."user"
 -- PostgreSQL database dump
 --
 
-\restrict bm0a2RRcVhGE03Z5xXuEdgOQpcUUkuiogGx0hK7MPjMSgYeaBdWQWka8Io6yGjH
+\restrict 03DhhUPKJaj9hCaJVduroQ0BYmjPLnCKyzgLKaKc8Sxs4crmhQuDBpQRx0hRpBx
 
 -- Dumped from database version 18.1
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-01-16 18:49:58 +05
+-- Started on 2026-01-16 22:40:18 +05
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1812,15 +1812,15 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
--- Completed on 2026-01-16 18:49:58 +05
+-- Completed on 2026-01-16 22:40:19 +05
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict bm0a2RRcVhGE03Z5xXuEdgOQpcUUkuiogGx0hK7MPjMSgYeaBdWQWka8Io6yGjH
+\unrestrict 03DhhUPKJaj9hCaJVduroQ0BYmjPLnCKyzgLKaKc8Sxs4crmhQuDBpQRx0hRpBx
 
--- Completed on 2026-01-16 18:49:58 +05
+-- Completed on 2026-01-16 22:40:19 +05
 
 --
 -- PostgreSQL database cluster dump complete
