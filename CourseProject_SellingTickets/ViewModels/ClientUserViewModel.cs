@@ -21,11 +21,9 @@ public class ClientUserViewModel : ViewModelBase, IParameterReceiver
     // Services 
     private INavigationService? _navigationMainService;
     public INavigationService? NavigationMainService { get => _navigationMainService; set => this.RaiseAndSetIfChanged(ref _navigationMainService, value); }
-
     
     private INavigationService? _navigationClientUserService;
-    public INavigationService? NavigationClientUserService { get => _navigationClientUserService; set => this.RaiseAndSetIfChanged(ref _navigationClientUserService, value);
-    }
+    public INavigationService? NavigationClientUserService { get => _navigationClientUserService; set => this.RaiseAndSetIfChanged(ref _navigationClientUserService, value); }
 
     // Commands (Event handlers)
     

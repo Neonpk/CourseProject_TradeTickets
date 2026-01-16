@@ -1,5 +1,4 @@
-using CourseProject_SellingTickets.Interfaces.DbContextsInterface;
-using CourseProject_SellingTickets.Models;
+using CourseProject_SellingTickets.Interfaces.Factories;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject_SellingTickets.DbContexts;

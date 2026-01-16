@@ -114,11 +114,23 @@ namespace CourseProject_SellingTickets.Models
         Failed
     }
 
+    public enum UploadFileMode
+    {
+        FromUrl = 0,
+        FromFile
+    }
+    
     public enum ResultStatus
     {
         Success = 0,
         Failure 
     }
+
+    public readonly record struct FileMeta
+    {
+        public string FileName { get; init; }
+        public byte[] Bytes { get; init; }
+    } 
     
     public class TicketUserViewModelParam
     {

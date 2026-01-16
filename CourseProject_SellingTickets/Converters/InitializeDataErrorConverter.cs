@@ -11,7 +11,9 @@ public class InitializeDataErrorConverter : IMultiValueConverter
     {
         bool hasErrorMessage = (bool)values[0]!;
         bool isConnectedToDb = (bool)values[1]!;
-        
-        return hasErrorMessage || !isConnectedToDb;
+
+        bool result = hasErrorMessage || !isConnectedToDb;
+
+        return parameter is "inverse" ? !result : result;
     }
 }

@@ -22,30 +22,47 @@
             Diameter="60"/>
         
         <Grid IsVisible="{Binding !IsLoading}">
-        
-            <TextBlock 
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Foreground="Red"
-                Text="{Binding ErrorMessage}"
-                TextWrapping="WrapWithOverflow">
-                            
-                <TextBlock.IsVisible>
+            
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="200">
+                
+                <StackPanel.IsVisible>
                     <MultiBinding Converter="{StaticResource InitializeDataErrorConverter}">
                         <Binding Path="HasErrorMessage"/>
                         <Binding Path="DatabaseHasConnected"/>
                     </MultiBinding>
-                </TextBlock.IsVisible>
-                            
-            </TextBlock>
-            
-            <Grid IsVisible="{Binding DatabaseHasConnected}"
-                  Margin="10">
+                </StackPanel.IsVisible>
+                
+                <TextBlock 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="Red"
+                    Text="{Binding ErrorMessage}"
+                    TextWrapping="WrapWithOverflow"
+                    Margin="0 0 0 10"/>
+                
+                <Button Content="Обновить данные"
+                        Width="200"
+                        HorizontalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Command="{Binding LoadUserDataCommand}"/>
+                
+            </StackPanel>
+                
+            <Grid Margin="10">
+                
+                <Grid.IsVisible>
+                    <MultiBinding Converter="{StaticResource InitializeDataErrorConverter}" ConverterParameter="inverse">
+                        <Binding Path="HasErrorMessage"/>
+                        <Binding Path="DatabaseHasConnected"/>
+                    </MultiBinding>
+                </Grid.IsVisible>
                 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="220"/>
                     <ColumnDefinition Width="250"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="270"/>
                 </Grid.ColumnDefinitions>
         
                 <Grid.RowDefinitions>
@@ -55,73 +72,103 @@
                     <RowDefinition MaxHeight="35"/>
                     <RowDefinition MaxHeight="35"/>
                     <RowDefinition MaxHeight="35"/>
+                    <RowDefinition MaxHeight="50"/>
+                    <RowDefinition MaxHeight="35"/>
                 </Grid.RowDefinitions>
-        
-                <Border Grid.Column="0" 
-                        Grid.RowSpan="5"
+                                
+                <StackPanel Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2">
+                    
+                    <Button HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            Content="Обновить профиль"
+                            Command="{Binding LoadUserDataCommand}"/>
+                    
+                    <Border Height="1" Background="White" Margin="0,5,0,0" />
+                    
+                </StackPanel>
+                
+                <Border Grid.Row="0" 
+                        Grid.Column="0" 
+                        Grid.RowSpan="6"
                         BorderThickness="2" 
                         CornerRadius="5"
-                        >
+                        Margin="0 0 10 0">
                     <Border.Background>
                         <ImageBrush Stretch="Fill" 
                                     Source="{Binding Photo.BitMapFromUrl^, Mode=OneTime}" /> 
                     </Border.Background>   
                 </Border>
-                
-                <Button Content="Изменить аватар" 
-                        Grid.Column="0" Grid.Row="5" 
-                        Margin="0 0 10 0"
-                        HorizontalContentAlignment="Center"
-                        HorizontalAlignment="Stretch" />
-                
+            
                 <Label Content="Имя: " 
                        Grid.Column="1" 
-                       Grid.Row="0" />
+                       Grid.Row="1" 
+                       Margin="0 10 0 0"/>
         
                 <Label Content="{Binding UserName}" 
                        Grid.Column="2"
-                       Grid.Row="0" />
+                       Grid.Row="1" 
+                       Margin="0 10 0 0"/>
                 
                 <Label Content="Дата рождения: " 
                        Grid.Column="1" 
-                       Grid.Row="1" />
+                       Grid.Row="2"
+                       Margin="0 10 0 0"
+                       />
         
                 <Label Content="{Binding BirthDay}" 
                        Grid.Column="2"
-                       Grid.Row="1" />
+                       Grid.Row="2"
+                       Margin="0 10 0 0"
+                       />
                 
                 <Label Content="Паспортные данные: " 
                        Grid.Column="1" 
-                       Grid.Row="2" />
+                       Grid.Row="3" 
+                       Margin="0 10 0 0"
+                       />
         
                 <Label Content="{Binding Passport}" 
                        Grid.Column="2"
-                       Grid.Row="2" />
+                       Grid.Row="3"
+                       Margin="0 10 0 0"
+                       />
         
                 <Label Content="Баланс: " 
                        Grid.Column="1" 
-                       Grid.Row="3" />
+                       Grid.Row="4"
+                       Margin="0 10 0 0"
+                       />
         
                 <Label Content="{Binding Balance}" 
                        Grid.Column="2"
-                       Grid.Row="3" />
+                       Grid.Row="4"
+                       Margin="0 10 0 0"
+                       />
                 
                 <Label Content="Ваша скидка: " 
                        Grid.Column="1" 
-                       Grid.Row="4" />
+                       Grid.Row="5"
+                       Margin="0 10 0 0"
+                       />
         
                 <Label Content="{Binding DiscountText}" 
                        Grid.Column="2"
-                       Grid.Row="4" />
+                       Grid.Row="5"
+                       Margin="0 10 0 0"
+                       />
         
                 <StackPanel Grid.Column="1" 
-                            Grid.Row="5" 
-                            Grid.ColumnSpan="2" 
-                            Orientation="Horizontal">
-            
+                        Grid.Row="6" 
+                        Grid.ColumnSpan="2" 
+                        Margin="0 10 0 10"
+                        Orientation="Horizontal">
+        
                     <NumericUpDown Margin="0 0 10 0" 
                                    Watermark="Сумма пополнения"
                                    Minimum="0"
+                                   Width="135"
                                    Value="{Binding Amount}" />
             
                     <Button Content="Пополнить"
@@ -134,11 +181,55 @@
                            Margin="0 0 0 0"
                            Foreground="{Binding ResultDepositBalance, Converter={StaticResource ResultStateForegroundConverter}, ConverterParameter='Foreground'}"
                            VerticalAlignment="Center" />
-            
-                </StackPanel>
         
+                </StackPanel>
+            
+                <ComboBox Grid.Row="6"
+                          Grid.Column="0"
+                          Margin="0 10 10 10"
+                          HorizontalAlignment="Stretch"
+                          PlaceholderText="Загрузка аватара"
+                          SelectedIndex="{Binding SelectedUploadFileMode}"
+                          >
+                    <ComboBox.Items>
+                        <ComboBoxItem>Загрузка ссылке</ComboBoxItem>
+                        <ComboBoxItem>Загрузка файлу</ComboBoxItem>
+                    </ComboBox.Items>
+                </ComboBox>
+                
+                <Grid Grid.Row="7" 
+                      Grid.Column="0" 
+                      Grid.ColumnSpan="3"
+                      ColumnDefinitions="*, 100"
+                      HorizontalAlignment="Stretch"
+                      IsVisible="{Binding IsUrlInputVisible}">
+                    
+                    <TextBox Grid.Column="0" 
+                             Height="25"
+                             Margin="0 0 10 0"
+                             Watermark="Укажите прямую ссылку на изображение" 
+                             Text="{Binding FileUrl}"/> 
+                    
+                    <Button Grid.Column="1" 
+                            Content="Сохранить "
+                            Command="{Binding SaveUserAvatarCommand}"/>
+                    
+                </Grid>
+                
+                <Button Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Grid.Row="7"
+                        Content="Выбрать изображение (FreeImageHost)"
+                        Margin="0 0 10 0"
+                        HorizontalContentAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        IsVisible="{Binding IsFileInputVisible}"
+                        Command="{Binding ChoosePhotoCommand}"
+                        CommandParameter="{Binding $parent[TopLevel]}"/>
+            
             </Grid>
-            </Grid>
+            
+        </Grid>
         
     </Grid>
     

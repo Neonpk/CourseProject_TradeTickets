@@ -1,6 +1,6 @@
 using CourseProject_SellingTickets.DbContexts;
 
-namespace CourseProject_SellingTickets.Interfaces.DbContextsInterface;
+namespace CourseProject_SellingTickets.Interfaces.Factories;
 
 public interface ITradeTicketsDbContextFactory
 {

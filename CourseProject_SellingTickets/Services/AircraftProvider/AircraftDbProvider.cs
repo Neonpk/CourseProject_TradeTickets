@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
 using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
-using CourseProject_SellingTickets.Interfaces.DbContextsInterface;
+using CourseProject_SellingTickets.Interfaces.Factories;
 using CourseProject_SellingTickets.Models;
 using Microsoft.EntityFrameworkCore;
 

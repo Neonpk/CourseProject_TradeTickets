@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
 using CourseProject_SellingTickets.Interfaces.Common;
-using CourseProject_SellingTickets.Interfaces.DbContextsInterface;
+using CourseProject_SellingTickets.Interfaces.Factories;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Models.Common;
@@ -99,6 +99,29 @@ public class UserDbProvider : IUserDbProvider
                     .ToListAsync();
 
                 return Result<string>.Success(result.FirstOrDefault("The balance was not changed."));
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                return Result<string>.Failure(ex.MessageText);
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Failure(ex.Message);
+            }
+        }
+    }
+
+    public async Task<IResult<string>> GenerateUserAvatar(long userId, string urlPath)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            try
+            {
+                IEnumerable<string> result = await context.Database
+                    .SqlQuery<string>($"SELECT * FROM public.generate_user_avatar({(int)userId}, {urlPath})")
+                    .ToListAsync();
+
+                return Result<string>.Success(result.FirstOrDefault("Failed to generate avatar"));
             }
             catch (Npgsql.PostgresException ex)
             {

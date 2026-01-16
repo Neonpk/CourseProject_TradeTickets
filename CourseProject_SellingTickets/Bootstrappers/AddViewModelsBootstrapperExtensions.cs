@@ -2,8 +2,10 @@ using CourseProject_SellingTickets.Interfaces;
 using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
 using CourseProject_SellingTickets.Interfaces.AirlineProviderInterface;
 using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
+using CourseProject_SellingTickets.Interfaces.FileServiceInterface;
 using CourseProject_SellingTickets.Interfaces.FlightClassProviderInterface;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
+using CourseProject_SellingTickets.Interfaces.FreeImageServiceInterface;
 using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
@@ -21,6 +23,9 @@ public static class AddViewModelsBootstrapperExtensions
         {
             // Included services 
 
+            IFreeImageService? freeImageService = service.GetService<IFreeImageService>();
+            IFileService? fileService = service.GetService<IFileService>();
+            
             IUserDbProvider? userDbProvider = service.GetService<IUserDbProvider>();
             IAuthProvider? authProvider = service.GetService<IAuthProvider>();
             
@@ -73,7 +78,7 @@ public static class AddViewModelsBootstrapperExtensions
             
             // UserClient 
             
-            resolver.RegisterLazySingleton(() => new ClientBalanceUserViewModel( userDbProvider! ));
+            resolver.RegisterLazySingleton(() => new ClientBalanceUserViewModel( clientUserNavigation, userDbProvider!, fileService!, freeImageService! ));
             
             //--ClientUserViewModel
             
