@@ -17,10 +17,10 @@ public interface ITicketVmProvider
     Task<IEnumerable<Ticket>> GetTicketsByFilterSort<TKeySelector>
         ( Expression<Func<TicketDTO, bool>> searchFunc, Expression<Func<TicketDTO, TKeySelector>> sortFunc, SortMode? sortMode, int topRows = -1);
     
-    public Task<IEnumerable<FlightClass>> GetAllFlightClasses();
-    public Task<IEnumerable<Discount>> GetAllDiscounts();
-    public Task<IEnumerable<Flight>> GetAllFlights();
-    public Task<IEnumerable<User>> GetAllUsers();
+    Task<IEnumerable<FlightClass>> GetAllFlightClasses();
+    Task<IEnumerable<Discount>> GetAllDiscounts();
+    Task<IEnumerable<Flight>> GetAllFlights();
+    Task<IEnumerable<User>> GetAllUsers();
     
     Task<IResult<string>> BuyTicket(Int64 userId, Int64 ticketId);
     Task<IResult<string>> CancelTicket(Int64 ticketId);

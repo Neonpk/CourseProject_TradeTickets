@@ -35,6 +35,15 @@
                     
                </DockPanel>
                 
+               <Button
+                   HorizontalAlignment="Stretch"
+                   HorizontalContentAlignment="Center"
+                   DockPanel.Dock="Top"
+                   Content="Список пользователей" FontSize="15"
+                   IsVisible="{Binding ShowedSideBar}"
+                   Command="{Binding SwitchControlCommand}"
+                   CommandParameter="users"/>
+               
                 <Button
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
@@ -42,8 +51,7 @@
                     Content="Места" FontSize="15"
                     IsVisible="{Binding ShowedSideBar}"
                     Command="{Binding SwitchControlCommand}"
-                    CommandParameter="place"
-                />
+                    CommandParameter="place"/>
                 
                 <Button 
                     HorizontalAlignment="Stretch"
@@ -52,8 +60,7 @@
                     Content="Самолеты" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
                     Command="{Binding SwitchControlCommand}"
-                    CommandParameter="aircraft"
-                    />
+                    CommandParameter="aircraft"/>
                 
                                 
                 <Button 
@@ -63,8 +70,7 @@
                     Content="Виды скидок" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
                     Command="{Binding SwitchControlCommand}"
-                    CommandParameter="discount"
-                    />
+                    CommandParameter="discount"/>
                 
                 <Button 
                     HorizontalAlignment="Stretch"
@@ -73,8 +79,7 @@
                     Content="Авиа компании" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
                     Command="{Binding SwitchControlCommand}"
-                    CommandParameter="airline"
-                    />
+                    CommandParameter="airline"/>
                 
                 <Button 
                     HorizontalAlignment="Stretch"
@@ -83,8 +88,7 @@
                     Content="Классы рейсов" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
                     Command="{Binding SwitchControlCommand}"
-                    CommandParameter="flight_class"
-                    />
+                    CommandParameter="flight_class"/>
                                 
                 <Button 
                     HorizontalAlignment="Stretch"
@@ -93,8 +97,7 @@
                     Content="Изображения" FontSize="15" 
                     IsVisible="{Binding ShowedSideBar}"
                     Command="{Binding SwitchControlCommand}"
-                    CommandParameter="photo"
-                    />
+                    CommandParameter="photo"/>
                 
                 <Button Content="Выход" FontSize="15" 
                         HorizontalAlignment="Stretch"

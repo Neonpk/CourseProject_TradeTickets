@@ -1,3 +1,4 @@
+using System;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
@@ -12,6 +13,14 @@ public class UseCaseUploadImageCommand : ReactiveCommand<IResult<FileMeta>, Task
 {
     private static async Task UseCaseUploadImage(ClientBalanceUserViewModel clientBalanceUserVm, IResult<FileMeta> fileMeta)
     {
+        var isConnected = await ConnectionDbState.CheckConnectionState.Execute().ToTask();
+
+        if (!await isConnected)
+        {
+            clientBalanceUserVm.ErrorMessage = "Потеряно соединение с БД.";
+            return;
+        }
+        
         if (!fileMeta.IsSuccess)
         {
             clientBalanceUserVm.ErrorMessage = fileMeta.Message!;

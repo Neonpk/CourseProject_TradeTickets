@@ -1,4 +1,5 @@
 using System;
+using CourseProject_SellingTickets.DbContexts.ModelConfigurations;
 using CourseProject_SellingTickets.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,11 @@ public class TradeTicketsDbContext : DbContext
     // Postgres DateTime (timestamp) Format 
     [DbFunction("to_char", "")]
     public static string DateTimeFormatToString(DateTime value, string format) => value.ToString(format);
+    
+    // Postgres StringFormat 
+    [DbFunction("FORMAT", "", IsBuiltIn = true)]
+    public static string FormatSqlParams(string formatString, params string[] args) => 
+        throw new NotSupportedException("Only for LINQ translation.");
 
     // Generate custom model builders 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>

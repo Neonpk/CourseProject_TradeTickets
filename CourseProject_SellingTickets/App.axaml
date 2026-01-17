@@ -59,6 +59,10 @@
         
         <!-- SubViews of AdminMode -->
 
+        <DataTemplate DataType="{x:Type vm:UserListViewModel}">
+            <view:UserListView />
+        </DataTemplate>
+        
         <DataTemplate DataType="{x:Type vm:AircraftUserViewModel}">
             <view:AircraftUserView />
         </DataTemplate>

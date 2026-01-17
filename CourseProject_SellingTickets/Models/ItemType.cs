@@ -93,6 +93,16 @@ namespace CourseProject_SellingTickets.Models
         ArrivalTime,
         UserCustomer
     }
+
+    public enum UserSearchModes
+    {
+        Login = 0, 
+        Name,
+        Birthday,
+        Passport,
+        Discount,
+        AvatarUrl
+    }
     
     public enum SortMode
     {

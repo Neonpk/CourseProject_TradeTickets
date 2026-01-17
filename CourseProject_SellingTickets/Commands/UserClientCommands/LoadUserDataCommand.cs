@@ -21,15 +21,12 @@ public class LoadUserDataCommand : ReactiveCommand<Unit, Task>
             clientBalanceUserVm.IsLoading = true;
 
             User user = await userDbProvider.GetUserById(clientBalanceUserVm.UserId);
-
-            string series = user.Passport.Substring(0, 4);
-            string number = user.Passport.Substring(4);
             
             clientBalanceUserVm.UserName = user.Name;
             clientBalanceUserVm.Balance = user.Balance;
             clientBalanceUserVm.DiscountText = $"{user.Discount.DiscountSize}% ({user.Discount.Description})";
             clientBalanceUserVm.BirthDay = user.BirthDay;
-            clientBalanceUserVm.Passport = $"Серия: {series} Номер: {number}";
+            clientBalanceUserVm.Passport = user.PassportVisual;
             clientBalanceUserVm.Photo = user.Photo;
         }
         catch (Exception e)

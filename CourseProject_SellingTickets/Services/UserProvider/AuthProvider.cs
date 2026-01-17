@@ -70,7 +70,7 @@ public class AuthProvider : IAuthProvider
         return (UserRoles)Enum.Parse(typeof(UserRoles), role);
     }
 
-    public async Task<int> CreateOrEditUser(User user)
+    public async Task<int> CreateUser(User user)
     {
         return await _userDbProvider.CreateOrEditUser(user.CloneWithPassword(
             _passwordService.HashPassword(user.Password))

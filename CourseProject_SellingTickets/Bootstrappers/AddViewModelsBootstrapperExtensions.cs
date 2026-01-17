@@ -35,7 +35,8 @@ public static class AddViewModelsBootstrapperExtensions
             INavigationService? clientUserNavigation = service.GetService<INavigationService>("clientUserNavigation");
 
             //IConnectionStateProvider? connectionStateProvider = service.GetService<IConnectionStateProvider>();
-            
+
+            IUserListVmProvider? userListVmProvider = service.GetService<IUserListVmProvider>();
             IAircraftVmProvider? aircraftProvider = service.GetService<IAircraftVmProvider>();
             IPlaceVmProvider? placeVmProvider = service.GetService<IPlaceVmProvider>();
             IDiscountVmProvider? discountVmProvider = service.GetService<IDiscountVmProvider>();
@@ -49,6 +50,8 @@ public static class AddViewModelsBootstrapperExtensions
             //General ViewModels
             
             // Admin 
+            
+            resolver.RegisterLazySingleton( () => new UserListViewModel( userListVmProvider ) );
             
             resolver.RegisterLazySingleton( () => new AircraftUserViewModel( aircraftProvider ) );
             

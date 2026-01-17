@@ -10,5 +10,5 @@ public interface IAuthProvider
     Task<UserRoles> GetUserRole(string login);
     Task<User> GetUserById(Int64 id);
     Task<Int64> GetUserIdByLogin(string login);
-    Task<int> CreateOrEditUser(User user);
+    Task<int> CreateUser(User user);
 }

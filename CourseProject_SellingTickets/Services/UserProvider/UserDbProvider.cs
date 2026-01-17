@@ -9,7 +9,6 @@ using CourseProject_SellingTickets.Extensions;
 using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.Factories;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
-using CourseProject_SellingTickets.Interfaces.UserProviderInterface.PasswordServiceInterface;
 using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Models.Common;
 using Microsoft.EntityFrameworkCore;
@@ -84,7 +83,7 @@ public class UserDbProvider : IUserDbProvider
                 Include(x => x.Photo).
                 Include(x => x.Tickets).
                 ToListAsync();
-
+            
             return userDtos.Select(userDto => ToUser(userDto));
         }
     }

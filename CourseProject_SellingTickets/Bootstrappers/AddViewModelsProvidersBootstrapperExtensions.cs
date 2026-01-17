@@ -7,6 +7,7 @@ using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
+using CourseProject_SellingTickets.Interfaces.UserProviderInterface.PasswordServiceInterface;
 using CourseProject_SellingTickets.Services.AircraftProvider;
 using CourseProject_SellingTickets.Services.AirlineProvider;
 using CourseProject_SellingTickets.Services.DiscountProvider;
@@ -15,6 +16,7 @@ using CourseProject_SellingTickets.Services.FlightProvider;
 using CourseProject_SellingTickets.Services.PhotoProvider;
 using CourseProject_SellingTickets.Services.PlaceProvider;
 using CourseProject_SellingTickets.Services.TicketProvider;
+using CourseProject_SellingTickets.Services.UserProvider;
 using Splat;
 
 namespace CourseProject_SellingTickets.Bootstrappers;
@@ -36,9 +38,15 @@ public static class AddViewModelsProvidersBootstrapperExtensions
             var iPhotoDbProvider = service.GetService<IPhotoDbProvider>();
             var iUserDbProvider = service.GetService<IUserDbProvider>();
             
+            // Libraries 
+            var iPasswordService = service.GetService<IPasswordService>(); 
+            
             //ViewModels
             
             //ViewModels => AdminMode
+            
+            resolver.RegisterLazySingleton<IUserListVmProvider>( () => 
+                new UserListVmProvider(iUserDbProvider!, iDiscountDbProvider!, iPasswordService!) );
             
             resolver.RegisterLazySingleton<IAircraftVmProvider>( () => 
                 new AircraftVmProvider( iAircraftDbProvider, iPhotoDbProvider ) );

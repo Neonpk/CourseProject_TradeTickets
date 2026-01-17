@@ -46,6 +46,10 @@ public class AdminUserViewModel : ViewModelBase
             {
                 switch (obj)
                 {
+                    case "users":
+                        NavigationAdminService?.NavigateTo<UserListViewModel>();
+                        break;
+                    
                     case "aircraft":
                         NavigationAdminService?.NavigateTo<AircraftUserViewModel>();
                         break;

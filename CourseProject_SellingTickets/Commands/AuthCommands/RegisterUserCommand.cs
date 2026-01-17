@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
@@ -25,10 +26,10 @@ public class RegisterUserCommand : ReactiveCommand<Unit, Task>
     {
         registerUserVm.ErrorMessage = string.Empty;
         registerUserVm.IsLoading = true;
+
+        var isConnected = await ConnectionDbState.CheckConnectionState.Execute().ToTask();
         
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
-        if (!registerUserVm.DatabaseHasConnected)
+        if (!await isConnected)
         {
             registerUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
             registerUserVm.IsLoading = false;
@@ -37,7 +38,7 @@ public class RegisterUserCommand : ReactiveCommand<Unit, Task>
 
         try
         {
-            await authProvider.CreateOrEditUser(new User
+            await authProvider.CreateUser(new User
             {
                 Id = default,
                 Balance = default,
