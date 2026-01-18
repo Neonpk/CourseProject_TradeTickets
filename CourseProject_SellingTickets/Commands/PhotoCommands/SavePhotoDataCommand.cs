@@ -16,12 +16,12 @@ namespace CourseProject_SellingTickets.Commands.PhotoCommands;
 
 public class SavePhotoDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static IObservable<bool> CanExecuteCommand(PhotoUserViewModel photoVm)
+    private static IObservable<bool> CanExecuteCommand(PhotoUserViewModel photoUserVm)
     {
-        return photoVm.WhenAnyValue(x => x.SelectedPhoto.ValidationContext.IsValid);
+        return photoUserVm.WhenAnyValue(x => x.SelectedPhoto.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( PhotoUserViewModel photoUserVm, IPhotoVmProvider photoVmProvider)
+    private static async Task SaveDataAsync(PhotoUserViewModel photoUserVm, IPhotoVmProvider photoVmProvider)
     {
         try
         {

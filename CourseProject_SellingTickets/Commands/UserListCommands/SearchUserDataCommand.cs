@@ -64,12 +64,12 @@ public class SearchUserDataCommand : ReactiveCommand<Unit, Task<IEnumerable<User
 
     private static async Task<IEnumerable<User>> SearchUserData(UserListViewModel userListVm, IUserListVmProvider userListVmProvider)
     {
-        int limitRows = userListVm.LimitRows;
-        string searchTerm = userListVm.SearchTerm!;
-        UserSearchModes selectedSearchMode = (UserSearchModes)userListVm.SelectedSearchMode;
-
         try
         {
+            int limitRows = userListVm.LimitRows;
+            string searchTerm = userListVm.SearchTerm!;
+            UserSearchModes selectedSearchMode = (UserSearchModes)userListVm.SelectedSearchMode;
+            
             userListVm.IsLoading = true;
             IEnumerable<User> users = await GetUsersByFilter(userListVmProvider, searchTerm, selectedSearchMode, limitRows);
 

@@ -10,41 +10,38 @@ namespace CourseProject_SellingTickets.Commands.AircraftCommands;
 
 public class SortAircraftsCommand : ReactiveCommand<Unit, Unit>
 {
-    
-    private static void SortFlights(AircraftUserViewModel flightUserViewModel)
+    private static void SortAircrafts(AircraftUserViewModel aircraftUserVm)
     {
-
-        if (flightUserViewModel.IsLoading!.Value)
+        if (aircraftUserVm.IsLoading!.Value)
             return;
         
-        SortMode sortMode = (SortMode)flightUserViewModel.SelectedSortMode;
-        AircraftSearchSortModes searchSortModes = (AircraftSearchSortModes)flightUserViewModel.SelectedSortValue;
+        SortMode sortMode = (SortMode)aircraftUserVm.SelectedSortMode;
+        AircraftSearchSortModes searchSortModes = (AircraftSearchSortModes)aircraftUserVm.SelectedSortValue;
 
         Dispatcher.UIThread.Post(() =>
         {
-            var aircraftItems = flightUserViewModel.AircraftItems;
+            var aircraftItems = aircraftUserVm.AircraftItems;
 
             switch (searchSortModes)
             {
                 // By Model
                 case AircraftSearchSortModes.Model:
-                    aircraftItems!.OrderByReferenceMode(x => x.Model, sortMode);
+                    aircraftItems.OrderByReferenceMode(x => x.Model, sortMode);
                     break;
                 // By Type
                 case AircraftSearchSortModes.Type:
-                    aircraftItems!.OrderByReferenceMode(x => x.Type, sortMode);
+                    aircraftItems.OrderByReferenceMode(x => x.Type, sortMode);
                     break;
                 // By TotalPlace
                 case AircraftSearchSortModes.TotalPlace:
-                    aircraftItems!.OrderByReferenceMode(x => x.TotalPlace, sortMode);
+                    aircraftItems.OrderByReferenceMode(x => x.TotalPlace, sortMode);
                     break;
             }
         });
-
     }
     
-    public SortAircraftsCommand(AircraftUserViewModel aircraftUserViewModel) :
-        base(_ => Observable.Start(() => SortFlights(aircraftUserViewModel)), canExecute: Observable.Return(true))
+    public SortAircraftsCommand(AircraftUserViewModel aircraftUserVm) :
+        base(_ => Observable.Start(() => SortAircrafts(aircraftUserVm)), canExecute: Observable.Return(true))
     {
         
     }

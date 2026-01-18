@@ -10,37 +10,37 @@ namespace CourseProject_SellingTickets.Commands.PlaceCommands;
 
 public class SortPlacesCommand : ReactiveCommand<Unit, Unit>
 {
-    private static void SortFlights(PlaceUserViewModel flightUserViewModel)
+    private static void SortPlaces(PlaceUserViewModel placeUserVm)
     {
 
-        if (flightUserViewModel.IsLoading!.Value)
+        if (placeUserVm.IsLoading!.Value)
             return;
         
-        SortMode sortMode = (SortMode)flightUserViewModel.SelectedSortMode;
-        PlaceSearchSortModes searchSortModes = (PlaceSearchSortModes)flightUserViewModel.SelectedSortValue;
+        SortMode sortMode = (SortMode)placeUserVm.SelectedSortMode;
+        PlaceSearchSortModes searchSortModes = (PlaceSearchSortModes)placeUserVm.SelectedSortValue;
 
         Dispatcher.UIThread.Post(() =>
         {
-            var placeItems = flightUserViewModel.PlaceItems;
+            var placeItems = placeUserVm.PlaceItems;
 
             switch (searchSortModes)
             {
                 // By Name (Country)
                 case PlaceSearchSortModes.Name:
-                    placeItems!.OrderByReferenceMode(x => x.Name, sortMode);
+                    placeItems.OrderByReferenceMode(x => x.Name, sortMode);
                     break;
                 
                 // By Description (Airport)
                 case PlaceSearchSortModes.Description:
-                    placeItems!.OrderByReferenceMode(x => x.Description, sortMode);
+                    placeItems.OrderByReferenceMode(x => x.Description, sortMode);
                     break;
             }
         });
 
     }
     
-    public SortPlacesCommand(PlaceUserViewModel placeUserViewModel) :
-        base(_ => Observable.Start(() => SortFlights(placeUserViewModel)), canExecute: Observable.Return(true))
+    public SortPlacesCommand(PlaceUserViewModel placeUserVm) :
+        base(_ => Observable.Start(() => SortPlaces(placeUserVm)), canExecute: Observable.Return(true))
     {
         
     }

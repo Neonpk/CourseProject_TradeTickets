@@ -8,17 +8,16 @@ namespace CourseProject_SellingTickets.Commands.FlightCommands;
 
 public class AddEditFlightCommand : ReactiveCommand<bool, Unit>
 {
-
-    private static void EditData(FlightUserViewModel flightUserViewModel, bool isNewInstance)
+    private static void EditData(FlightUserViewModel flightUserVm, bool isNewInstance)
     {
         if (isNewInstance)
-            flightUserViewModel.SelectedFlight = new Flight();
+            flightUserVm.SelectedFlight = new Flight();
 
-        flightUserViewModel.SideBarShowed = true;
+        flightUserVm.SideBarShowed = true;
     }
     
-    public AddEditFlightCommand( FlightUserViewModel flightUserViewModel ) : 
-        base(  isNewInstance => Observable.Start(() => EditData(flightUserViewModel, isNewInstance)), 
+    public AddEditFlightCommand(FlightUserViewModel flightUserVm ) : 
+        base(  isNewInstance => Observable.Start(() => EditData(flightUserVm, isNewInstance)), 
             canExecute: Observable.Return(true)  )
     {
         

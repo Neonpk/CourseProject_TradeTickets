@@ -8,16 +8,16 @@ namespace CourseProject_SellingTickets.Commands.DiscountCommands;
 
 public class AddEditDiscountCommand : ReactiveCommand<bool, Unit>
 {
-    private static void EditData(DiscountUserViewModel discountUserViewModel, bool isNewInstance)
+    private static void EditData(DiscountUserViewModel discountUserVm, bool isNewInstance)
     {
         if (isNewInstance)
-            discountUserViewModel.SelectedDiscount = new Discount();
+            discountUserVm.SelectedDiscount = new Discount();
 
-        discountUserViewModel.SideBarShowed = true;
+        discountUserVm.SideBarShowed = true;
     }
     
-    public AddEditDiscountCommand(DiscountUserViewModel discountUserViewModel) : 
-        base(  isNewInstance => Observable.Start(() => EditData(discountUserViewModel, isNewInstance)), 
+    public AddEditDiscountCommand(DiscountUserViewModel discountUserVm) : 
+        base(  isNewInstance => Observable.Start(() => EditData(discountUserVm, isNewInstance)), 
             canExecute: Observable.Return(true)  )
     {
         

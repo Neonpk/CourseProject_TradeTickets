@@ -8,16 +8,16 @@ namespace CourseProject_SellingTickets.Commands.PlaceCommands;
 
 public class AddEditPlaceDataCommand : ReactiveCommand<bool, Unit>
 {
-    private static void EditData(PlaceUserViewModel placeUserViewModel, bool isNewInstance)
+    private static void EditData(PlaceUserViewModel placeUserVm, bool isNewInstance)
     {
         if (isNewInstance)
-            placeUserViewModel.SelectedPlace = new Place();
+            placeUserVm.SelectedPlace = new Place();
 
-        placeUserViewModel.SideBarShowed = true;
+        placeUserVm.SideBarShowed = true;
     }
     
-    public AddEditPlaceDataCommand( PlaceUserViewModel placeUserViewModel ) : 
-        base(  isNewInstance => Observable.Start(() => EditData(placeUserViewModel, isNewInstance)), 
+    public AddEditPlaceDataCommand( PlaceUserViewModel placeUserVm ) : 
+        base(  isNewInstance => Observable.Start(() => EditData(placeUserVm, isNewInstance)), 
             canExecute: Observable.Return(true)  )
     {
         

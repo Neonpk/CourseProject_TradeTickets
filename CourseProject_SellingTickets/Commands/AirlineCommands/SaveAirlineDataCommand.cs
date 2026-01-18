@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using CourseProject_SellingTickets.Extensions;
@@ -15,51 +16,52 @@ namespace CourseProject_SellingTickets.Commands.AirlineCommands;
 
 public class SaveAirlineDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static IObservable<bool> CanExecuteCommand(AirlineUserViewModel airlineUserViewModel)
+    private static IObservable<bool> CanExecuteCommand(AirlineUserViewModel airlineUserVm)
     {
-        return airlineUserViewModel.WhenAnyValue(x => x.SelectedAirline.ValidationContext.IsValid);
+        return airlineUserVm.WhenAnyValue(x => x.SelectedAirline.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider)
+    private static async Task SaveDataAsync(AirlineUserViewModel airlineUserVm, IAirlineVmProvider airlineVmProvider)
     {
-        airlineUserViewModel.ErrorMessage = string.Empty;
-        airlineUserViewModel.IsLoadingEditMode = true;
-        
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
-        if (!airlineUserViewModel.DatabaseHasConnected)
-        {
-            airlineUserViewModel.ErrorMessage = "Не удалось установить соединение с БД.";
-            airlineUserViewModel.IsLoadingEditMode = false;
-            return;
-        }
-
         try
         {
-            Airline selectedAirline = airlineUserViewModel.SelectedAirline;
-            var dbState = await airlineVmProvider.CreateOrEditAirline(selectedAirline);
+            airlineUserVm.ErrorMessage = string.Empty;
+            airlineUserVm.IsLoadingEditMode = true;
+            airlineUserVm.IsLoading = true;
 
-            airlineUserViewModel.SearchAirlineDataCommand.Execute().Subscribe();
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+
+            if (!await isConnected)
+            {
+                airlineUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+
+            await airlineVmProvider.CreateOrEditAirline(airlineUserVm.SelectedAirline);
+            airlineUserVm.SearchAirlineDataCommand.Execute().Subscribe();
         }
-        catch(DbUpdateException e) when (e.InnerException is NpgsqlException pgException)
+        catch (DbUpdateException e) when (e.InnerException is NpgsqlException pgException)
         {
-            airlineUserViewModel.ErrorMessage = pgException.ErrorMessageFromCode(nameof(AirlineUserViewModel));
+            airlineUserVm.ErrorMessage = pgException.ErrorMessageFromCode(nameof(AirlineUserViewModel));
         }
         catch (DbUpdateException e)
         {
-            airlineUserViewModel.ErrorMessage = e.InnerException!.Message;
+            airlineUserVm.ErrorMessage = e.InnerException!.Message;
         }
         catch (Exception e)
         {
-            airlineUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
+            airlineUserVm.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
         }
-        
-        airlineUserViewModel.IsLoadingEditMode = false;
+        finally
+        {
+            airlineUserVm.IsLoadingEditMode = false;
+            airlineUserVm.IsLoading = false;
+        }
     }
     
-    public SaveAirlineDataCommand(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider) : 
-        base(_ => Observable.Start(async () => await SaveDataAsync(airlineUserViewModel, airlineVmProvider)), 
-        canExecute: CanExecuteCommand(airlineUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
+    public SaveAirlineDataCommand(AirlineUserViewModel airlineUserVm, IAirlineVmProvider airlineVmProvider) : 
+        base(_ => Observable.Start(async () => await SaveDataAsync(airlineUserVm, airlineVmProvider)), 
+        canExecute: CanExecuteCommand(airlineUserVm).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }
 }

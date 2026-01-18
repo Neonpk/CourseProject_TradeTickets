@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using CourseProject_SellingTickets.Extensions;
@@ -15,51 +16,52 @@ namespace CourseProject_SellingTickets.Commands.DiscountCommands;
 
 public class SaveDiscountDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static IObservable<bool> CanExecuteCommand(DiscountUserViewModel discountVm)
+    private static IObservable<bool> CanExecuteCommand(DiscountUserViewModel discountUserVm)
     {
-        return discountVm.WhenAnyValue(x => x.SelectedDiscount.ValidationContext.IsValid);
+        return discountUserVm.WhenAnyValue(x => x.SelectedDiscount.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider)
+    private static async Task SaveDataAsync( DiscountUserViewModel discountUserVm, IDiscountVmProvider discountVmProvider)
     {
-        discountUserViewModel.ErrorMessage = string.Empty;
-        discountUserViewModel.IsLoadingEditMode = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
-        if (!discountUserViewModel.DatabaseHasConnected)
-        {
-            discountUserViewModel.ErrorMessage = "Не удалось установить соединение с БД.";
-            discountUserViewModel.IsLoadingEditMode = false;
-            return;
-        }
-
         try
         {
-            Discount selectedDiscount = discountUserViewModel.SelectedDiscount;
-            var dbState = await discountVmProvider.CreateOrEditDiscount(selectedDiscount);
+            discountUserVm.ErrorMessage = string.Empty;
+            discountUserVm.IsLoadingEditMode = true;
+            discountUserVm.IsLoading = true;
 
-            discountUserViewModel.SearchDiscountDataCommand.Execute().Subscribe();
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+        
+            if (!await isConnected)
+            {
+                discountUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+            
+            await discountVmProvider.CreateOrEditDiscount(discountUserVm.SelectedDiscount);
+            discountUserVm.SearchDiscountDataCommand.Execute().Subscribe();
         }
-        catch(DbUpdateException e) when (e.InnerException is NpgsqlException pgException)
+        catch (DbUpdateException e) when (e.InnerException is NpgsqlException pgException)
         {
-            discountUserViewModel.ErrorMessage = pgException.ErrorMessageFromCode(nameof(DiscountUserViewModel));
+            discountUserVm.ErrorMessage = pgException.ErrorMessageFromCode(nameof(DiscountUserViewModel));
         }
         catch (DbUpdateException e)
         {
-            discountUserViewModel.ErrorMessage = e.InnerException!.Message;
+            discountUserVm.ErrorMessage = e.InnerException!.Message;
         }
         catch (Exception e)
         {
-            discountUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
+            discountUserVm.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
         }
-        
-        discountUserViewModel.IsLoadingEditMode = false;
+        finally
+        {
+            discountUserVm.IsLoadingEditMode = false;
+            discountUserVm.IsLoading = false;
+        }
     }
     
-    public SaveDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider) : 
-        base(_ => Observable.Start(async () => await SaveDataAsync(discountUserViewModel, discountVmProvider)), 
-        canExecute: CanExecuteCommand(discountUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
+    public SaveDiscountDataCommand(DiscountUserViewModel discountUserVm, IDiscountVmProvider discountVmProvider) : 
+        base(_ => Observable.Start(async () => await SaveDataAsync(discountUserVm, discountVmProvider)), 
+        canExecute: CanExecuteCommand(discountUserVm).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }
 }

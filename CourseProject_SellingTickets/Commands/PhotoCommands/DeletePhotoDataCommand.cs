@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Models;
@@ -11,38 +12,38 @@ namespace CourseProject_SellingTickets.Commands.PhotoCommands;
 
 public class DeletePhotoDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task DeleteDataAsync(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider? photoVmProvider)
+    private static async Task DeleteDataAsync(PhotoUserViewModel photoUserVm, IPhotoVmProvider? photoVmProvider)
     {
-        photoUserViewModel.ErrorMessage = string.Empty;
-        photoUserViewModel.IsLoadingEditMode = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
-        if (!photoUserViewModel.DatabaseHasConnected)
-        {
-            photoUserViewModel.ErrorMessage = "Не удалось установить соединение с БД.";
-            photoUserViewModel.IsLoadingEditMode = false;
-            return;
-        }
-        
         try
         {
-            Photo selectedPhoto = photoUserViewModel.SelectedPhoto;
-            
-            var dbState = await photoVmProvider!.DeletePhoto(selectedPhoto);
+            photoUserVm.ErrorMessage = string.Empty;
+            photoUserVm.IsLoadingEditMode = true;
+            photoUserVm.IsLoading = true;
 
-            photoUserViewModel.SearchPhotoDataCommand?.Execute().Subscribe();
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+        
+            if (!await isConnected)
+            {
+                photoUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+            
+            await photoVmProvider!.DeletePhoto(photoUserVm.SelectedPhoto);
+            photoUserVm.SearchPhotoDataCommand.Execute().Subscribe();
         }
         catch (Exception e)
         {
-            photoUserViewModel.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
+            photoUserVm.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
         }
-
-        photoUserViewModel.IsLoadingEditMode = false;
+        finally
+        {
+            photoUserVm.IsLoadingEditMode = false;
+            photoUserVm.IsLoading = false;
+        }
     }
     
-    public DeletePhotoDataCommand(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider? photoVmProvider) : 
-        base(_ => Observable.Start(async () => await DeleteDataAsync(photoUserViewModel, photoVmProvider)), 
+    public DeletePhotoDataCommand(PhotoUserViewModel photoUserVm, IPhotoVmProvider? photoVmProvider) : 
+        base(_ => Observable.Start(async () => await DeleteDataAsync(photoUserVm, photoVmProvider)), 
             canExecute: Observable.Return(true)) 
     {
     }

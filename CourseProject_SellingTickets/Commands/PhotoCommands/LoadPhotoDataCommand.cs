@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
@@ -13,40 +14,48 @@ namespace CourseProject_SellingTickets.Commands.PhotoCommands;
 
 public class LoadPhotoDataCommand : ReactiveCommand<IEnumerable<Photo>, Task>
 {
-    private static async Task LoadDataAsync(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider, IEnumerable<Photo> filteredPhotos)
+    private static async Task LoadDataAsync(PhotoUserViewModel photoUserVm, IPhotoVmProvider photoVmProvider, IEnumerable<Photo> filteredPhotos)
     {
-        var limitRows = photoUserViewModel.LimitRows;
-
-        photoUserViewModel.ErrorMessage = string.Empty;
-        photoUserViewModel.IsLoading = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
         try
         {
-            bool hasSearching = photoUserViewModel.HasSearching;
+            var limitRows = photoUserVm.LimitRows;
+
+            photoUserVm.ErrorMessage = string.Empty;
+            photoUserVm.IsLoading = true;
+
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+
+            if (!await isConnected)
+            {
+                photoUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+            
+            bool hasSearching = photoUserVm.HasSearching;
 
             IEnumerable<Photo> photos =
-                hasSearching ? filteredPhotos! : await photoVmProvider.GetTopPhotos(limitRows);
+                hasSearching ? filteredPhotos : await photoVmProvider.GetTopPhotos(limitRows);
 
             Dispatcher.UIThread.Post(() =>
             {
-                photoUserViewModel.PhotoItems.Clear();
-                photoUserViewModel.PhotoItems.AddRange(photos);
+                photoUserVm.PhotoItems.Clear();
+                photoUserVm.PhotoItems.AddRange(photos);
             });
-            
+
         }
         catch (Exception e)
         {
-            photoUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
+            photoUserVm.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
         }
-
-        photoUserViewModel.IsLoading = false;
+        finally
+        {
+            photoUserVm.IsLoading = false;   
+        }
     }
     
-    public LoadPhotoDataCommand(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider) :
+    public LoadPhotoDataCommand(PhotoUserViewModel photoUserVm, IPhotoVmProvider photoVmProvider) :
         base(filteredPhotos => Observable.Start(async () => 
-                await LoadDataAsync(photoUserViewModel, photoVmProvider, filteredPhotos) ),
+                await LoadDataAsync(photoUserVm, photoVmProvider, filteredPhotos) ),
             canExecute: Observable.Return(true))
     {
     }

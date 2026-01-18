@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
 using CourseProject_SellingTickets.Models;
@@ -11,38 +12,38 @@ namespace CourseProject_SellingTickets.Commands.DiscountCommands;
 
 public class DeleteDiscountDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task DeleteDataAsync(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider? discountProvider)
+    private static async Task DeleteDataAsync(DiscountUserViewModel discountUserVm, IDiscountVmProvider? discountProvider)
     {
-        discountUserViewModel.ErrorMessage = string.Empty;
-        discountUserViewModel.IsLoadingEditMode = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
-        if (!discountUserViewModel.DatabaseHasConnected)
-        {
-            discountUserViewModel.ErrorMessage = "Не удалось установить соединение с БД.";
-            discountUserViewModel.IsLoadingEditMode = false;
-            return;
-        }
-        
         try
         {
-            Discount selectedDiscount = discountUserViewModel.SelectedDiscount;
-            
-            var dbState = await discountProvider!.DeleteDiscount(selectedDiscount);
+            discountUserVm.ErrorMessage = string.Empty;
+            discountUserVm.IsLoadingEditMode = true;
+            discountUserVm.IsLoading = true;
 
-            discountUserViewModel.SearchDiscountDataCommand?.Execute().Subscribe();
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+        
+            if (!await isConnected)
+            {
+                discountUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+            
+            await discountProvider!.DeleteDiscount(discountUserVm.SelectedDiscount);
+            discountUserVm.SearchDiscountDataCommand.Execute().Subscribe();
         }
         catch (Exception e)
         {
-            discountUserViewModel.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
+            discountUserVm.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
         }
-
-        discountUserViewModel.IsLoadingEditMode = false;
+        finally
+        {
+            discountUserVm.IsLoadingEditMode = false;
+            discountUserVm.IsLoading = false;
+        }
     }
     
-    public DeleteDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider? discountProvider) : 
-        base(_ => Observable.Start(async () => await DeleteDataAsync(discountUserViewModel, discountProvider)), 
+    public DeleteDiscountDataCommand(DiscountUserViewModel discountUserVm, IDiscountVmProvider? discountProvider) : 
+        base(_ => Observable.Start(async () => await DeleteDataAsync(discountUserVm, discountProvider)), 
             canExecute: Observable.Return(true)) 
     {
     }

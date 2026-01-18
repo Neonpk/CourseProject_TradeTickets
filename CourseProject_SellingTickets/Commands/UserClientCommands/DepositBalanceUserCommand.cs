@@ -16,7 +16,7 @@ public class DepositBalanceUserCommand : ReactiveCommand<Unit, Task>
 
     public static async Task DepositBalance(ClientBalanceUserViewModel clientBalanceUserVm, IUserDbProvider userDbProvider)
     {
-        var dbHasConnected =  await ConnectionDbState.CheckConnectionState.Execute().ToTask();
+        var dbHasConnected =  ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
         
         Int64 userId = clientBalanceUserVm.UserId;
         decimal amount = clientBalanceUserVm.Amount;

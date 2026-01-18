@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
@@ -14,22 +14,27 @@ namespace CourseProject_SellingTickets.Commands.TicketCommands;
 
 public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
 {
-    private static async Task LoadDataAsync(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider, IEnumerable<Ticket>? filteredTickets)
+    private static async Task LoadDataAsync(TicketUserViewModel ticketUserVm, ITicketVmProvider ticketVmProvider, IEnumerable<Ticket>? filteredTickets)
     {
-        var limitRows = ticketUserViewModel.LimitRows;
-
-        ticketUserViewModel.ErrorMessage = string.Empty;
-        ticketUserViewModel.IsLoading = true;
-
-        ConnectionDbState.CheckConnectionState.Execute()
-            .Subscribe(isConnected => ticketUserViewModel.DatabaseHasConnected = isConnected.Result);
-
         try
         {
-            bool hasSearching = ticketUserViewModel.HasSearching;
+            var limitRows = ticketUserVm.LimitRows;
+
+            ticketUserVm.ErrorMessage = string.Empty;
+            ticketUserVm.IsLoading = true;
+
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+
+            if (!await isConnected)
+            {
+                ticketUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+            
+            bool hasSearching = ticketUserVm.HasSearching;
 
             IEnumerable<Ticket> tickets;
-            TicketUserViewModelParam? ticketUserVmParam = ticketUserViewModel.TicketUserVmParam;
+            TicketUserViewModelParam? ticketUserVmParam = ticketUserVm.TicketUserVmParam;
 
             if (!hasSearching)
             {
@@ -52,40 +57,40 @@ public class LoadTicketDataCommand : ReactiveCommand<IEnumerable<Ticket>, Task>
 
             Dispatcher.UIThread.Post(async void () =>
             {
-                ticketUserViewModel.TicketItems.Clear();
-                ticketUserViewModel.Discounts.Clear();
-                ticketUserViewModel.FlightClasses.Clear();
-                ticketUserViewModel.Flights.Clear();
-                ticketUserViewModel.Users.Clear();
+                ticketUserVm.TicketItems.Clear();
+                ticketUserVm.Discounts.Clear();
+                ticketUserVm.FlightClasses.Clear();
+                ticketUserVm.Flights.Clear();
+                ticketUserVm.Users.Clear();
                 
-                ticketUserViewModel.TicketItems.AddRange(tickets);
+                ticketUserVm.TicketItems.AddRange(tickets);
 
                 if (ticketUserVmParam != null)
                 {
-                    ticketUserViewModel.SideBarShowed = false;
+                    ticketUserVm.SideBarShowed = false;
                     return;
                 }
                 
-                ticketUserViewModel.Discounts.AddRange(await ticketVmProvider.GetAllDiscounts());
-                ticketUserViewModel.FlightClasses.AddRange(await ticketVmProvider.GetAllFlightClasses());
-                ticketUserViewModel.Flights.AddRange(await ticketVmProvider.GetAllFlights());
-                ticketUserViewModel.Users.AddRange(await ticketVmProvider.GetAllUsers());
+                ticketUserVm.Discounts.AddRange(await ticketVmProvider.GetAllDiscounts());
+                ticketUserVm.FlightClasses.AddRange(await ticketVmProvider.GetAllFlightClasses());
+                ticketUserVm.Flights.AddRange(await ticketVmProvider.GetAllFlights());
+                ticketUserVm.Users.AddRange(await ticketVmProvider.GetAllUsers());
             });
 
         }
         catch (Exception e)
         {
-            ticketUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
+            ticketUserVm.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
         }
         finally
         {
-            ticketUserViewModel.IsLoading = false;
+            ticketUserVm.IsLoading = false;
         }
     }
     
-    public LoadTicketDataCommand(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketProvider) :
+    public LoadTicketDataCommand(TicketUserViewModel ticketUserVm, ITicketVmProvider ticketProvider) :
         base(filteredTickets => Observable.Start(async () => 
-                await LoadDataAsync(ticketUserViewModel, ticketProvider, filteredTickets) ),
+                await LoadDataAsync(ticketUserVm, ticketProvider, filteredTickets) ),
             canExecute: Observable.Return(true))
     {
     }

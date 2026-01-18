@@ -8,16 +8,16 @@ namespace CourseProject_SellingTickets.Commands.TicketCommands;
 
 public class AddEditTicketCommand : ReactiveCommand<bool, Unit>
 {
-    private static void EditData(TicketUserViewModel ticketUserViewModel, bool isNewInstance)
+    private static void EditData(TicketUserViewModel ticketUserVm, bool isNewInstance)
     {
         if (isNewInstance)
-            ticketUserViewModel.SelectedTicket = new Ticket();
+            ticketUserVm.SelectedTicket = new Ticket();
 
-        ticketUserViewModel.SideBarShowed = true;
+        ticketUserVm.SideBarShowed = true;
     }
     
-    public AddEditTicketCommand(TicketUserViewModel ticketUserViewModel) : 
-        base(  isNewInstance => Observable.Start(() => EditData(ticketUserViewModel, isNewInstance)), 
+    public AddEditTicketCommand(TicketUserViewModel ticketUserVm) : 
+        base(  isNewInstance => Observable.Start(() => EditData(ticketUserVm, isNewInstance)), 
             canExecute: Observable.Return(true)  )
     {
         

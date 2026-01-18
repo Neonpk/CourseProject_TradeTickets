@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
@@ -13,47 +14,54 @@ namespace CourseProject_SellingTickets.Commands.PlaceCommands;
 
 public class LoadPlaceDataCommand : ReactiveCommand<IEnumerable<Place>, Task>
 {
-    private static async Task LoadDataAsync(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider, IEnumerable<Place> filteredPlaces
-    )
+    private static async Task LoadDataAsync(PlaceUserViewModel placeUserVm, IPlaceVmProvider placeVmProvider, IEnumerable<Place> filteredPlaces)
     {
-        var limitRows = placeUserViewModel.LimitRows;
-        
-        placeUserViewModel.ErrorMessage = string.Empty;
-        placeUserViewModel.IsLoading = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
         try
         {
-            bool hasSearching = placeUserViewModel.HasSearching;
-           
-            IEnumerable<Place> places = hasSearching ? filteredPlaces! : await placeVmProvider.GetTopPlaces(limitRows);
+            var limitRows = placeUserVm.LimitRows;
+        
+            placeUserVm.ErrorMessage = string.Empty;
+            placeUserVm.IsLoading = true;
+
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+
+            if (!await isConnected)
+            {
+                placeUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
             
+            bool hasSearching = placeUserVm.HasSearching;
+
+            IEnumerable<Place> places = hasSearching ? filteredPlaces : await placeVmProvider.GetTopPlaces(limitRows);
+
             IEnumerable<Photo> photos = await placeVmProvider.GetAllPhotos();
 
             Dispatcher.UIThread.Post(() =>
             {
-                placeUserViewModel.Photos.Clear();
-                placeUserViewModel.Photos.AddRange(photos);
+                placeUserVm.Photos.Clear();
+                placeUserVm.Photos.AddRange(photos);
 
-                placeUserViewModel.PlaceItems.Clear();
-                placeUserViewModel.PlaceItems.AddRange(places);
+                placeUserVm.PlaceItems.Clear();
+                placeUserVm.PlaceItems.AddRange(places);
 
             });
 
-            placeUserViewModel.SortAircraftCommand!.Execute().Subscribe();
+            placeUserVm.SortAircraftCommand.Execute().Subscribe();
         }
         catch (Exception e)
         {
-            placeUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
+            placeUserVm.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
         }
-       
-        placeUserViewModel.IsLoading = false;
+        finally
+        {
+            placeUserVm.IsLoading = false;   
+        }
     }
     
-    public LoadPlaceDataCommand(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider) :
+    public LoadPlaceDataCommand(PlaceUserViewModel placeUserVm, IPlaceVmProvider placeVmProvider) :
         base(filteredPlaces => 
-                Observable.Start( async () => await LoadDataAsync(placeUserViewModel, placeVmProvider, filteredPlaces)),
+                Observable.Start( async () => await LoadDataAsync(placeUserVm, placeVmProvider, filteredPlaces)),
             canExecute: Observable.Return(true))
     {
         

@@ -34,30 +34,30 @@ public class SearchPlaceDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Pla
         }
     }
     
-    private static async Task<IEnumerable<Place>?> SearchDataAsync(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider)
+    private static async Task<IEnumerable<Place>?> SearchDataAsync(PlaceUserViewModel placeUserVm, IPlaceVmProvider placeVmProvider)
     {
-        int limitRows = placeUserViewModel.LimitRows;
-        string searchTerm = placeUserViewModel.SearchTerm!;
-        PlaceSearchSortModes selectedSearchMode = (PlaceSearchSortModes)placeUserViewModel.SelectedSearchMode;
-
         try
         {
-            placeUserViewModel.IsLoading = true;
+            int limitRows = placeUserVm.LimitRows;
+            string searchTerm = placeUserVm.SearchTerm!;
+            PlaceSearchSortModes selectedSearchMode = (PlaceSearchSortModes)placeUserVm.SelectedSearchMode;
+            
+            placeUserVm.IsLoading = true;
             IEnumerable<Place> places = await GetPlaceDataByFilter(placeVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return places;
         }
         catch (Exception e)
         {
-            placeUserViewModel.IsLoading = false;
-            placeUserViewModel.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
+            placeUserVm.IsLoading = false;
+            placeUserVm.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
 
             return null;
         }
     }
     
-    public SearchPlaceDataCommand(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider) : 
-        base(_ => Observable.Start(async () => await SearchDataAsync(placeUserViewModel, placeVmProvider)), canExecute: Observable.Return(true))
+    public SearchPlaceDataCommand(PlaceUserViewModel placeUserVm, IPlaceVmProvider placeVmProvider) : 
+        base(_ => Observable.Start(async () => await SearchDataAsync(placeUserVm, placeVmProvider)), canExecute: Observable.Return(true))
     {
         
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using CourseProject_SellingTickets.Extensions;
@@ -15,51 +16,52 @@ namespace CourseProject_SellingTickets.Commands.AircraftCommands;
 
 public class SaveAircraftDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static IObservable<bool> CanExecuteCommand(AircraftUserViewModel flightVm)
+    private static IObservable<bool> CanExecuteCommand(AircraftUserViewModel aircraftUserVm)
     {
-        return flightVm.WhenAnyValue(x => x.SelectedAircraft.ValidationContext.IsValid);
+        return aircraftUserVm.WhenAnyValue(x => x.SelectedAircraft.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider aircraftVmProvider)
+    private static async Task SaveDataAsync(AircraftUserViewModel aircraftUserVm, IAircraftVmProvider aircraftVmProvider)
     {
-        aircraftUserViewModel.ErrorMessage = string.Empty;
-        aircraftUserViewModel.IsLoadingEditMode = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
-        if (!aircraftUserViewModel.DatabaseHasConnected)
-        {
-            aircraftUserViewModel.ErrorMessage = "Не удалось установить соединение с БД.";
-            aircraftUserViewModel.IsLoadingEditMode = false;
-            return;
-        }
-        
         try
         {
-            Aircraft selectedAircraft = aircraftUserViewModel.SelectedAircraft;
-            var dbState = await aircraftVmProvider.CreateOrEditAircraft(selectedAircraft);
+            aircraftUserVm.ErrorMessage = string.Empty;
+            aircraftUserVm.IsLoadingEditMode = true;
+            aircraftUserVm.IsLoading = true;
 
-            aircraftUserViewModel.SearchAircraftDataCommand!.Execute().Subscribe();
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+        
+            if (!await isConnected)
+            {
+                aircraftUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+            
+            await aircraftVmProvider.CreateOrEditAircraft(aircraftUserVm.SelectedAircraft);
+            aircraftUserVm.SearchAircraftDataCommand.Execute().Subscribe();
         }
-        catch (DbUpdateException e) when ( e.InnerException is NpgsqlException pgException )
+        catch (DbUpdateException e) when (e.InnerException is NpgsqlException pgException)
         {
-            aircraftUserViewModel.ErrorMessage = pgException.ErrorMessageFromCode(nameof(AircraftUserViewModel));
+            aircraftUserVm.ErrorMessage = pgException.ErrorMessageFromCode(nameof(AircraftUserViewModel));
         }
         catch (DbUpdateException e)
         {
-            aircraftUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
+            aircraftUserVm.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
         }
         catch (Exception e)
         {
-            aircraftUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
+            aircraftUserVm.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
         }
-        
-        aircraftUserViewModel.IsLoadingEditMode = false;
+        finally
+        {
+            aircraftUserVm.IsLoadingEditMode = false;
+            aircraftUserVm.IsLoading = false;
+        }
     }
 
-    public SaveAircraftDataCommand(AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider aircraftVmProvider) :
-        base(_ => Observable.Start(async () => await SaveDataAsync(aircraftUserViewModel, aircraftVmProvider)), 
-            canExecute: CanExecuteCommand(aircraftUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
+    public SaveAircraftDataCommand(AircraftUserViewModel airuAircraftUserVm, IAircraftVmProvider aircraftVmProvider) :
+        base(_ => Observable.Start(async () => await SaveDataAsync(airuAircraftUserVm, aircraftVmProvider)), 
+            canExecute: CanExecuteCommand(airuAircraftUserVm).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }
 }

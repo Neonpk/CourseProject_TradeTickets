@@ -16,7 +16,7 @@ public class UseCaseUploadImageCommand : ReactiveCommand<IResult<FileMeta>, Task
 
         if (!await isConnected)
         {
-            clientBalanceUserVm.ErrorMessage = "Потеряно соединение с БД.";
+            clientBalanceUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
             return;
         }
         

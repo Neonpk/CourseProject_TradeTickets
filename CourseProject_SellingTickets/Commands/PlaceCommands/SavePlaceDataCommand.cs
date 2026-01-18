@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using CourseProject_SellingTickets.Extensions;
@@ -15,51 +16,52 @@ namespace CourseProject_SellingTickets.Commands.PlaceCommands;
 
 public class SavePlaceDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static IObservable<bool> CanExecuteCommand(PlaceUserViewModel flightVm)
+    private static IObservable<bool> CanExecuteCommand(PlaceUserViewModel placeUserVm)
     {
-        return flightVm.WhenAnyValue(x => x.SelectedPlace.ValidationContext.IsValid);
+        return placeUserVm.WhenAnyValue(x => x.SelectedPlace.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider )
+    private static async Task SaveDataAsync(PlaceUserViewModel placeUserVm, IPlaceVmProvider placeVmProvider )
     {
-        placeUserViewModel.ErrorMessage = string.Empty;
-        placeUserViewModel.IsLoadingEditMode = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
-        if (!placeUserViewModel.DatabaseHasConnected)
-        {
-            placeUserViewModel.ErrorMessage = "Не удалось установить соединение с БД.";
-            placeUserViewModel.IsLoadingEditMode = false;
-            return;
-        }
-        
         try
         {
-            Place selectedAircraft = placeUserViewModel.SelectedPlace;
-            var dbState = await placeVmProvider.CreateOrEditPlace(selectedAircraft);
+            placeUserVm.ErrorMessage = string.Empty;
+            placeUserVm.IsLoadingEditMode = true;
+            placeUserVm.IsLoading = true;
 
-            placeUserViewModel.SearchPlaceDataCommand!.Execute().Subscribe();
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+        
+            if (!await isConnected)
+            {
+                placeUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+            
+            await placeVmProvider.CreateOrEditPlace(placeUserVm.SelectedPlace);
+            placeUserVm.SearchPlaceDataCommand.Execute().Subscribe();
         }
-        catch (DbUpdateException e) when ( e.InnerException is NpgsqlException pgException )
+        catch (DbUpdateException e) when (e.InnerException is NpgsqlException pgException)
         {
-            placeUserViewModel.ErrorMessage = pgException.ErrorMessageFromCode(nameof(PlaceUserViewModel));
+            placeUserVm.ErrorMessage = pgException.ErrorMessageFromCode(nameof(PlaceUserViewModel));
         }
         catch (DbUpdateException e)
         {
-            placeUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
+            placeUserVm.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
         }
         catch (Exception e)
         {
-            placeUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
+            placeUserVm.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
         }
-        
-        placeUserViewModel.IsLoadingEditMode = false;
+        finally
+        {
+            placeUserVm.IsLoadingEditMode = false;
+            placeUserVm.IsLoading = false;
+        }
     }
 
-    public SavePlaceDataCommand(PlaceUserViewModel placeUserViewModel, IPlaceVmProvider placeVmProvider) :
-        base(_ => Observable.Start(async () => await SaveDataAsync(placeUserViewModel, placeVmProvider)), 
-            canExecute: CanExecuteCommand(placeUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
+    public SavePlaceDataCommand(PlaceUserViewModel placeUserVm, IPlaceVmProvider placeVmProvider) :
+        base(_ => Observable.Start(async () => await SaveDataAsync(placeUserVm, placeVmProvider)), 
+            canExecute: CanExecuteCommand(placeUserVm).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }
 }

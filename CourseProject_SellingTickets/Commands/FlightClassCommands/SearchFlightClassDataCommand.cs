@@ -26,30 +26,30 @@ public class SearchFlightClassDataCommand : ReactiveCommand<Unit, Task<IEnumerab
                 return new List<FlightClass>();
         }
     }
-    private static async Task<IEnumerable<FlightClass>?> SearchDataAsync(FlightClassUserViewModel flightClassUserViewModel, IFlightClassVmProvider flightClassVmProvider)
+    private static async Task<IEnumerable<FlightClass>?> SearchDataAsync(FlightClassUserViewModel flightClassUserVm, IFlightClassVmProvider flightClassVmProvider)
     {
-        int limitRows = flightClassUserViewModel.LimitRows;
-        string searchTerm = flightClassUserViewModel.SearchTerm!;
-        FlightClassSearchSortModes selectedSearchMode = (FlightClassSearchSortModes)flightClassUserViewModel.SelectedSearchMode;
-        
         try
         {
-            flightClassUserViewModel.IsLoading = true;
+            int limitRows = flightClassUserVm.LimitRows;
+            string searchTerm = flightClassUserVm.SearchTerm!;
+            FlightClassSearchSortModes selectedSearchMode = (FlightClassSearchSortModes)flightClassUserVm.SelectedSearchMode;
+            
+            flightClassUserVm.IsLoading = true;
             IEnumerable<FlightClass> flightClasses = await GetFlightClassDataByFilter(flightClassVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return flightClasses;
         }
         catch (Exception e)
         {
-            flightClassUserViewModel.IsLoading = false;
-            flightClassUserViewModel.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
+            flightClassUserVm.IsLoading = false;
+            flightClassUserVm.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
 
             return null;
         }
     }
     
-    public SearchFlightClassDataCommand(FlightClassUserViewModel flightClassUserViewModel, IFlightClassVmProvider flightClassVmProvider) : 
-        base(_ => Observable.Start(async () => await SearchDataAsync(flightClassUserViewModel, flightClassVmProvider)), canExecute: Observable.Return(true))
+    public SearchFlightClassDataCommand(FlightClassUserViewModel flightClassUserVm, IFlightClassVmProvider flightClassVmProvider) : 
+        base(_ => Observable.Start(async () => await SearchDataAsync(flightClassUserVm, flightClassVmProvider)), canExecute: Observable.Return(true))
     {
     }
 }

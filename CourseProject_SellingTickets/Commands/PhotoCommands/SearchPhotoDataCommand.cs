@@ -32,30 +32,30 @@ public class SearchPhotoDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Pho
                  return new List<Photo>();
         }
     }
-    private static async Task<IEnumerable<Photo>?> SearchDataAsync(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider)
+    private static async Task<IEnumerable<Photo>?> SearchDataAsync(PhotoUserViewModel photoUserVm, IPhotoVmProvider photoVmProvider)
     {
-        int limitRows = photoUserViewModel.LimitRows;
-        string searchTerm = photoUserViewModel.SearchTerm!;
-        PhotoSearchSortModes selectedSearchMode = (PhotoSearchSortModes)photoUserViewModel.SelectedSearchMode;
-        
         try
         {
-            photoUserViewModel.IsLoading = true;
+            int limitRows = photoUserVm.LimitRows;
+            string searchTerm = photoUserVm.SearchTerm!;
+            PhotoSearchSortModes selectedSearchMode = (PhotoSearchSortModes)photoUserVm.SelectedSearchMode;
+            
+            photoUserVm.IsLoading = true;
             IEnumerable<Photo> photos = await GetFlightClassDataByFilter(photoVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return photos;
         }
         catch (Exception e)
         {
-            photoUserViewModel.IsLoading = false;
-            photoUserViewModel.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
+            photoUserVm.IsLoading = false;
+            photoUserVm.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
 
             return null;
         }
     }
     
-    public SearchPhotoDataCommand(PhotoUserViewModel photoUserViewModel, IPhotoVmProvider photoVmProvider) : 
-        base(_ => Observable.Start(async () => await SearchDataAsync(photoUserViewModel, photoVmProvider)), canExecute: Observable.Return(true))
+    public SearchPhotoDataCommand(PhotoUserViewModel photoUserVm, IPhotoVmProvider photoVmProvider) : 
+        base(_ => Observable.Start(async () => await SearchDataAsync(photoUserVm, photoVmProvider)), canExecute: Observable.Return(true))
     {
     }
 }

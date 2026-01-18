@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using CourseProject_SellingTickets.Extensions;
@@ -15,52 +16,53 @@ namespace CourseProject_SellingTickets.Commands.TicketCommands;
 
 public class SaveTicketDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static IObservable<bool> CanExecuteCommand(TicketUserViewModel ticketVm)
+    private static IObservable<bool> CanExecuteCommand(TicketUserViewModel ticketUserVm)
     {
-        return ticketVm.WhenAnyValue(x => x.SelectedTicket.ValidationContext.IsValid);
+        return ticketUserVm.WhenAnyValue(x => x.SelectedTicket.ValidationContext.IsValid);
     }
     
-    private static async Task SaveDataAsync( TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider)
+    private static async Task SaveDataAsync(TicketUserViewModel ticketUserVm, ITicketVmProvider ticketVmProvider)
     {
-        ticketUserViewModel.ErrorMessage = string.Empty;
-        ticketUserViewModel.IsLoadingEditMode = true;
-
-        ConnectionDbState.CheckConnectionState.Execute()
-            .Subscribe(isConnected => ticketUserViewModel.DatabaseHasConnected = isConnected.Result);
-        
-        if (!ticketUserViewModel.DatabaseHasConnected)
-        {
-            ticketUserViewModel.ErrorMessage = "Не удалось установить соединение с БД.";
-            ticketUserViewModel.IsLoadingEditMode = false;
-            return;
-        }
-
         try
         {
-            Ticket selectedTicket = ticketUserViewModel.SelectedTicket;
-            var dbState = await ticketVmProvider.CreateOrEditTicket(selectedTicket);
+            ticketUserVm.ErrorMessage = string.Empty;
+            ticketUserVm.IsLoadingEditMode = true;
+            ticketUserVm.IsLoading = true;
 
-            ticketUserViewModel.SearchTicketDataCommand.Execute().Subscribe();
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+        
+            if (!await isConnected)
+            {
+                ticketUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                ticketUserVm.IsLoadingEditMode = false;
+                return;
+            }
+
+            await ticketVmProvider.CreateOrEditTicket(ticketUserVm.SelectedTicket);
+            ticketUserVm.SearchTicketDataCommand.Execute().Subscribe();
         }
-        catch(DbUpdateException e) when (e.InnerException is NpgsqlException pgException)
+        catch (DbUpdateException e) when (e.InnerException is NpgsqlException pgException)
         {
-            ticketUserViewModel.ErrorMessage = pgException.ErrorMessageFromCode(nameof(TicketUserViewModel));
+            ticketUserVm.ErrorMessage = pgException.ErrorMessageFromCode(nameof(TicketUserViewModel));
         }
         catch (DbUpdateException e)
         {
-            ticketUserViewModel.ErrorMessage = e.InnerException!.Message;
+            ticketUserVm.ErrorMessage = e.InnerException!.Message;
         }
         catch (Exception e)
         {
-            ticketUserViewModel.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
+            ticketUserVm.ErrorMessage = $"Не удалось сохранить данные: ({e.InnerException!.Message})";
         }
-        
-        ticketUserViewModel.IsLoadingEditMode = false;
+        finally
+        {
+            ticketUserVm.IsLoadingEditMode = false;
+            ticketUserVm.IsLoading = false;
+        }
     }
     
-    public SaveTicketDataCommand(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider) : 
-        base(_ => Observable.Start(async () => await SaveDataAsync(ticketUserViewModel, ticketVmProvider)), 
-        canExecute: CanExecuteCommand(ticketUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
+    public SaveTicketDataCommand(TicketUserViewModel ticketUserVm, ITicketVmProvider ticketVmProvider) : 
+        base(_ => Observable.Start(async () => await SaveDataAsync(ticketUserVm, ticketVmProvider)), 
+        canExecute: CanExecuteCommand(ticketUserVm).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }
 }

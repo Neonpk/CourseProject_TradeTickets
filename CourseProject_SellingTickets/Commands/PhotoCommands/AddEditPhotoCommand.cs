@@ -8,16 +8,16 @@ namespace CourseProject_SellingTickets.Commands.PhotoCommands;
 
 public class AddEditPhotoCommand : ReactiveCommand<bool, Unit>
 {
-    private static void EditData(PhotoUserViewModel photoUserViewModel, bool isNewInstance)
+    private static void EditData(PhotoUserViewModel photoUserVm, bool isNewInstance)
     {
         if (isNewInstance)
-            photoUserViewModel.SelectedPhoto = new Photo();
+            photoUserVm.SelectedPhoto = new Photo();
 
-        photoUserViewModel.SideBarShowed = true;
+        photoUserVm.SideBarShowed = true;
     }
     
-    public AddEditPhotoCommand(PhotoUserViewModel photoUserViewModel) : 
-        base(  isNewInstance => Observable.Start(() => EditData(photoUserViewModel, isNewInstance)), 
+    public AddEditPhotoCommand(PhotoUserViewModel photoUserVm) : 
+        base(  isNewInstance => Observable.Start(() => EditData(photoUserVm, isNewInstance)), 
             canExecute: Observable.Return(true)  )
     {
         

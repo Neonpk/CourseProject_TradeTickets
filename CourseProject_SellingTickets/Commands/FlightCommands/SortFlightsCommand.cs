@@ -10,77 +10,77 @@ namespace CourseProject_SellingTickets.Commands.FlightCommands;
 
 public class SortFlightsCommand : ReactiveCommand<Unit, Unit>
 {
-    private static void SortFlights(FlightUserViewModel flightUserViewModel)
+    private static void SortFlights(FlightUserViewModel flightUserVm)
     {
 
-        if (flightUserViewModel.IsLoading!.Value)
+        if (flightUserVm.IsLoading!.Value)
             return;
         
-        SortMode sortMode = (SortMode)flightUserViewModel.SelectedSortMode;
-        FlightSortModes sortModes = (FlightSortModes)flightUserViewModel.SelectedSortValue;
+        SortMode sortMode = (SortMode)flightUserVm.SelectedSortMode;
+        FlightSortModes sortModes = (FlightSortModes)flightUserVm.SelectedSortValue;
 
         Dispatcher.UIThread.Post(() =>
         {
-            var flightItems = flightUserViewModel.FlightItems;
+            var flightItems = flightUserVm.FlightItems;
 
             switch (sortModes)
             {
                 case FlightSortModes.FlightNumber:
-                    flightItems!.OrderByReferenceMode(x => x.FlightNumber, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.FlightNumber, sortMode);
                     break;
 
                 case FlightSortModes.DeparturePlace:
-                    flightItems!.OrderByReferenceMode(x => x.DeparturePlace.Name, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.DeparturePlace.Name, sortMode);
                     break;
 
                 case FlightSortModes.DestinationPlace:
-                    flightItems!.OrderByReferenceMode(x => x.DestinationPlace.Name, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.DestinationPlace.Name, sortMode);
                     break;
 
                 case FlightSortModes.DepartureTime:
-                    flightItems!.OrderByReferenceMode(x => x.DepartureTime, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.DepartureTime, sortMode);
                     break;
                 case FlightSortModes.ArrivalTime:
-                    flightItems!.OrderByReferenceMode(x => x.ArrivalTime, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.ArrivalTime, sortMode);
                     break;
 
                 case FlightSortModes.AircraftName:
-                    flightItems!.OrderByReferenceMode(x => x.Aircraft.Model!, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.Aircraft.Model, sortMode);
                     break;
 
                 case FlightSortModes.TotalPlace:
-                    flightItems!.OrderByReferenceMode(x => x.TotalPlace, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.TotalPlace, sortMode);
                     break;
                 case FlightSortModes.FreePlace:
-                    flightItems!.OrderByReferenceMode(x => x.FreePlace, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.FreePlace, sortMode);
                     break;
 
                 case FlightSortModes.CanceledFlights:
-                    flightItems!.OrderByReferenceMode(x => x.IsCanceled, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.IsCanceled, sortMode);
                     break;
 
                 case FlightSortModes.DurationTime:
-                    flightItems!.OrderByReferenceMode(x => x.DurationTime, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.DurationTime, sortMode);
                     break;
 
                 case FlightSortModes.InProgress:
-                    flightItems!.OrderByReferenceMode(x => x.InProgress, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.InProgress, sortMode);
                     break;
 
                 case FlightSortModes.IsCompleted:
-                    flightItems!.OrderByReferenceMode(x => x.IsCompleted, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.IsCompleted, sortMode);
                     break;
                 
                 case FlightSortModes.Price: 
-                    flightItems!.OrderByReferenceMode(x => x.Price, sortMode);
+                    flightItems.OrderByReferenceMode(x => x.Price, sortMode);
                     break;
             }
         });
 
     }
 
-    public SortFlightsCommand(FlightUserViewModel flightUserViewModel) :
-        base(_ => Observable.Start(() => SortFlights(flightUserViewModel)), canExecute: Observable.Return(true))
+    public SortFlightsCommand(FlightUserViewModel flightUserVm) :
+        base(_ => Observable.Start(() => SortFlights(flightUserVm)), canExecute: Observable.Return(true))
     {
         
     }

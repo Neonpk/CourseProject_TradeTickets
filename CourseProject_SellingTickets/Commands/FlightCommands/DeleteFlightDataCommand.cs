@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
 using CourseProject_SellingTickets.Models;
@@ -11,39 +12,39 @@ namespace CourseProject_SellingTickets.Commands.FlightCommands;
 
 public class DeleteFlightDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task DeleteDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider? flightProvider)
+    private static async Task DeleteDataAsync(FlightUserViewModel flightUserVm, IFlightVmProvider? flightProvider)
     {
-        flightUserViewModel.ErrorMessage = string.Empty;
-        flightUserViewModel.IsLoadingEditMode = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
-        if (!flightUserViewModel.DatabaseHasConnected)
-        {
-            flightUserViewModel.ErrorMessage = "Не удалось установить соединение с БД.";
-            flightUserViewModel.IsLoadingEditMode = false;
-            return;
-        }
-        
         try
         {
-            Flight? selectedFlight = flightUserViewModel.SelectedFlight;
-            
-            var dbState = await flightProvider!.DeleteFlight(selectedFlight);
+            flightUserVm.ErrorMessage = string.Empty;
+            flightUserVm.IsLoadingEditMode = true;
+            flightUserVm.IsLoading = true;
 
-            flightUserViewModel.SearchFlightDataCommand?.Execute().Subscribe();
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+        
+            if (!await isConnected)
+            {
+                flightUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+
+            await flightProvider!.DeleteFlight(flightUserVm.SelectedFlight);
+            flightUserVm.SearchFlightDataCommand.Execute().Subscribe();
         }
         catch (Exception e)
         {
-            flightUserViewModel.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
+            flightUserVm.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
         }
-
-        flightUserViewModel.IsLoadingEditMode = false;
+        finally
+        {
+            flightUserVm.IsLoadingEditMode = false;
+            flightUserVm.IsLoading = false;
+        }
     }
 
-    public DeleteFlightDataCommand( FlightUserViewModel flightUserViewModel, IFlightVmProvider? flightProvider) : 
+    public DeleteFlightDataCommand(FlightUserViewModel flightUserVm, IFlightVmProvider? flightProvider) : 
         base(_ => 
-            Observable.Start(async () => await DeleteDataAsync(flightUserViewModel, flightProvider)), canExecute: Observable.Return(true))
+            Observable.Start(async () => await DeleteDataAsync(flightUserVm, flightProvider)), canExecute: Observable.Return(true))
     {
     }
 }

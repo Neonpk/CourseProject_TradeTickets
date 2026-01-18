@@ -61,9 +61,9 @@ public class SearchFlightDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Fl
              case FlightSearchModes.AircraftName:
                  return await flightVmProvider.GetFlightsByFilter(
                      x => 
-                         x.Aircraft!.Model!.ToLower().StartsWith(searchTerm.ToLower()) 
+                         x.Aircraft!.Model.ToLower().StartsWith(searchTerm.ToLower()) 
                          || 
-                         x.Aircraft.Type!.ToLower().StartsWith(searchTerm.ToLower()), 
+                         x.Aircraft.Type.ToLower().StartsWith(searchTerm.ToLower()), 
                      limitRows);
 
              // By Total Place
@@ -99,30 +99,30 @@ public class SearchFlightDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Fl
         }
     }
     
-    private static async Task<IEnumerable<Flight>?> SearchDataAsync(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider)
+    private static async Task<IEnumerable<Flight>?> SearchDataAsync(FlightUserViewModel flightUserVm, IFlightVmProvider flightVmProvider)
     {
-        int limitRows = flightUserViewModel.LimitRows;
-        string searchTerm = flightUserViewModel.SearchTerm!;
-        FlightSearchModes selectedSearchMode = (FlightSearchModes)flightUserViewModel.SelectedSearchMode;
-        
         try
         {
-            flightUserViewModel.IsLoading = true;
+            int limitRows = flightUserVm.LimitRows;
+            string searchTerm = flightUserVm.SearchTerm!;
+            FlightSearchModes selectedSearchMode = (FlightSearchModes)flightUserVm.SelectedSearchMode;
+            
+            flightUserVm.IsLoading = true;
             IEnumerable<Flight> flights = await GetFlightDataByFilter(flightVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return flights;
         }
         catch (Exception e)
         {
-            flightUserViewModel.IsLoading = false;
-            flightUserViewModel.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
+            flightUserVm.IsLoading = false;
+            flightUserVm.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
 
             return null;
         }
     }
 
-    public SearchFlightDataCommand(FlightUserViewModel flightUserViewModel, IFlightVmProvider flightVmProvider) : 
-        base(_ => Observable.Start(async () => await SearchDataAsync(flightUserViewModel, flightVmProvider)), canExecute: Observable.Return(true))
+    public SearchFlightDataCommand(FlightUserViewModel flightUserVm, IFlightVmProvider flightVmProvider) : 
+        base(_ => Observable.Start(async () => await SearchDataAsync(flightUserVm, flightVmProvider)), canExecute: Observable.Return(true))
     {
         
     }

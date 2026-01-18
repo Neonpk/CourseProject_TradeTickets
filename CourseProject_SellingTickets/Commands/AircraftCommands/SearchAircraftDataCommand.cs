@@ -12,7 +12,6 @@ namespace CourseProject_SellingTickets.Commands.AircraftCommands;
 
 public class SearchAircraftDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Aircraft>?>>
 {
-    
     private static async Task<IEnumerable<Aircraft>> GetAircraftDataByFilter(IAircraftVmProvider aircraftVmProvider, string searchTerm, AircraftSearchSortModes searchMode, int limitRows = 50)
     {
          switch (searchMode)
@@ -41,30 +40,30 @@ public class SearchAircraftDataCommand : ReactiveCommand<Unit, Task<IEnumerable<
         }
     }
     
-    private static async Task<IEnumerable<Aircraft>?> SearchDataAsync(AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider aircraftVmProvider)
+    private static async Task<IEnumerable<Aircraft>?> SearchDataAsync(AircraftUserViewModel aircraftUserVm, IAircraftVmProvider aircraftVmProvider)
     {
-        int limitRows = aircraftUserViewModel.LimitRows;
-        string searchTerm = aircraftUserViewModel.SearchTerm!;
-        AircraftSearchSortModes selectedSearchMode = (AircraftSearchSortModes)aircraftUserViewModel.SelectedSearchMode;
-        
         try
         {
-            aircraftUserViewModel.IsLoading = true;
+            int limitRows = aircraftUserVm.LimitRows;
+            string searchTerm = aircraftUserVm.SearchTerm!;
+            AircraftSearchSortModes selectedSearchMode = (AircraftSearchSortModes)aircraftUserVm.SelectedSearchMode;
+            
+            aircraftUserVm.IsLoading = true;
             IEnumerable<Aircraft> aircrafts = await GetAircraftDataByFilter(aircraftVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return aircrafts;
         }
         catch (Exception e)
         {
-            aircraftUserViewModel.IsLoading = false;
-            aircraftUserViewModel.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
+            aircraftUserVm.IsLoading = false;
+            aircraftUserVm.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
 
             return null;
         }
     }
     
-    public SearchAircraftDataCommand(AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider aircraftVmProvider) : 
-        base(_ => Observable.Start(async () => await SearchDataAsync(aircraftUserViewModel, aircraftVmProvider)), canExecute: Observable.Return(true))
+    public SearchAircraftDataCommand(AircraftUserViewModel aircraftUserVm, IAircraftVmProvider aircraftVmProvider) : 
+        base(_ => Observable.Start(async () => await SearchDataAsync(aircraftUserVm, aircraftVmProvider)), canExecute: Observable.Return(true))
     {
         
     }

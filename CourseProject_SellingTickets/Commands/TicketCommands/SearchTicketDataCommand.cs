@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -81,7 +82,7 @@ public class SearchTicketDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Ti
              // By Discount Price
              case TicketSearchModes.DiscountPrice:
                  return await ticketVmProvider.GetTicketsByFilter(
-                     x => (x.Flight.Price - x.Flight.Price * (x.Discount.DiscountSize * 0.01)).ToString().StartsWith(searchTerm), 
+                     x => (x.Flight.Price - x.Flight.Price * (x.Discount.DiscountSize * 0.01)).ToString(CultureInfo.InvariantCulture).StartsWith(searchTerm), 
                      limitRows);
              
              // By Departure Time
@@ -129,7 +130,7 @@ public class SearchTicketDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Ti
              case TicketSearchModes.DeparturePlace:
                  return (await tickets).Where(
                      x => 
-                         x.Flight.DeparturePlace!.Description.ToLower().StartsWith(searchTerm.ToLower()) 
+                         x.Flight.DeparturePlace.Description.ToLower().StartsWith(searchTerm.ToLower()) 
                          || 
                          x.Flight.DeparturePlace.Name.ToLower().StartsWith(searchTerm.ToLower()));
 
@@ -137,7 +138,7 @@ public class SearchTicketDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Ti
              case TicketSearchModes.DestinationPlace:
                  return (await tickets).Where(
                      x => 
-                         x.Flight.DestinationPlace!.Description.ToLower().StartsWith(searchTerm.ToLower()) 
+                         x.Flight.DestinationPlace.Description.ToLower().StartsWith(searchTerm.ToLower()) 
                          || 
                          x.Flight.DestinationPlace.Name.ToLower().StartsWith(searchTerm.ToLower()));
 
@@ -170,7 +171,7 @@ public class SearchTicketDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Ti
              // By Discount Price
              case TicketSearchModes.DiscountPrice:
                  return (await tickets).Where(
-                     x => (x.Flight.Price - x.Flight.Price * (x.Discount.DiscountSize * 0.01)).ToString().StartsWith(searchTerm));
+                     x => (x.Flight.Price - x.Flight.Price * (x.Discount.DiscountSize * 0.01)).ToString(CultureInfo.InvariantCulture).StartsWith(searchTerm));
              
              // By Departure Time
              case TicketSearchModes.DepartureTime:
@@ -195,13 +196,13 @@ public class SearchTicketDataCommand : ReactiveCommand<Unit, Task<IEnumerable<Ti
     
     private static async Task<IEnumerable<Ticket>?> SearchDataAsync(TicketUserViewModel ticketUserViewModel, ITicketVmProvider ticketVmProvider)
     {
-        int limitRows = ticketUserViewModel.LimitRows;
-        string searchTerm = ticketUserViewModel.SearchTerm!;
-        TicketUserViewModelParam? ticketUserVmParam = ticketUserViewModel.TicketUserVmParam;
-        TicketSearchModes selectedSearchMode = (TicketSearchModes)ticketUserViewModel.SelectedSearchMode;
-
         try
         {
+            int limitRows = ticketUserViewModel.LimitRows;
+            string searchTerm = ticketUserViewModel.SearchTerm!;
+            TicketUserViewModelParam? ticketUserVmParam = ticketUserViewModel.TicketUserVmParam;
+            TicketSearchModes selectedSearchMode = (TicketSearchModes)ticketUserViewModel.SelectedSearchMode;
+            
             ticketUserViewModel.IsLoading = true;
             
             IEnumerable<Ticket> tickets = ticketUserVmParam != null ? 

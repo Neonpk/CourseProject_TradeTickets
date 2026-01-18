@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
@@ -13,40 +14,48 @@ namespace CourseProject_SellingTickets.Commands.DiscountCommands;
 
 public class LoadDiscountDataCommand : ReactiveCommand<IEnumerable<Discount>, Task>
 {
-    private static async Task LoadDataAsync(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider, IEnumerable<Discount> filteredDiscounts)
+    private static async Task LoadDataAsync(DiscountUserViewModel discountUserVm, IDiscountVmProvider discountVmProvider, IEnumerable<Discount> filteredDiscounts)
     {
-        var limitRows = discountUserViewModel.LimitRows;
-
-        discountUserViewModel.ErrorMessage = string.Empty;
-        discountUserViewModel.IsLoading = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
         try
         {
-            bool hasSearching = discountUserViewModel.HasSearching;
+            var limitRows = discountUserVm.LimitRows;
+
+            discountUserVm.ErrorMessage = string.Empty;
+            discountUserVm.IsLoading = true;
+
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+
+            if (!await isConnected)
+            {
+                discountUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+
+            bool hasSearching = discountUserVm.HasSearching;
 
             IEnumerable<Discount> discounts =
-                hasSearching ? filteredDiscounts! : await discountVmProvider.GetTopDiscounts(limitRows);
+                hasSearching ? filteredDiscounts : await discountVmProvider.GetTopDiscounts(limitRows);
 
             Dispatcher.UIThread.Post(() =>
             {
-                discountUserViewModel.DiscountItems.Clear();
-                discountUserViewModel.DiscountItems.AddRange(discounts);
+                discountUserVm.DiscountItems.Clear();
+                discountUserVm.DiscountItems.AddRange(discounts);
             });
-            
+
         }
         catch (Exception e)
         {
-            discountUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
+            discountUserVm.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
         }
-
-        discountUserViewModel.IsLoading = false;
+        finally
+        {
+            discountUserVm.IsLoading = false;   
+        }
     }
     
-    public LoadDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider) :
+    public LoadDiscountDataCommand(DiscountUserViewModel discountUserVm, IDiscountVmProvider discountVmProvider) :
         base(filteredDiscounts => Observable.Start(async () => 
-                await LoadDataAsync(discountUserViewModel, discountVmProvider, filteredDiscounts) ),
+                await LoadDataAsync(discountUserVm, discountVmProvider, filteredDiscounts) ),
             canExecute: Observable.Return(true))
     {
     }

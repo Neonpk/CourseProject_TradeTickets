@@ -24,20 +24,19 @@ public class RegisterUserCommand : ReactiveCommand<Unit, Task>
 
     public static async Task RegisterUserAsync(RegisterUserViewModel registerUserVm, IAuthProvider authProvider)
     {
-        registerUserVm.ErrorMessage = string.Empty;
-        registerUserVm.IsLoading = true;
-
-        var isConnected = await ConnectionDbState.CheckConnectionState.Execute().ToTask();
-        
-        if (!await isConnected)
-        {
-            registerUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
-            registerUserVm.IsLoading = false;
-            return;
-        }
-
         try
         {
+            registerUserVm.ErrorMessage = string.Empty;
+            registerUserVm.IsLoading = true;
+
+            var isConnected = await ConnectionDbState.CheckConnectionState.Execute().ToTask();
+        
+            if (!await isConnected)
+            {
+                registerUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+            
             await authProvider.CreateUser(new User
             {
                 Id = default,
@@ -70,12 +69,11 @@ public class RegisterUserCommand : ReactiveCommand<Unit, Task>
         {
             registerUserVm.IsLoading = false;
         }
-        
     }
     
-    public RegisterUserCommand(RegisterUserViewModel registerUserViewModel, IAuthProvider authProvider) : 
-        base(_ => Observable.Start(async () => await RegisterUserAsync(registerUserViewModel, authProvider)), 
-            canExecute: CanExecuteCommand(registerUserViewModel).ObserveOn(AvaloniaScheduler.Instance) )
+    public RegisterUserCommand(RegisterUserViewModel registerUserVm, IAuthProvider authProvider) : 
+        base(_ => Observable.Start(async () => await RegisterUserAsync(registerUserVm, authProvider)), 
+            canExecute: CanExecuteCommand(registerUserVm).ObserveOn(AvaloniaScheduler.Instance) )
     {
     }
 }

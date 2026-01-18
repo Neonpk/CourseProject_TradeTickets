@@ -1,6 +1,7 @@
 using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
 using CourseProject_SellingTickets.Models;
@@ -11,39 +12,39 @@ namespace CourseProject_SellingTickets.Commands.AircraftCommands;
 
 public class DeleteAircraftDataCommand : ReactiveCommand<Unit, Task>
 {
-    private static async Task DeleteDataAsync(AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider? aircraftVmProvider)
+    private static async Task DeleteDataAsync(AircraftUserViewModel aircraftUserVm, IAircraftVmProvider? aircraftVmProvider)
     {
-        aircraftUserViewModel.ErrorMessage = string.Empty;
-        aircraftUserViewModel.IsLoadingEditMode = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
-        if (!aircraftUserViewModel.DatabaseHasConnected)
-        {
-            aircraftUserViewModel.ErrorMessage = "Не удалось установить соединение с БД.";
-            aircraftUserViewModel.IsLoadingEditMode = false;
-            return;
-        }
-        
         try
         {
-            Aircraft? selectedAircraft = aircraftUserViewModel.SelectedAircraft;
+            aircraftUserVm.ErrorMessage = string.Empty;
+            aircraftUserVm.IsLoadingEditMode = true;
+            aircraftUserVm.IsLoading = true;
             
-            var dbState = await aircraftVmProvider!.DeleteAircraft(selectedAircraft);
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
 
-            aircraftUserViewModel.SearchAircraftDataCommand?.Execute().Subscribe();
+            if (!await isConnected)
+            {
+                aircraftUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+
+            await aircraftVmProvider!.DeleteAircraft(aircraftUserVm.SelectedAircraft);
+            aircraftUserVm.SearchAircraftDataCommand.Execute().Subscribe();
         }
         catch (Exception e)
         {
-            aircraftUserViewModel.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
+            aircraftUserVm.ErrorMessage = $"Не удалось удалить данные: ({e.InnerException!.Message})";
         }
-
-        aircraftUserViewModel.IsLoadingEditMode = false;
+        finally
+        {
+            aircraftUserVm.IsLoadingEditMode = false;
+            aircraftUserVm.IsLoading = false;
+        }
     }
 
-    public DeleteAircraftDataCommand( AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider? aircraftVmProvider) : 
+    public DeleteAircraftDataCommand( AircraftUserViewModel aircraftUserVm, IAircraftVmProvider? aircraftVmProvider) : 
         base(_ => 
-            Observable.Start(async () => await DeleteDataAsync(aircraftUserViewModel, aircraftVmProvider)), canExecute: Observable.Return(true))
+            Observable.Start(async () => await DeleteDataAsync(aircraftUserVm, aircraftVmProvider)), canExecute: Observable.Return(true))
     {
         
     }

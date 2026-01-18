@@ -26,30 +26,30 @@ public class SearchAirlineDataCommand : ReactiveCommand<Unit, Task<IEnumerable<A
                 return new List<Airline>();
         }
     }
-    private static async Task<IEnumerable<Airline>?> SearchDataAsync(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider)
+    private static async Task<IEnumerable<Airline>?> SearchDataAsync(AirlineUserViewModel airlineUserVm, IAirlineVmProvider airlineVmProvider)
     {
-        int limitRows = airlineUserViewModel.LimitRows;
-        string searchTerm = airlineUserViewModel.SearchTerm!;
-        AirlineSearchSortModes selectedSearchMode = (AirlineSearchSortModes)airlineUserViewModel.SelectedSearchMode;
-        
         try
         {
-            airlineUserViewModel.IsLoading = true;
+            int limitRows = airlineUserVm.LimitRows;
+            string searchTerm = airlineUserVm.SearchTerm!;
+            AirlineSearchSortModes selectedSearchMode = (AirlineSearchSortModes)airlineUserVm.SelectedSearchMode;
+            
+            airlineUserVm.IsLoading = true;
             IEnumerable<Airline> airlines = await GetAirlinesDataByFilter(airlineVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return airlines;
         }
         catch (Exception e)
         {
-            airlineUserViewModel.IsLoading = false;
-            airlineUserViewModel.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
+            airlineUserVm.IsLoading = false;
+            airlineUserVm.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
 
             return null;
         }
     }
     
-    public SearchAirlineDataCommand(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider) : 
-        base(_ => Observable.Start(async () => await SearchDataAsync(airlineUserViewModel, airlineVmProvider)), canExecute: Observable.Return(true))
+    public SearchAirlineDataCommand(AirlineUserViewModel airlineUserVm, IAirlineVmProvider airlineVmProvider) : 
+        base(_ => Observable.Start(async () => await SearchDataAsync(airlineUserVm, airlineVmProvider)), canExecute: Observable.Return(true))
     {
     }
 }

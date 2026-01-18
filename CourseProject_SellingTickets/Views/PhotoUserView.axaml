@@ -204,7 +204,7 @@
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Width="32" Height="32" Source="{Binding BitMapFromUrl^}" Margin="0 5 0 0"/>
-                                                    <Label Content="{Binding UrlPath, Converter={StaticResource TrimTextConverter}}" VerticalAlignment="Center"/>
+                                                    <Label Content="{Binding UrlPath, Converter={StaticResource TrimTextConverter}, Mode=OneTime}" VerticalAlignment="Center"/>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -314,8 +314,5 @@
                 </ScrollViewer>
             </Border>
         </SplitView.Pane>
-        
     </SplitView>
-    
-    
 </UserControl>

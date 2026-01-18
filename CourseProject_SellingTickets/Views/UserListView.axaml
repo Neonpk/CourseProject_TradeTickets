@@ -340,7 +340,5 @@
                 </ScrollViewer>
             </Border>
         </SplitView.Pane>
-        
     </SplitView>
-    
 </UserControl>

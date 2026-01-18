@@ -18,13 +18,13 @@ public class DeleteUserDataCommand : ReactiveCommand<Unit, Task>
         {
             userListVm.ErrorMessage = string.Empty;
             userListVm.IsLoadingEditMode = true;
+            userListVm.IsLoading = true;
 
             var isConnected = await ConnectionDbState.CheckConnectionState.Execute().ToTask();
 
             if (!await isConnected)
             {
                 userListVm.ErrorMessage = "Не удалось установить соединение с БД.";
-                userListVm.IsLoadingEditMode = false;
                 return;
             }
             
@@ -38,7 +38,8 @@ public class DeleteUserDataCommand : ReactiveCommand<Unit, Task>
         }
         finally
         {
-            userListVm.IsLoadingEditMode = false;   
+            userListVm.IsLoadingEditMode = false;
+            userListVm.IsLoading = false;
         }
     }
 

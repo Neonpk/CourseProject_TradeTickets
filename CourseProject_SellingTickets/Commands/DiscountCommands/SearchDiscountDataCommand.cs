@@ -38,30 +38,30 @@ public class SearchDiscountDataCommand : ReactiveCommand<Unit, Task<IEnumerable<
                  return new List<Discount>();
         }
     }
-    private static async Task<IEnumerable<Discount>?> SearchDataAsync(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider)
+    private static async Task<IEnumerable<Discount>?> SearchDataAsync(DiscountUserViewModel discountUserVm, IDiscountVmProvider discountVmProvider)
     {
-        int limitRows = discountUserViewModel.LimitRows;
-        string searchTerm = discountUserViewModel.SearchTerm!;
-        DiscountSearchSortModes selectedSearchMode = (DiscountSearchSortModes)discountUserViewModel.SelectedSearchMode;
-        
         try
         {
-            discountUserViewModel.IsLoading = true;
+            int limitRows = discountUserVm.LimitRows;
+            string searchTerm = discountUserVm.SearchTerm!;
+            DiscountSearchSortModes selectedSearchMode = (DiscountSearchSortModes)discountUserVm.SelectedSearchMode;
+            
+            discountUserVm.IsLoading = true;
             IEnumerable<Discount> discounts = await GetDiscountDataByFilter(discountVmProvider, searchTerm, selectedSearchMode, limitRows);
 
             return discounts;
         }
         catch (Exception e)
         {
-            discountUserViewModel.IsLoading = false;
-            discountUserViewModel.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
+            discountUserVm.IsLoading = false;
+            discountUserVm.ErrorMessage = $"Не удалось найти данные: ({e.Message})";
 
             return null;
         }
     }
     
-    public SearchDiscountDataCommand(DiscountUserViewModel discountUserViewModel, IDiscountVmProvider discountVmProvider) : 
-        base(_ => Observable.Start(async () => await SearchDataAsync(discountUserViewModel, discountVmProvider)), canExecute: Observable.Return(true))
+    public SearchDiscountDataCommand(DiscountUserViewModel discountUserVm, IDiscountVmProvider discountVmProvider) : 
+        base(_ => Observable.Start(async () => await SearchDataAsync(discountUserVm, discountVmProvider)), canExecute: Observable.Return(true))
     {
     }
 }

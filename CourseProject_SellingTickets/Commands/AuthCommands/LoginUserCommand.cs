@@ -11,41 +11,41 @@ namespace CourseProject_SellingTickets.Commands.AuthCommands;
 
 public class LoginUserCommand : ReactiveCommand<Unit, Task>
 {
-    public static async Task LoginUser(AuthUserViewModel authUserViewModel, IAuthProvider authProvider)
+    public static async Task LoginUser(AuthUserViewModel authUserVm, IAuthProvider authProvider)
     {
         try
         {
             ConnectionDbState.CheckConnectionState.Execute().Subscribe();
                         
-            authUserViewModel.IsLoading = true;
-            authUserViewModel.AuthState = await authProvider.CheckUserPassword(authUserViewModel.Login, authUserViewModel.Password);
-            authUserViewModel.IsLoading = false;
+            authUserVm.IsLoading = true;
+            authUserVm.AuthState = await authProvider.CheckUserPassword(authUserVm.Login, authUserVm.Password);
+            authUserVm.IsLoading = false;
 
-            if (authUserViewModel.AuthState != AuthStates.Success) return;
+            if (authUserVm.AuthState != AuthStates.Success) return;
                         
-            switch (await authProvider.GetUserRole(authUserViewModel.Login))
+            switch (await authProvider.GetUserRole(authUserVm.Login))
             {
                 case UserRoles.Admin: 
-                    authUserViewModel.NavigationService!.NavigateTo<AdminUserViewModel>(); 
+                    authUserVm.NavigationService!.NavigateTo<AdminUserViewModel>(); 
                     break;
                 case UserRoles.Dispatcher: 
-                    authUserViewModel.NavigationService!.NavigateTo<DispatcherUserViewModel>();
+                    authUserVm.NavigationService!.NavigateTo<DispatcherUserViewModel>();
                     break;
                 case UserRoles.User:
-                    var userId = await authProvider.GetUserIdByLogin(authUserViewModel.Login);
-                    authUserViewModel.NavigationService!.NavigateTo<ClientUserViewModel>(userId);
+                    var userId = await authProvider.GetUserIdByLogin(authUserVm.Login);
+                    authUserVm.NavigationService!.NavigateTo<ClientUserViewModel>(userId);
                     break;
             }
 
         }
         finally
         {
-            authUserViewModel.IsLoading = false;
+            authUserVm.IsLoading = false;
         }
     }
     
-    public LoginUserCommand(AuthUserViewModel authUserViewModel, IAuthProvider authProvider) 
-        : base(_ => Observable.Start(async () => await LoginUser(authUserViewModel, authProvider)), 
+    public LoginUserCommand(AuthUserViewModel authUserVm, IAuthProvider authProvider) 
+        : base(_ => Observable.Start(async () => await LoginUser(authUserVm, authProvider)), 
         canExecute: Observable.Return(true))
     {
         

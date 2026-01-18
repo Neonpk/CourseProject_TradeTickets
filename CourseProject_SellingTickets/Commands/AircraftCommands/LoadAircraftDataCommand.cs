@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
@@ -13,46 +14,55 @@ namespace CourseProject_SellingTickets.Commands.AircraftCommands;
 
 public class LoadAircraftDataCommand : ReactiveCommand<IEnumerable<Aircraft>, Task>
 {
-    private static async Task LoadDataAsync(AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider aircraftVmProvider, IEnumerable<Aircraft> filteredAircrafts)
+    private static async Task LoadDataAsync(AircraftUserViewModel aircraftUserVm, IAircraftVmProvider aircraftVmProvider, IEnumerable<Aircraft> filteredAircrafts)
     {
-        var limitRows = aircraftUserViewModel.LimitRows;
-        
-        aircraftUserViewModel.ErrorMessage = string.Empty;
-        aircraftUserViewModel.IsLoading = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
         try
         {
-            bool hasSearching = aircraftUserViewModel.HasSearching;
-           
-            IEnumerable<Aircraft> aircrafts = hasSearching ? filteredAircrafts! : await aircraftVmProvider.GetTopAircrafts(limitRows);
-            
+            var limitRows = aircraftUserVm.LimitRows;
+
+            aircraftUserVm.ErrorMessage = string.Empty;
+            aircraftUserVm.IsLoading = true;
+
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+
+            if (!await isConnected)
+            {
+                aircraftUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+
+            bool hasSearching = aircraftUserVm.HasSearching;
+
+            IEnumerable<Aircraft> aircrafts =
+                hasSearching ? filteredAircrafts : await aircraftVmProvider.GetTopAircrafts(limitRows);
+
             IEnumerable<Photo> photos = await aircraftVmProvider.GetAllPhotos();
 
             Dispatcher.UIThread.Post(() =>
             {
-                aircraftUserViewModel.Photos.Clear();
-                aircraftUserViewModel.Photos.AddRange(photos);
+                aircraftUserVm.Photos.Clear();
+                aircraftUserVm.Photos.AddRange(photos);
 
-                aircraftUserViewModel.AircraftItems.Clear();
-                aircraftUserViewModel.AircraftItems.AddRange(aircrafts);
+                aircraftUserVm.AircraftItems.Clear();
+                aircraftUserVm.AircraftItems.AddRange(aircrafts);
 
             });
 
-            aircraftUserViewModel.SortAircraftCommand!.Execute().Subscribe();
+            aircraftUserVm.SortAircraftCommand.Execute().Subscribe();
         }
         catch (Exception e)
         {
-            aircraftUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
+            aircraftUserVm.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
         }
-       
-        aircraftUserViewModel.IsLoading = false;
+        finally
+        {
+            aircraftUserVm.IsLoading = false;
+        }
     }
     
-    public LoadAircraftDataCommand(AircraftUserViewModel aircraftUserViewModel, IAircraftVmProvider aircraftVmProvider) :
+    public LoadAircraftDataCommand(AircraftUserViewModel aircraftUserVm, IAircraftVmProvider aircraftVmProvider) :
         base(fileteredAircrafts => 
-                Observable.Start( async () => await LoadDataAsync(aircraftUserViewModel, aircraftVmProvider, fileteredAircrafts)),
+                Observable.Start( async () => await LoadDataAsync(aircraftUserVm, aircraftVmProvider, fileteredAircrafts)),
             canExecute: Observable.Return(true))
     {
         

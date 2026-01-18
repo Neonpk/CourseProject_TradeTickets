@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CourseProject_SellingTickets.Interfaces.AirlineProviderInterface;
@@ -13,40 +14,48 @@ namespace CourseProject_SellingTickets.Commands.AirlineCommands;
 
 public class LoadAirlineDataCommand : ReactiveCommand<IEnumerable<Airline>, Task>
 {
-    private static async Task LoadDataAsync(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider, IEnumerable<Airline> filteredAirlines)
+    private static async Task LoadDataAsync(AirlineUserViewModel airlineUserVm, IAirlineVmProvider airlineVmProvider, IEnumerable<Airline> filteredAirlines)
     {
-        var limitRows = airlineUserViewModel.LimitRows;
-
-        airlineUserViewModel.ErrorMessage = string.Empty;
-        airlineUserViewModel.IsLoading = true;
-
-        ConnectionDbState.CheckConnectionState.Execute().Subscribe();
-        
         try
         {
-            bool hasSearching = airlineUserViewModel.HasSearching;
+            var limitRows = airlineUserVm.LimitRows;
+
+            airlineUserVm.ErrorMessage = string.Empty;
+            airlineUserVm.IsLoading = true;
+
+            var isConnected = ConnectionDbState.CheckConnectionState.Execute().ToTask().Unwrap();
+
+            if (!await isConnected)
+            {
+                airlineUserVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+
+            bool hasSearching = airlineUserVm.HasSearching;
 
             IEnumerable<Airline> airlines =
-                hasSearching ? filteredAirlines! : await airlineVmProvider.GetTopAirlines(limitRows);
+                hasSearching ? filteredAirlines : await airlineVmProvider.GetTopAirlines(limitRows);
 
             Dispatcher.UIThread.Post(() =>
             {
-                airlineUserViewModel.AirlineItems.Clear();
-                airlineUserViewModel.AirlineItems.AddRange(airlines);
+                airlineUserVm.AirlineItems.Clear();
+                airlineUserVm.AirlineItems.AddRange(airlines);
             });
-            
+
         }
         catch (Exception e)
         {
-            airlineUserViewModel.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
+            airlineUserVm.ErrorMessage = $"Не удалось загрузить данные: ({e.Message})";
         }
-
-        airlineUserViewModel.IsLoading = false;
+        finally
+        {
+            airlineUserVm.IsLoading = false;   
+        }
     }
     
-    public LoadAirlineDataCommand(AirlineUserViewModel airlineUserViewModel, IAirlineVmProvider airlineVmProvider) :
+    public LoadAirlineDataCommand(AirlineUserViewModel airlineUserVm, IAirlineVmProvider airlineVmProvider) :
         base(filteredAirlines => Observable.Start(async () => 
-                await LoadDataAsync(airlineUserViewModel, airlineVmProvider, filteredAirlines) ),
+                await LoadDataAsync(airlineUserVm, airlineVmProvider, filteredAirlines) ),
             canExecute: Observable.Return(true))
     {
     }
