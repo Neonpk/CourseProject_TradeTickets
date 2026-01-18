@@ -5,8 +5,10 @@ using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
+using CourseProject_SellingTickets.Models.Common;
 using CourseProject_SellingTickets.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -21,29 +23,79 @@ public class SaveUserDataCommand : ReactiveCommand<Unit, Task>
         return userListVm.WhenAnyValue(x => x.SelectedUser.ValidationContext.IsValid);
     }
 
-    public static async Task SaveDataAsync(UserListViewModel userListVm, IUserListVmProvider userListVmProvider)
+    private static async Task<IResult<Int64>> GenerateUserAvatar(IUserListVmProvider userListVmProvider, string urlPath)
     {
-        userListVm.ErrorMessage = string.Empty;
-        userListVm.IsLoading = true;
-
-        var isConnected = await ConnectionDbState.CheckConnectionState.Execute().ToTask();
-        
-        if (!await isConnected)
+        var newAvatarId = await userListVmProvider.GenerateAvatar(urlPath);
+                
+        if (!newAvatarId.IsSuccess)
         {
-            userListVm.ErrorMessage = "Не удалось установить соединение с БД.";
-            userListVm.IsLoading = false;
-            return;
+            return Result<Int64>.Failure(newAvatarId.Message!);
         }
-
+        
+        return Result<Int64>.Success(newAvatarId.Value);
+    }
+    
+    public static async Task SaveDataAsync(
+        UserListViewModel userListVm, 
+        IUserListVmProvider userListVmProvider
+        )
+    {
         try
         {
+            userListVm.ErrorMessage = string.Empty;
+            userListVm.IsLoading = true;
+            userListVm.IsLoadingEditMode = true;
+
+            var isConnected = await ConnectionDbState.CheckConnectionState.Execute().ToTask();
+        
+            if (!await isConnected)
+            {
+                userListVm.ErrorMessage = "Не удалось установить соединение с БД.";
+                return;
+            }
+            
             var user = userListVm.SelectedUser;
             
             if (!string.IsNullOrEmpty(user.NewUserPassword))
             {
-                user = user.CloneWithPassword(
-                    userListVmProvider.HashPassword(user.NewUserPassword)
-                );
+                user.Password = userListVmProvider.HashPassword(user.NewUserPassword);
+            }
+            
+            if (!string.IsNullOrEmpty(user.NewPhotoUrl))
+            {
+                var generateUserAvatarResult = await GenerateUserAvatar(userListVmProvider, user.NewPhotoUrl);
+
+                if (!generateUserAvatarResult.IsSuccess)
+                {
+                    userListVm.ErrorMessage = generateUserAvatarResult.Message!;
+                    return;
+                }
+
+                user.Photo.Id = generateUserAvatarResult.Value;
+            }
+
+            if (user.Photo.SelectedFilePhoto is not null)
+            {
+                
+                var freeImageResult = await userListVm.GenerateFreeImageCommand.Execute(
+                    user.Photo.SelectedFilePhoto.GetValueOrDefault(new FileMeta())
+                ).ToTask().Unwrap();
+
+                if (!freeImageResult.IsSuccess)
+                {
+                    userListVm.ErrorMessage = freeImageResult.Message!;
+                    return;
+                }
+                
+                var generateUserAvatarResult = await GenerateUserAvatar(userListVmProvider, freeImageResult.Value!);
+
+                if (!generateUserAvatarResult.IsSuccess)
+                {
+                    userListVm.ErrorMessage = generateUserAvatarResult.Message!;
+                    return;
+                }
+
+                user.Photo.Id = generateUserAvatarResult.Value;
             }
             
             await userListVmProvider.CreateOrEditUser(user);
@@ -64,8 +116,8 @@ public class SaveUserDataCommand : ReactiveCommand<Unit, Task>
         finally
         {
             userListVm.IsLoading = false;
+            userListVm.IsLoadingEditMode = false;
         }
-        
     }
     
     protected internal SaveUserDataCommand(UserListViewModel userListVm, IUserListVmProvider userListVmProvider) : 

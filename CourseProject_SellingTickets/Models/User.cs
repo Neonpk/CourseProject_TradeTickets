@@ -33,6 +33,9 @@ public class User : ReactiveObject, IValidatableViewModel
     private string _newUserPassword = String.Empty;
     public string NewUserPassword { get => _newUserPassword; set => this.RaiseAndSetIfChanged(ref _newUserPassword, value); }
     
+    private string _newPhotoUrl = String.Empty;
+    public string NewPhotoUrl { get => _newPhotoUrl; set => this.RaiseAndSetIfChanged(ref _newPhotoUrl, value); }
+    
     private decimal _balance;
     public decimal Balance { get => _balance; set => this.RaiseAndSetIfChanged(ref _balance, value); }
 
@@ -71,12 +74,14 @@ public class User : ReactiveObject, IValidatableViewModel
         Name = String.Empty;
         Role = "user";
         Password = String.Empty;
-        NewUserPassword = String.Empty;
         Balance = 0;
         BirthDay = DateTime.Now;
         Passport = "0000000000";
         Discount = new Discount();
         Photo = new Photo();
+        
+        NewUserPassword = String.Empty;
+        NewPhotoUrl = String.Empty;
         
         // Validations
         
@@ -95,13 +100,15 @@ public class User : ReactiveObject, IValidatableViewModel
         Name = name;
         Role = role;
         Password = password;
-        NewUserPassword = String.Empty;
         Balance = balance;
         BirthDay = birthDay;
         Passport = passport;
         Discount = discount;
         Photo = photo;
         
+        
+        NewUserPassword = String.Empty;
+        NewPhotoUrl = String.Empty;
         
         // Validations
         

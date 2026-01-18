@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.FileServiceInterface;
+using CourseProject_SellingTickets.Interfaces.FreeImageServiceInterface;
 using CourseProject_SellingTickets.Models;
 
 namespace CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
@@ -18,4 +20,10 @@ public interface IPhotoVmProvider
     
     Task<int> CreateOrEditPhoto(Photo photo);
     Task<int> DeletePhoto(Photo photo);
+    
+    // Custom 
+    
+    IFileService GetFileService();
+    
+    IFreeImageService GetFreeImageService();
 }

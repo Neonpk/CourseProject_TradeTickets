@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CourseProject_SellingTickets.Interfaces.FileServiceInterface;
+using CourseProject_SellingTickets.Interfaces.FreeImageServiceInterface;
 using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Models;
 
@@ -10,10 +12,14 @@ namespace CourseProject_SellingTickets.Services.PhotoProvider;
 public class PhotoVmProvider : IPhotoVmProvider
 {
     private readonly IPhotoDbProvider _photoDbProvider;
+    private readonly IFileService _fileService;
+    private readonly IFreeImageService _freeImageService;
 
-    public PhotoVmProvider(IPhotoDbProvider? photoDbProvider)
+    public PhotoVmProvider(IPhotoDbProvider photoDbProvider, IFileService fileService, IFreeImageService freeImageService)
     {
-        _photoDbProvider = photoDbProvider!;
+        _photoDbProvider = photoDbProvider;
+        _fileService = fileService;
+        _freeImageService = freeImageService;
     }
     
     public async Task<IEnumerable<Photo>> GetAllPhotos()
@@ -45,5 +51,15 @@ public class PhotoVmProvider : IPhotoVmProvider
     public async Task<int> DeletePhoto(Photo photo)
     {
         return await _photoDbProvider.DeletePhoto(photo);
+    }
+
+    public IFileService GetFileService()
+    {
+        return _fileService;
+    }
+
+    public IFreeImageService GetFreeImageService()
+    {
+        return _freeImageService;
     }
 }

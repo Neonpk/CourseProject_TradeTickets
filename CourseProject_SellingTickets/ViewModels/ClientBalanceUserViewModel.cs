@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using CourseProject_SellingTickets.Commands.PhotoCommands;
 using CourseProject_SellingTickets.Commands.UserClientCommands;
 using CourseProject_SellingTickets.Interfaces;
 using CourseProject_SellingTickets.Interfaces.CommonInterface;

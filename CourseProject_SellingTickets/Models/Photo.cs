@@ -35,6 +35,9 @@ public class Photo : ReactiveObject, IValidatableViewModel
     private Task<Bitmap?>? _bitmapFromUrl;
     public Task<Bitmap?> BitMapFromUrl => _bitmapFromUrl ??= ImageHelper.LoadFromWeb(new Uri(UrlPath)); 
 
+    private FileMeta? _selectedFilePhoto;
+    public FileMeta? SelectedFilePhoto { get => _selectedFilePhoto; set => this.RaiseAndSetIfChanged(ref _selectedFilePhoto, value); }
+    
     // Validation
     
     private string _errorValidations;
@@ -46,6 +49,8 @@ public class Photo : ReactiveObject, IValidatableViewModel
     {
         Name = String.Empty;
         UrlPath = String.Empty;
+
+        SelectedFilePhoto = null;
         
         this.InitializeValidationRules();
     }
@@ -56,6 +61,8 @@ public class Photo : ReactiveObject, IValidatableViewModel
         Name = name;
         UrlPath = urlPath;
         IsDeleted = isDeleted;
+
+        SelectedFilePhoto = null;
         
         this.InitializeValidationRules();
     }

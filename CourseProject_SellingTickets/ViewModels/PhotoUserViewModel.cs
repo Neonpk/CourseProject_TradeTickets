@@ -4,7 +4,10 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Controls;
 using CourseProject_SellingTickets.Commands.PhotoCommands;
+using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Models;
 using ReactiveUI;
@@ -21,6 +24,24 @@ public class PhotoUserViewModel : ViewModelBase
     
     private bool _sideBarShowed;
     public bool SideBarShowed { get => _sideBarShowed; set => this.RaiseAndSetIfChanged(ref _sideBarShowed, value); }
+    
+    private int _selectedUploadFileMode = -1;
+    public int SelectedUploadFileMode
+    {
+        get => _selectedUploadFileMode;
+        set
+        {
+            if (value == (int)UploadFileMode.FromUrl)
+                SelectedPhoto.SelectedFilePhoto = null;
+            
+            this.RaiseAndSetIfChanged(ref _selectedUploadFileMode, value);
+            this.RaisePropertyChanged(nameof(IsUrlInputVisible));
+            this.RaisePropertyChanged(nameof(IsFileInputVisible));
+        }
+    }
+
+    public bool IsUrlInputVisible => (UploadFileMode)SelectedUploadFileMode == UploadFileMode.FromUrl;
+    public bool IsFileInputVisible => (UploadFileMode)SelectedUploadFileMode == UploadFileMode.FromFile; 
     
     // => // Filters => // Search Terms
     
@@ -69,16 +90,24 @@ public class PhotoUserViewModel : ViewModelBase
     public ReactiveCommand<bool, Unit> AddEditDataCommand => _addEditDataCommand ??= new AddEditPhotoCommand(this);
     
     private ReactiveCommand<IEnumerable<Photo>, Task>? _loadPhotoDataCommand;
-    public ReactiveCommand<IEnumerable<Photo>, Task> LoadPhotoDataCommand => _loadPhotoDataCommand ??= new LoadPhotoDataCommand(this, _photoVmProvider!);
+    public ReactiveCommand<IEnumerable<Photo>, Task> LoadPhotoDataCommand => _loadPhotoDataCommand ??= new LoadPhotoDataCommand(this, _photoVmProvider);
 
     private ReactiveCommand<Unit, Task<IEnumerable<Photo>?>>? _searchPhotoDataCommand;
-    public ReactiveCommand<Unit, Task<IEnumerable<Photo>?>> SearchPhotoDataCommand => _searchPhotoDataCommand ??= new SearchPhotoDataCommand(this, _photoVmProvider!);
+    public ReactiveCommand<Unit, Task<IEnumerable<Photo>?>> SearchPhotoDataCommand => _searchPhotoDataCommand ??= new SearchPhotoDataCommand(this, _photoVmProvider);
 
     private ReactiveCommand<Unit, Task>? _savePhotoDataCommand;
-    public ReactiveCommand<Unit, Task> SavePhotoDataCommand => _savePhotoDataCommand ??= new SavePhotoDataCommand(this, _photoVmProvider!);
+    public ReactiveCommand<Unit, Task> SavePhotoDataCommand => _savePhotoDataCommand ??= new SavePhotoDataCommand(this, _photoVmProvider);
 
     private ReactiveCommand<Unit, Task>? _deletePhotoDataCommand;
-    public ReactiveCommand<Unit, Task> DeletePhotoDataCommand => _deletePhotoDataCommand ??= new DeletePhotoDataCommand(this, _photoVmProvider!);
+    public ReactiveCommand<Unit, Task> DeletePhotoDataCommand => _deletePhotoDataCommand ??= new DeletePhotoDataCommand(this, _photoVmProvider);
+    
+    private ReactiveCommand<TopLevel, Task<IResult<FileMeta>>>? _choosePhotoCommand;
+    public ReactiveCommand<TopLevel, Task<IResult<FileMeta>>> ChoosePhotoCommand =>
+        _choosePhotoCommand ??= new ChoosePhotoCommand(_photoVmProvider.GetFileService());
+    
+    private ReactiveCommand<FileMeta, Task<IResult<string>>>? _generateFreeImageCommand;
+    public ReactiveCommand<FileMeta, Task<IResult<string>>> GenerateFreeImageCommand =>
+        _generateFreeImageCommand ??= new GenerateFreeImageCommand(_photoVmProvider.GetFreeImageService());
     
     // Constructor 
     
@@ -86,8 +115,12 @@ public class PhotoUserViewModel : ViewModelBase
     {
         _photoVmProvider = photoVmProvider!;
         
+        ChoosePhotoCommand.
+            Subscribe(async void (fResult) => SelectedPhoto.SelectedFilePhoto = await fResult.GetValueOrNull() );
+        
         LoadPhotoDataCommand.Execute();
-        SearchPhotoDataCommand.Subscribe(filteredPhotos => LoadPhotoDataCommand!.Execute(filteredPhotos.Result!));
+        SearchPhotoDataCommand.
+            Subscribe(async void (filteredPhotos) => LoadPhotoDataCommand.Execute((await filteredPhotos)!));
         
         ConnectionDbState.CheckConnectionState.Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);
     }

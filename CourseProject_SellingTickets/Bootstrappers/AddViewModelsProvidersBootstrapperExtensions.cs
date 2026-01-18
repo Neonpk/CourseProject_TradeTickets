@@ -1,8 +1,10 @@
 using CourseProject_SellingTickets.Interfaces.AircraftProviderInterface;
 using CourseProject_SellingTickets.Interfaces.AirlineProviderInterface;
 using CourseProject_SellingTickets.Interfaces.DiscountProviderInterface;
+using CourseProject_SellingTickets.Interfaces.FileServiceInterface;
 using CourseProject_SellingTickets.Interfaces.FlightClassProviderInterface;
 using CourseProject_SellingTickets.Interfaces.FlightProviderInterface;
+using CourseProject_SellingTickets.Interfaces.FreeImageServiceInterface;
 using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Interfaces.PlaceProviderInterface;
 using CourseProject_SellingTickets.Interfaces.TicketProviderInterface;
@@ -39,14 +41,24 @@ public static class AddViewModelsProvidersBootstrapperExtensions
             var iUserDbProvider = service.GetService<IUserDbProvider>();
             
             // Libraries 
-            var iPasswordService = service.GetService<IPasswordService>(); 
+            var iPasswordService = service.GetService<IPasswordService>();
+            var iFileService = service.GetService<IFileService>();
+            var iFreeImageService = service.GetService<IFreeImageService>();
             
             //ViewModels
             
             //ViewModels => AdminMode
             
             resolver.RegisterLazySingleton<IUserListVmProvider>( () => 
-                new UserListVmProvider(iUserDbProvider!, iDiscountDbProvider!, iPasswordService!) );
+                new UserListVmProvider(
+                    iUserDbProvider!, 
+                    iPhotoDbProvider!, 
+                    iDiscountDbProvider!, 
+                    iPasswordService!,
+                    iFileService!, 
+                    iFreeImageService!
+                ) 
+            );
             
             resolver.RegisterLazySingleton<IAircraftVmProvider>( () => 
                 new AircraftVmProvider( iAircraftDbProvider, iPhotoDbProvider ) );
@@ -58,7 +70,7 @@ public static class AddViewModelsProvidersBootstrapperExtensions
                 new DiscountVmProvider( iDiscountDbProvider ));
             
             resolver.RegisterLazySingleton<IPhotoVmProvider>(() => 
-                new PhotoVmProvider( iPhotoDbProvider ));
+                new PhotoVmProvider( iPhotoDbProvider!, iFileService!, iFreeImageService! ));
             
             resolver.RegisterLazySingleton<IAirlineVmProvider>( () => 
                 new AirlineVmProvider( iAirlineDbProvider ) );

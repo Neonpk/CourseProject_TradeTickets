@@ -4,7 +4,11 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Controls;
+using CourseProject_SellingTickets.Commands.PhotoCommands;
 using CourseProject_SellingTickets.Commands.UserListCommands;
+using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.UserProviderInterface;
 using CourseProject_SellingTickets.Models;
 using ReactiveUI;
@@ -26,6 +30,35 @@ public class UserListViewModel : ViewModelBase
     
     private bool _sideBarShowed;
     public bool SideBarShowed { get => _sideBarShowed; set => this.RaiseAndSetIfChanged(ref _sideBarShowed, value); }
+    
+    private int _selectedUploadFileMode = -1;
+    public int SelectedUploadFileMode
+    {
+        get => _selectedUploadFileMode;
+        set
+        {
+            switch (value)
+            {
+                case (int)UploadFileMode.FromFile:
+                    SelectedUser.NewPhotoUrl = String.Empty;  
+                    break;
+                case (int)UploadFileMode.FromUrl:
+                    SelectedUser.Photo.SelectedFilePhoto = null;
+                    break;
+                default:
+                    SelectedUser.NewPhotoUrl = String.Empty;  
+                    SelectedUser.Photo.SelectedFilePhoto = null;
+                    break;
+            }
+            
+            this.RaiseAndSetIfChanged(ref _selectedUploadFileMode, value);
+            this.RaisePropertyChanged(nameof(IsUrlInputVisible));
+            this.RaisePropertyChanged(nameof(IsFileInputVisible));
+        }
+    }
+
+    public bool IsUrlInputVisible => (UploadFileMode)SelectedUploadFileMode == UploadFileMode.FromUrl;
+    public bool IsFileInputVisible => (UploadFileMode)SelectedUploadFileMode == UploadFileMode.FromFile; 
     
     // => // Filters => // Search Terms
     
@@ -85,6 +118,14 @@ public class UserListViewModel : ViewModelBase
 
     private ReactiveCommand<Unit, Task>? _deleteUserDataCommand;
     public ReactiveCommand<Unit, Task> DeleteUserDataCommand => _deleteUserDataCommand ??= new DeleteUserDataCommand(this, _userListVmProvider);
+
+    private ReactiveCommand<TopLevel, Task<IResult<FileMeta>>>? _choosePhotoCommand;
+    public ReactiveCommand<TopLevel, Task<IResult<FileMeta>>> ChoosePhotoCommand =>
+        _choosePhotoCommand ??= new ChoosePhotoCommand(_userListVmProvider.GetFileService());
+    
+    private ReactiveCommand<FileMeta, Task<IResult<string>>>? _generateFreeImageCommand;
+    public ReactiveCommand<FileMeta, Task<IResult<string>>> GenerateFreeImageCommand =>
+        _generateFreeImageCommand ??= new GenerateFreeImageCommand(_userListVmProvider.GetFreeImageService());
     
     // Constructor 
     
@@ -92,8 +133,12 @@ public class UserListViewModel : ViewModelBase
     {
         _userListVmProvider = userListVmProvider!;
         
+        ChoosePhotoCommand.
+            Subscribe(async void (fResult) => SelectedUser.Photo.SelectedFilePhoto = await fResult.GetValueOrNull() );
+        
         LoadUserDataCommand.Execute();
-        SearchUserDataCommand.Subscribe(filteredUsers => LoadUserDataCommand.Execute(filteredUsers.Result));
+        SearchUserDataCommand.
+            Subscribe(filteredUsers => LoadUserDataCommand.Execute(filteredUsers.Result));
         
         ConnectionDbState.CheckConnectionState.
             Subscribe(isConnected => DatabaseHasConnected = isConnected.Result);

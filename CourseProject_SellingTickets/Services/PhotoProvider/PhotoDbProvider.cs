@@ -5,9 +5,11 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CourseProject_SellingTickets.DbContexts;
 using CourseProject_SellingTickets.Extensions;
+using CourseProject_SellingTickets.Interfaces.CommonInterface;
 using CourseProject_SellingTickets.Interfaces.Factories;
 using CourseProject_SellingTickets.Interfaces.PhotoProviderInterface;
 using CourseProject_SellingTickets.Models;
+using CourseProject_SellingTickets.Models.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject_SellingTickets.Services.PhotoProvider;
@@ -75,6 +77,29 @@ public class PhotoDbProvider : IPhotoDbProvider
                 ToListAsync();
 
             return photoDtos.Select(ticket => ToPhoto(ticket));
+        }
+    }
+
+    public async Task<IResult<Int64>> GenerateAvatar(string urlPath)
+    {
+        using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())
+        {
+            try
+            {
+                IEnumerable<int> result = await context.Database
+                    .SqlQuery<int>($"SELECT * FROM public.generate_avatar({urlPath})")
+                    .ToListAsync();
+
+                return Result<Int64>.Success(result.FirstOrDefault(-1));
+            }
+            catch (Npgsql.PostgresException ex)
+            {
+                return Result<Int64>.Failure(ex.MessageText);
+            }
+            catch (Exception ex)
+            {
+                return Result<Int64>.Failure(ex.Message);
+            }
         }
     }
 

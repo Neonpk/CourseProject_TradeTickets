@@ -69,7 +69,7 @@ public class UserDbProvider : IUserDbProvider
             return userDtos.Select(userDto => ToUser(userDto));
         }
     }
-
+    
     public async Task<IEnumerable<User>> GetUsersByFilter(Expression<Func<UserDTO, bool>> searchFunc, int topRows = -1)
     {
         using (TradeTicketsDbContext context = _dbContextFactory.CreateDbContext())

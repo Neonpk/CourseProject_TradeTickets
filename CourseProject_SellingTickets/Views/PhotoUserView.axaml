@@ -17,6 +17,7 @@
         <converter:InitializeDataErrorConverter x:Key="InitializeDataErrorConverter"/>
         <converter:CollectionHasItemsConverter x:Key="CollectionHasItemsConverter"/>
         <converter:TrimTextConverter x:Key="TrimTextConverter"/>
+        <converter:FileMetaStringConverter x:Key="FileMetaStringConverter" />
         
         <s:Boolean x:Key="FalseValue">False</s:Boolean>
         <s:Boolean x:Key="TrueValue">True</s:Boolean>
@@ -245,13 +246,38 @@
                         
                         <Label Content="Название изображения" Margin="0 10 0 0"/>
                         <TextBox Text="{Binding SelectedPhoto.Name}" 
-                                 Watermark="Укажите название класса."
-                                 />
+                                 Watermark="Укажите название изображения."/>
                         
-                        <Label Content="Ссылка на изображение" Margin="0 10 0 0"/>
-                        <TextBox Text="{Binding SelectedPhoto.UrlPath}" 
-                                 Watermark="Укажите ссылку на изображение."
-                        />
+                        <ComboBox Margin="0 10 0 10"
+                                  HorizontalAlignment="Stretch"
+                                  PlaceholderText="Загрузка аватара"
+                                  SelectedIndex="{Binding SelectedUploadFileMode}">
+                            <ComboBox.Items>
+                                <ComboBoxItem>Загрузка ссылкой</ComboBoxItem>
+                                <ComboBoxItem>Загрузка файлом</ComboBoxItem>
+                            </ComboBox.Items>
+                        </ComboBox>
+                    
+                        <TextBox Height="25"
+                                 HorizontalAlignment="Stretch"
+                                 Margin="0 0 0 10"
+                                 IsVisible="{Binding IsUrlInputVisible}"
+                                 Watermark="Укажите прямую ссылку на изображение"
+                                 Text="{Binding SelectedPhoto.UrlPath}" />
+                
+                        <StackPanel Margin="0 0 0 10"
+                                    IsVisible="{Binding IsFileInputVisible}">
+                            <Button Content="Выбрать изображение (FreeImageHost)"
+                                    Margin="0 0 0 10"
+                                    HorizontalContentAlignment="Center"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding ChoosePhotoCommand}"
+                                    CommandParameter="{Binding $parent[TopLevel]}" />
+                            
+                            <TextBlock TextWrapping="WrapWithOverflow" 
+                                       Text="{Binding SelectedPhoto.SelectedFilePhoto, Converter={StaticResource FileMetaStringConverter}, ConverterParameter='string'}"
+                                       Foreground="{Binding SelectedPhoto.SelectedFilePhoto, Converter={StaticResource FileMetaStringConverter}, ConverterParameter='foreground'}"/>
+                        </StackPanel>
                         
                         <StackPanel Orientation="Horizontal" 
                                     Margin="0 10 0 10">

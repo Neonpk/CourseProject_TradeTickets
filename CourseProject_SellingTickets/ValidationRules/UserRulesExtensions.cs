@@ -26,6 +26,9 @@ public static class UserRulesExtensions
         self.ValidationRule(x => x.NewUserPassword, x => Regex.IsMatch(x!, "^[A-Za-z0-9]{5,30}$|^$"),
             "[=>] Пароль должен быть от 5 до 30 символов.");
         
+        self.ValidationRule(x => x.NewPhotoUrl, x => Regex.IsMatch(x!.Trim(), "^https?:\\/\\/.*\\.(jpg|jpeg|png|webp|gif)$|^$"),
+            "[=>] Некорректный адрес изображения.");
+        
         self.ValidationRule(x => x.Discount.Id, x => x.CompareTo(default) != 0, "[=>] Вид скидки не был выбран.");
         
         self.ValidationContext.Changed.

@@ -6,7 +6,7 @@ using CourseProject_SellingTickets.Models;
 using CourseProject_SellingTickets.Models.Common;
 using ReactiveUI;
 
-namespace CourseProject_SellingTickets.Commands.UserClientCommands;
+namespace CourseProject_SellingTickets.Commands.PhotoCommands;
 
 public class GenerateFreeImageCommand : ReactiveCommand<FileMeta, Task<IResult<string>>>
 {
